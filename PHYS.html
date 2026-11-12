@@ -1,0 +1,1984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>E&M Question Bank — PHYS3331 / PHYS4450</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- MathJax 配置（确保在加载脚本之前） -->
+<script>
+  window.MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']],
+      processEscapes: true,
+      tags: 'none'
+    },
+    options: {
+      // 移动端优化：禁止自动缩放，依赖CSS控制尺寸
+      scale: 1,
+      // 跳过对已渲染元素的重复处理
+      skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    // 长公式水平滚动由CSS处理，此处无需MathJax特定配置
+    chtml: {
+      displayAlign: 'left',  // 长公式左对齐更易读
+      displayIndent: '0'
+    }
+  };
+</script>
+
+<!-- MathJax 脚本（可尝试更换CDN） -->
+<script id="MathJax-script" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    :root {
+      --primary: #2563eb;
+      --bg-card: #f8fafc;
+      --border: #e2e8f0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      line-height: 1.65;
+      max-width: 920px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+      color: #1e293b;
+    }
+
+    .filter-bar {
+      background: var(--bg-card);
+      padding: 1rem 1.25rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-bar label { font-weight: 600; }
+
+    .filter-bar select {
+      padding: 0.5rem 0.75rem;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      background: white;
+      cursor: pointer;
+      min-width: 240px;
+    }
+
+    .topic-section { margin-bottom: 2.5rem; }
+
+    .topic-title {
+      border-bottom: 2px solid var(--primary);
+      padding-bottom: 0.4rem;
+      margin-bottom: 1rem;
+      color: #0f172a;
+    }
+
+    details.year-group {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 0.75rem;
+      overflow: hidden;
+    }
+
+    details.year-group > summary {
+      background: var(--bg-card);
+      padding: 0.85rem 1.25rem;
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.15s ease;
+    }
+
+    details.year-group > summary:hover { background: #f1f5f9; }
+
+    .year-content {
+      padding: 1rem 1.25rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .question-card {
+      background: #fff;
+      border-left: 4px solid var(--primary);
+      padding: 0.75rem 1rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .question-card:last-child { margin-bottom: 0; }
+
+    .q-header {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--primary);
+      margin-bottom: 0.4rem;
+    }
+
+    details.solution {
+      margin-top: 0.75rem;
+      font-size: 0.95rem;
+    }
+
+    details.solution > summary {
+      color: #475569;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .solution-body {
+      margin-top: 0.5rem;
+      padding: 1rem 1.25rem;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+
+    .solution-body p {
+      margin-top: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+
+  <h1>Electromagnetic Field Theory — Past Paper Archive</h1>
+  <p style="color:#64748b; margin-top:-0.5rem;">PHYS3331 / PHYS4450 · HKU Department of Physics · 2014–2022 (Full-Credit Exam Derivations)</p>
+
+  <!-- Topic Selector -->
+  <div class="filter-bar">
+    <label for="topic-select">Select Topic:</label>
+    <select id="topic-select" onchange="filterTopics()">
+      <option value="all">All Topics</option>
+      <option value="waves">Waves &amp; Optical Properties</option>
+      <option value="potentials">Potentials, Gauges &amp; Retarded Fields</option>
+      <option value="radiation">Radiation &amp; Scattering</option>
+      <option value="relativity">Special Relativity &amp; E&amp;M</option>
+      <option value="sources">Fields from Time-Varying Sources</option>
+    </select>
+  </div>
+
+  <!-- ================= TOPIC 1: WAVES & OPTICAL PROPERTIES ================= -->
+  <div class="topic-section" data-topic="waves">
+    <h2 class="topic-title">Waves &amp; Optical Properties of Media</h2>
+
+    <!-- 1.1 Refractive index -->
+    <details class="year-group" open>
+      <summary>Refractive Index of a Conducting / Dielectric Medium</summary>
+      <div class="year-content">
+        <div class="question-card">
+          <div class="q-header">2014 Q1 · 2017 Q1 · 2020 Q1 · 2022 Q1</div>
+          <p>Calculate the complex refractive index \(\tilde{n}(\omega)\) of:</p>
+          <p>(a) a conductive material with conductivity \(\sigma\) and permittivity \(\epsilon\) (take \(\mu=\mu_0\));</p>
+          <p>(b) a dielectric material with \(\tilde{\epsilon} = \epsilon + i\epsilon_i\) and \(\mu=\mu_0\).</p>
+          <details class="solution">
+            <summary>Show Full Exam Derivation</summary>
+            <div class="solution-body">
+              <p><strong>(a) Conductive Material:</strong></p>
+              <p>In a linear, isotropic, homogeneous conducting medium with zero free charge density (\(\rho_f = 0\)) and Ohmic conduction current \(\mathbf{J}_f = \sigma \mathbf{E}\), Maxwell's equations are:
+              \[
+              \nabla \cdot \mathbf{E} = 0, \qquad \nabla \cdot \mathbf{B} = 0,
+              \]
+              \[
+              \nabla \times \mathbf{E} = -\frac{\partial \mathbf{B}}{\partial t}, \qquad \nabla \times \mathbf{B} = \mu_0 \mathbf{J}_f + \mu_0 \epsilon \frac{\partial \mathbf{E}}{\partial t} = \mu_0 \sigma \mathbf{E} + \mu_0 \epsilon \frac{\partial \mathbf{E}}{\partial t}.
+              \]
+              Taking the curl of Faraday's law and applying the vector identity \(\nabla \times (\nabla \times \mathbf{E}) = \nabla(\nabla \cdot \mathbf{E}) - \nabla^2 \mathbf{E}\):
+              \[
+              \nabla(\nabla \cdot \mathbf{E}) - \nabla^2 \mathbf{E} = -\frac{\partial}{\partial t}(\nabla \times \mathbf{B}) = -\frac{\partial}{\partial t}\left(\mu_0 \sigma \mathbf{E} + \mu_0 \epsilon \frac{\partial \mathbf{E}}{\partial t}\right).
+              \]
+              Since \(\nabla \cdot \mathbf{E} = 0\), we obtain the damped wave (telegrapher's) equation:
+              \[
+              \nabla^2 \mathbf{E} - \mu_0 \sigma \frac{\partial \mathbf{E}}{\partial t} - \mu_0 \epsilon \frac{\partial^2 \mathbf{E}}{\partial t^2} = 0.
+              \]
+              Consider a monochromatic plane wave solution propagating along the \(z\)-axis:
+              \[
+              \mathbf{E}(\mathbf{r},t) = \mathbf{E}_0 e^{i(\tilde{k}z - \omega t)},
+              \]
+              where \(\nabla^2 \to -\tilde{k}^2\) and \(\frac{\partial}{\partial t} \to -i\omega\). Substituting this ansatz into the wave equation gives the dispersion relation:
+              \[
+              \left[-\tilde{k}^2 - \mu_0 \sigma (-i\omega) - \mu_0 \epsilon (-i\omega)^2\right]\mathbf{E}_0 e^{i(\tilde{k}z - \omega t)} = 0 \implies \tilde{k}^2 = \mu_0 \epsilon \omega^2 + i\mu_0 \sigma \omega.
+              \]
+              The vacuum wavevector is \(k_0 = \frac{\omega}{c} = \omega\sqrt{\mu_0 \epsilon_0}\), and the complex refractive index is defined by \(\tilde{n}(\omega) \equiv \frac{c\tilde{k}}{\omega} = \frac{\tilde{k}}{k_0}\). Dividing through by \(k_0^2 = \mu_0 \epsilon_0 \omega^2\):
+              \[
+              \tilde{n}^2(\omega) = \frac{\tilde{k}^2}{\mu_0 \epsilon_0 \omega^2} = \frac{\epsilon}{\epsilon_0} + i\frac{\sigma}{\epsilon_0 \omega} = \epsilon_r + i\frac{\sigma}{\epsilon_0 \omega},
+              \]
+              where \(\epsilon_r \equiv \epsilon/\epsilon_0\). Taking the square root yields:
+              \[
+              \boxed{\tilde{n}(\omega) = \sqrt{\frac{\epsilon}{\epsilon_0} + i\frac{\sigma}{\epsilon_0 \omega}} = \sqrt{\epsilon_r + i\frac{\sigma}{\epsilon_0 \omega}}}.
+              \]
+              To explicitly separate \(\tilde{n} = n + i\kappa\) into its real and imaginary parts, equate squares:
+              \[
+              (n + i\kappa)^2 = (n^2 - \kappa^2) + 2in\kappa = \epsilon_r + i\frac{\sigma}{\epsilon_0 \omega} \implies \begin{cases} n^2 - \kappa^2 = \epsilon_r, \\ 2n\kappa = \dfrac{\sigma}{\epsilon_0\omega}. \end{cases}
+              \]
+              Using \((n^2 + \kappa^2)^2 = (n^2 - \kappa^2)^2 + 4n^2\kappa^2 = \epsilon_r^2 + \left(\frac{\sigma}{\epsilon_0\omega}\right)^2\), we solve for \(n\) and \(\kappa\):
+              \[
+              n(\omega) = \sqrt{\frac{\epsilon_r}{2}\left[\sqrt{1 + \left(\frac{\sigma}{\epsilon\omega}\right)^2} + 1\right]}, \qquad \kappa(\omega) = \sqrt{\frac{\epsilon_r}{2}\left[\sqrt{1 + \left(\frac{\sigma}{\epsilon\omega}\right)^2} - 1\right]}.
+              \]</p>
+
+              <p><strong>(b) Lossy Dielectric Material:</strong></p>
+              <p>In a lossy dielectric with no free charges or free currents (\(\rho_f = 0, \mathbf{J}_f = 0\)), the constitutive relation in the frequency domain is \(\mathbf{D} = \tilde{\epsilon}\mathbf{E} = (\epsilon + i\epsilon_i)\mathbf{E}\) and \(\mathbf{B} = \mu_0 \mathbf{H}\). For harmonic time dependence \(e^{-i\omega t}\), Maxwell's curl equations become:
+              \[
+              \nabla \times \mathbf{E} = i\omega \mu_0 \mathbf{H}, \qquad \nabla \times \mathbf{H} = -i\omega \mathbf{D} = -i\omega \tilde{\epsilon}\mathbf{E}.
+              \]
+              Taking the curl of the first equation and using \(\nabla \cdot \mathbf{E} = 0\) (since \(\nabla \cdot \mathbf{D} = \tilde{\epsilon}\nabla \cdot \mathbf{E} = 0\)):
+              \[
+              \nabla \times (\nabla \times \mathbf{E}) = -\nabla^2 \mathbf{E} = i\omega \mu_0 (\nabla \times \mathbf{H}) = \omega^2 \mu_0 \tilde{\epsilon}\mathbf{E} \implies \nabla^2 \mathbf{E} + \mu_0 \tilde{\epsilon}\omega^2 \mathbf{E} = 0.
+              \]
+              Substituting the plane wave \(\mathbf{E} = \mathbf{E}_0 e^{i(\tilde{k}z - \omega t)}\) yields:
+              \[
+              \tilde{k}^2 = \mu_0 \tilde{\epsilon}\omega^2 = \mu_0 (\epsilon + i\epsilon_i)\omega^2.
+              \]
+              Dividing by \(k_0^2 = \mu_0 \epsilon_0 \omega^2\) gives the complex refractive index:
+              \[
+              \boxed{\tilde{n}(\omega) = \frac{\tilde{k}}{k_0} = \sqrt{\frac{\tilde{\epsilon}}{\epsilon_0}} = \sqrt{\frac{\epsilon + i\epsilon_i}{\epsilon_0}} = \sqrt{\epsilon_r + i\epsilon_{i,r}}},
+              \]
+              with real and imaginary parts (\(\tilde{n} = n + i\kappa\)):
+              \[
+              n(\omega) = \sqrt{\frac{\sqrt{\epsilon^2 + \epsilon_i^2} + \epsilon}{2\epsilon_0}}, \qquad \kappa(\omega) = \sqrt{\frac{\sqrt{\epsilon^2 + \epsilon_i^2} - \epsilon}{2\epsilon_0}}.
+              \]</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </details>
+
+    <!-- 1.2 Skin depth -->
+    <details class="year-group">
+      <summary>Skin Depth in a Good Conductor</summary>
+      <div class="year-content">
+        <div class="question-card">
+          <div class="q-header">2018 Q2</div>
+          <p>The imaginary part of the complex wavevector in a metal is
+          \[
+          \kappa \equiv \omega\sqrt{\frac{\mu\epsilon}{2}}\left[\sqrt{1+\left(\frac{\sigma}{\epsilon\omega}\right)^{2}}-1\right]^{1/2}.
+          \]
+          (i) Show that the skin depth is \(\delta\approx\sqrt{\frac{2}{\omega\mu\sigma}}\) for a "good" metal (\(\sigma\gg\epsilon\omega\)).<br>
+          (ii) For sea water (\(\mu\approx4\pi\times10^{-7}\,\mathrm{H/m}\), \(\sigma=1\,\mathrm{S/m}\)), express the skin depth at frequencies \(f = 50\,\mathrm{Hz}\), \(10^6\,\mathrm{Hz}\) and \(10^9\,\mathrm{Hz}\).</p>
+          <details class="solution">
+            <summary>Show Full Exam Derivation</summary>
+            <div class="solution-body">
+              <p><strong>(i) Derivation of Skin Depth in a Good Conductor:</strong></p>
+              <p>First, let us verify the exact expression for \(\kappa = \mathrm{Im}(\tilde{k})\) from the dispersion relation in a conducting medium:
+              \[
+              \tilde{k}^2 = (k_r + i\kappa)^2 = k_r^2 - \kappa^2 + 2ik_r\kappa = \mu\epsilon\omega^2 + i\mu\sigma\omega.
+              \]
+              Equating real and imaginary parts gives \(k_r^2 - \kappa^2 = \mu\epsilon\omega^2\) and \(2k_r\kappa = \mu\sigma\omega\). Using the algebraic identity \((k_r^2 + \kappa^2)^2 = (k_r^2 - \kappa^2)^2 + 4k_r^2\kappa^2\):
+              \[
+              k_r^2 + \kappa^2 = \mu\epsilon\omega^2\sqrt{1 + \left(\frac{\sigma}{\epsilon\omega}\right)^2} \implies \kappa = \omega\sqrt{\frac{\mu\epsilon}{2}}\left[\sqrt{1 + \left(\frac{\sigma}{\epsilon\omega}\right)^2} - 1\right]^{1/2}.
+              \]
+              <em>(Note: The exam paper printed \(\mu\sigma\) under the leading square root by typo; keeping \(\mu\epsilon\) is required for dimensional consistency since \([\kappa] = \mathrm{m}^{-1}\).)</em></p>
+              <p>For a good conductor, the conduction current dominates the displacement current, i.e., \(\frac{\sigma}{\epsilon\omega} \gg 1\). Factoring out \(\frac{\sigma}{\epsilon\omega}\) from the inner radical and performing a binomial expansion \((1+x)^{1/2} = 1 + \frac{1}{2}x + \mathcal{O}(x^2)\):
+              \[
+              \sqrt{1 + \left(\frac{\sigma}{\epsilon\omega}\right)^2} = \frac{\sigma}{\epsilon\omega}\sqrt{1 + \left(\frac{\epsilon\omega}{\sigma}\right)^2} = \frac{\sigma}{\epsilon\omega}\left[1 + \frac{1}{2}\left(\frac{\epsilon\omega}{\sigma}\right)^2 + \mathcal{O}\left(\frac{\epsilon\omega}{\sigma}\right)^4\right] \approx \frac{\sigma}{\epsilon\omega}.
+              \]
+              Since \(\frac{\sigma}{\epsilon\omega} \gg 1\), we also have \(\frac{\sigma}{\epsilon\omega} - 1 = \frac{\sigma}{\epsilon\omega}\left(1 - \frac{\epsilon\omega}{\sigma}\right) \approx \frac{\sigma}{\epsilon\omega}\). Substituting this into the expression for \(\kappa\):
+              \[
+              \kappa \approx \omega\sqrt{\frac{\mu\epsilon}{2}}\left(\frac{\sigma}{\epsilon\omega}\right)^{1/2} = \sqrt{\frac{\omega^2\mu\epsilon}{2}\cdot\frac{\sigma}{\epsilon\omega}} = \sqrt{\frac{\omega\mu\sigma}{2}}.
+              \]
+              As the wave propagates along \(z\), its electric field amplitude attenuates according to:
+              \[
+              \mathbf{E}(z,t) = \mathbf{E}_0 e^{i(k_r + i\kappa)z - i\omega t} = \mathbf{E}_0 e^{-\kappa z} e^{i(k_r z - \omega t)}.
+              \]
+              The skin depth \(\delta\) is defined as the penetration distance over which the field amplitude decays by a factor of \(e^{-1}\), so \(\delta\kappa = 1\):
+              \[
+              \boxed{\delta \equiv \frac{1}{\kappa} \approx \sqrt{\frac{2}{\omega\mu\sigma}}}.
+              \]</p>
+
+              <p><strong>(ii) Analytical Evaluation for Sea Water:</strong></p>
+              <p>Using \(\omega = 2\pi f\), \(\mu = 4\pi \times 10^{-7}\,\mathrm{H/m}\), and \(\sigma = 1\,\mathrm{S/m}\), the general expression for the skin depth as a function of frequency \(f\) is:
+              \[
+              \delta(f) = \sqrt{\frac{2}{(2\pi f)(4\pi \times 10^{-7})(1)}} = \sqrt{\frac{1}{4\pi^2 \times 10^{-7} f}} = \frac{10^3}{2\pi\sqrt{0.1\,f}}\,\mathrm{m} = \frac{500}{\pi\sqrt{0.1\,f}}\,\mathrm{m}.
+              \]
+              Evaluating at the three specified frequencies in exact radical form:
+              <ul>
+                <li>At \(f = 50\,\mathrm{Hz}\):
+                \[
+                \boxed{\delta(50\,\mathrm{Hz}) = \sqrt{\frac{2}{2\pi(50)(4\pi\times 10^{-7})}} = \frac{100}{\pi\sqrt{5}}\,\mathrm{m} = \frac{20\sqrt{5}}{\pi}\,\mathrm{m}}.
+                \]</li>
+                <li>At \(f = 10^6\,\mathrm{Hz}\):
+                \[
+                \boxed{\delta(10^6\,\mathrm{Hz}) = \sqrt{\frac{2}{2\pi(10^6)(4\pi\times 10^{-7})}} = \frac{1}{\pi}\sqrt{\frac{5}{2}}\,\mathrm{m} = \frac{\sqrt{10}}{2\pi}\,\mathrm{m}}.
+                \]</li>
+                <li>At \(f = 10^9\,\mathrm{Hz}\):
+                \[
+                \boxed{\delta(10^9\,\mathrm{Hz}) = \sqrt{\frac{2}{2\pi(10^9)(4\pi\times 10^{-7})}} = \frac{1}{20\pi}\,\mathrm{m}}.
+                \]</li>
+              </ul></p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </details>
+
+    <!-- 1.3 Plane wave in dielectric -->
+    <details class="year-group">
+      <summary>Plane Wave in an Isotropic Dielectric: \(\mathbf{k}\cdot\mathbf{B}\), \(\mathbf{k}\cdot\mathbf{D}\), \(\mathbf{B}\cdot\mathbf{D}\), Poynting Vector</summary>
+      <div class="year-content">
+        <div class="question-card">
+          <div class="q-header">2018 Q1</div>
+          <p>A monochromatic plane wave travels in an isotropic dielectric medium. Suppose \(\mathbf{E},\mathbf{D},\mathbf{B},\mathbf{H}\) all have the form \(e^{i(\mathbf{k}\cdot\mathbf{x}-\omega t)}\).</p>
+          <p>(i) Show \(\mathbf{k}\cdot\mathbf{B}=\mathbf{k}\cdot\mathbf{D}=0\).</p>
+          <p>(ii) Show \(\mathbf{B}\cdot\mathbf{D}=0\).</p>
+          <p>(iii) Derive the Poynting vector \(\mathbf{S}\).</p>
+          <details class="solution">
+            <summary>Show Full Exam Derivation</summary>
+            <div class="solution-body">
+              <p><strong>(i) Proof that \(\mathbf{k}\cdot\mathbf{B} = \mathbf{k}\cdot\mathbf{D} = 0\):</strong></p>
+              <p>Let each field take the monochromatic plane-wave form \(\mathbf{F}(\mathbf{x},t) = \mathbf{F}_0 e^{i(\mathbf{k}\cdot\mathbf{x} - \omega t)}\), where \(\mathbf{F}_0\) is a constant complex amplitude vector. For any such plane wave, the spatial derivative operator acts in Cartesian coordinates (\(j=1,2,3\)) as:
+              \[
+              \partial_j \left(F_{0,m} e^{i(k_l x_l - \omega t)}\right) = i k_j F_{0,m} e^{i(k_l x_l - \omega t)} = i k_j F_m \implies \nabla \to i\mathbf{k}, \qquad \frac{\partial}{\partial t} \to -i\omega.
+              \]
+              In a sourceless dielectric medium (\(\rho_f = 0\), \(\mathbf{J}_f = 0\)), the two divergence Maxwell equations are:
+              \[
+              \nabla \cdot \mathbf{D} = 0, \qquad \nabla \cdot \mathbf{B} = 0.
+              \]
+              Substituting the plane-wave operator \(\nabla \to i\mathbf{k}\) gives:
+              \[
+              i\mathbf{k}\cdot\mathbf{D} = 0, \qquad i\mathbf{k}\cdot\mathbf{B} = 0.
+              \]
+              Since \(i \neq 0\), dividing by \(i\) yields:
+              \[
+              \boxed{\mathbf{k}\cdot\mathbf{D} = 0 \quad \text{and} \quad \mathbf{k}\cdot\mathbf{B} = 0}.
+              \]
+              Thus both \(\mathbf{D}\) and \(\mathbf{B}\) are strictly transverse to the wavevector \(\mathbf{k}\).</p>
+
+              <p><strong>(ii) Proof that \(\mathbf{B}\cdot\mathbf{D} = 0\):</strong></p>
+              <p>In a linear, isotropic dielectric medium, the constitutive relations are \(\mathbf{D} = \epsilon\mathbf{E}\) and \(\mathbf{B} = \mu\mathbf{H}\), where \(\epsilon\) and \(\mu\) are scalars. Faraday's law in differential form is:
+              \[
+              \nabla \times \mathbf{E} = -\frac{\partial \mathbf{B}}{\partial t}.
+              \]
+              Applying \(\nabla \to i\mathbf{k}\) and \(\frac{\partial}{\partial t} \to -i\omega\):
+              \[
+              i\mathbf{k} \times \mathbf{E} = -(-i\omega)\mathbf{B} = i\omega\mathbf{B} \implies \mathbf{B} = \frac{1}{\omega}(\mathbf{k} \times \mathbf{E}).
+              \]
+              Using the isotropic constitutive relation \(\mathbf{E} = \frac{1}{\epsilon}\mathbf{D}\), we express \(\mathbf{B}\) directly in terms of \(\mathbf{D}\):
+              \[
+              \mathbf{B} = \frac{1}{\omega\epsilon}(\mathbf{k} \times \mathbf{D}).
+              \]
+              Taking the scalar product of both sides with \(\mathbf{D}\) and invoking the scalar triple product identity \((\mathbf{A}\times\mathbf{B})\cdot\mathbf{B} = 0\):
+              \[
+              \mathbf{B}\cdot\mathbf{D} = \frac{1}{\omega\epsilon}(\mathbf{k} \times \mathbf{D})\cdot\mathbf{D} = \frac{1}{\omega\epsilon}\mathbf{k}\cdot(\mathbf{D} \times \mathbf{D}) = 0.
+              \]
+              Therefore:
+              \[
+              \boxed{\mathbf{B}\cdot\mathbf{D} = 0}.
+              \]
+              Combined with part (i), \((\mathbf{D}, \mathbf{B}, \mathbf{k})\) form a mutually orthogonal right-handed triad.</p>
+
+              <p><strong>(iii) Derivation of the Poynting Vector \(\mathbf{S}\) (Instantaneous and Time-Averaged):</strong></p>
+              <p><em>1. Conservation Law Derivation:</em> Consider the rate of work done on any currents \(\mathbf{E}\cdot\mathbf{J}\). From Ampère-Maxwell's law \(\mathbf{J} = \nabla \times \mathbf{H} - \frac{\partial \mathbf{D}}{\partial t}\):
+              \[
+              \mathbf{E}\cdot\mathbf{J} = \mathbf{E}\cdot(\nabla \times \mathbf{H}) - \mathbf{E}\cdot\frac{\partial \mathbf{D}}{\partial t}.
+              \]
+              Using the vector identity \(\nabla \cdot (\mathbf{E} \times \mathbf{H}) = \mathbf{H}\cdot(\nabla \times \mathbf{E}) - \mathbf{E}\cdot(\nabla \times \mathbf{H})\) together with Faraday's law \(\nabla \times \mathbf{E} = -\frac{\partial \mathbf{B}}{\partial t}\):
+              \[
+              \mathbf{E}\cdot\mathbf{J} = -\nabla \cdot (\mathbf{E} \times \mathbf{H}) - \mathbf{H}\cdot\frac{\partial \mathbf{B}}{\partial t} - \mathbf{E}\cdot\frac{\partial \mathbf{D}}{\partial t} = -\nabla \cdot (\mathbf{E} \times \mathbf{H}) - \frac{\partial}{\partial t}\left(\frac{1}{2}\mathbf{E}\cdot\mathbf{D} + \frac{1}{2}\mathbf{B}\cdot\mathbf{H}\right).
+              \]
+              Identifying the electromagnetic energy density \(u = \frac{1}{2}(\mathbf{E}\cdot\mathbf{D} + \mathbf{B}\cdot\mathbf{H})\), continuity of energy \(\nabla \cdot \mathbf{S} + \frac{\partial u}{\partial t} = -\mathbf{E}\cdot\mathbf{J}\) defines the Poynting vector (energy flux density):
+              \[
+              \mathbf{S} \equiv \mathbf{E} \times \mathbf{H}.
+              \]
+              <em>2. Evaluation for the Plane Wave:</em> From Faraday's and Ampère's laws:
+              \[
+              \mathbf{H} = \frac{\mathbf{B}}{\mu} = \frac{1}{\omega\mu}(\mathbf{k} \times \mathbf{E}), \qquad k^2 = \omega^2\mu\epsilon \implies k = \omega\sqrt{\mu\epsilon}.
+              \]
+              For physical fields \(\mathbf{E}_{\mathrm{real}}(\mathbf{x},t) = \mathrm{Re}\left[\mathbf{E}_0 e^{i(\mathbf{k}\cdot\mathbf{x}-\omega t)}\right]\), the instantaneous Poynting vector is:
+              \[
+              \mathbf{S}(\mathbf{x},t) = \mathbf{E}_{\mathrm{real}} \times \mathbf{H}_{\mathrm{real}} = \frac{1}{\omega\mu}\mathbf{E}_{\mathrm{real}} \times (\mathbf{k} \times \mathbf{E}_{\mathrm{real}}) = \frac{1}{\omega\mu}\left[|\mathbf{E}_{\mathrm{real}}|^2\mathbf{k} - (\mathbf{E}_{\mathrm{real}}\cdot\mathbf{k})\mathbf{E}_{\mathrm{real}}\right].
+              \]
+              Since \(\mathbf{k}\cdot\mathbf{D} = \epsilon(\mathbf{k}\cdot\mathbf{E}) = 0\), the second term vanishes and \(\mathbf{k} = k\hat{\mathbf{k}} = \omega\sqrt{\mu\epsilon}\,\hat{\mathbf{k}}\), giving:
+              \[
+              \boxed{\mathbf{S}(\mathbf{x},t) = \sqrt{\frac{\epsilon}{\mu}}|\mathbf{E}_{\mathrm{real}}(\mathbf{x},t)|^2\,\hat{\mathbf{k}}}.
+              \]
+              Taking the time average over one oscillation period \(T = 2\pi/\omega\):
+              \[
+              \langle \mathbf{S} \rangle = \frac{1}{2}\mathrm{Re}\left(\mathbf{E} \times \mathbf{H}^*\right) = \frac{1}{2\omega\mu}\mathrm{Re}\left[\mathbf{E}_0 \times (\mathbf{k} \times \mathbf{E}_0^*)\right] = \frac{1}{2\omega\mu}\left[(\mathbf{E}_0\cdot\mathbf{E}_0^*)\mathbf{k} - (\mathbf{E}_0\cdot\mathbf{k})\mathbf{E}_0^*\right].
+              \]
+              Since \(\mathbf{E}_0\cdot\mathbf{k} = 0\) and \(k = \omega\sqrt{\mu\epsilon}\), we obtain the time-averaged Poynting vector:
+              \[
+              \boxed{\langle \mathbf{S} \rangle = \frac{1}{2}\sqrt{\frac{\epsilon}{\mu}}|\mathbf{E}_0|^2\,\hat{\mathbf{k}}}.
+              \]</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </details>
+
+    <!-- 1.4 EM wave in plasma -->
+    <details class="year-group">
+      <summary>EM Wave in a Plasma / Diluted Electron Gas: Velocity and Propagation Range</summary>
+      <div class="year-content">
+        <div class="question-card">
+          <div class="q-header">2016 Q2 · 2021 Q2</div>
+          <p>(2016 Q2) An EM plane wave propagates in a space filled with free diluted electrons, with electron–electron interactions neglected. Derive the wave velocity and state the frequency range for which propagation is possible.</p>
+          <p>(2021 Q2) Model the Earth's ionosphere as a uniform plasma of density \(N\) (electrons + \(\mathrm{O}^+\) ions). Estimate the group velocity of a plane EM wave of angular frequency \(\omega\), neglecting damping and radiation.</p>
+          <details class="solution">
+            <summary>Show Full Exam Derivation</summary>
+            <div class="solution-body">
+              <p><strong>1. Microscopic Equation of Motion &amp; Current / Polarization Response:</strong></p>
+              <p>Consider a cold, collisionless, unmagnetized plasma of number density \(N\) (electrons of charge \(-e\) and mass \(m_e\), neutralized by heavy \(\mathrm{O}^+\) ions of charge \(+e\) and mass \(M_{\mathrm{ion}} \gg m_e\)). Because \(M_{\mathrm{ion}} \gg m_e\), the ion acceleration \(|\ddot{\mathbf{x}}_{\mathrm{ion}}| \sim \frac{m_e}{M_{\mathrm{ion}}}|\ddot{\mathbf{x}}_e| \ll |\ddot{\mathbf{x}}_e|\), so the ions may be treated as a stationary neutralizing background (\(\rho_{\mathrm{tot}} = 0\) at equilibrium).</p>
+              <p>For a non-relativistic electron (\(|\mathbf{v}| \ll c\)) subjected to a monochromatic plane wave \(\mathbf{E}(\mathbf{r},t) = \mathbf{E}_0 e^{i(\mathbf{k}\cdot\mathbf{r} - \omega t)}\), the magnetic Lorentz force \(|-e\mathbf{v}\times\mathbf{B}| \sim \frac{v}{c}|e\mathbf{E}| \ll |e\mathbf{E}|\) is negligible to linear order. Newton's second law for a single electron at displacement \(\mathbf{x}(t) = \mathbf{x}_0 e^{-i\omega t}\) is:
+              \[
+              m_e \frac{d^2\mathbf{x}}{dt^2} = -e\mathbf{E} \implies m_e(-i\omega)^2 \mathbf{x} = -m_e\omega^2\mathbf{x} = -e\mathbf{E} \implies \mathbf{x} = \frac{e}{m_e\omega^2}\mathbf{E}.
+              \]
+              <em>Method A (Bound/Polarization Picture):</em> The induced dipole moment per unit volume (polarization) is:
+              \[
+              \mathbf{P} = N(-e\mathbf{x}) = -\frac{Ne^2}{m_e\omega^2}\mathbf{E}.
+              \]
+              Hence the electric displacement vector is:
+              \[
+              \mathbf{D} = \epsilon_0 \mathbf{E} + \mathbf{P} = \epsilon_0\left(1 - \frac{Ne^2}{\epsilon_0 m_e \omega^2}\right)\mathbf{E} = \epsilon_0\left(1 - \frac{\omega_p^2}{\omega^2}\right)\mathbf{E},
+              \]
+              where we define the <strong>plasma frequency</strong> \(\omega_p\):
+              \[
+              \boxed{\omega_p \equiv \sqrt{\frac{Ne^2}{\epsilon_0 m_e}}}.
+              \]
+              <em>Method B (Free Current Picture):</em> Equivalently, the electron velocity is \(\mathbf{v} = \dot{\mathbf{x}} = -i\omega\mathbf{x} = -\frac{ie}{m_e\omega}\mathbf{E}\), giving a current density \(\mathbf{J} = -Ne\mathbf{v} = i\frac{Ne^2}{m_e\omega}\mathbf{E}\). Substituting into the Ampère-Maxwell equation \(\nabla \times \mathbf{B} = \mu_0\mathbf{J} + \mu_0\epsilon_0\frac{\partial \mathbf{E}}{\partial t}\):
+              \[
+              \nabla \times \mathbf{B} = \mu_0\left(i\frac{Ne^2}{m_e\omega}\right)\mathbf{E} + \mu_0\epsilon_0(-i\omega)\mathbf{E} = -i\omega\mu_0\epsilon_0\left(1 - \frac{\omega_p^2}{\omega^2}\right)\mathbf{E},
+              \]
+              which identifies the exact same effective relative permittivity \(\epsilon_r(\omega) = 1 - \frac{\omega_p^2}{\omega^2}\).</p>
+
+              <p><strong>2. Dispersion Relation:</strong></p>
+              <p>Taking the curl of Faraday's law \(\nabla \times \mathbf{E} = -\frac{\partial \mathbf{B}}{\partial t} = i\omega\mathbf{B}\) and using \(\nabla \cdot \mathbf{E} = 0\):
+              \[
+              \nabla \times (\nabla \times \mathbf{E}) = -\nabla^2\mathbf{E} = i\omega(\nabla \times \mathbf{B}) = \frac{\omega^2}{c^2}\left(1 - \frac{\omega_p^2}{\omega^2}\right)\mathbf{E}.
+              \]
+              Substituting the plane wave \(\nabla \to i\mathbf{k}\) gives \(\mathbf{k}^2 = k^2\):
+              \[
+              k^2 = \frac{\omega^2}{c^2}\left(1 - \frac{\omega_p^2}{\omega^2}\right) \implies \boxed{\omega^2 = \omega_p^2 + c^2 k^2}.
+              \]</p>
+
+              <p><strong>3. Phase Velocity and Group Velocity:</strong></p>
+              <p>The <strong>phase velocity</strong> \(v_p\) is:
+              \[
+              \boxed{v_p \equiv \frac{\omega}{k} = \frac{c}{\sqrt{1 - \dfrac{\omega_p^2}{\omega^2}}} = c\sqrt{1 + \frac{\omega_p^2}{c^2 k^2}}} \quad (> c).
+              \]
+              To obtain the <strong>group velocity</strong> \(v_g \equiv \frac{d\omega}{dk}\), differentiate the dispersion relation \(\omega^2 = \omega_p^2 + c^2 k^2\) with respect to \(k\):
+              \[
+              2\omega \frac{d\omega}{dk} = 2c^2 k \implies v_g = \frac{d\omega}{dk} = \frac{c^2 k}{\omega} = \frac{c^2}{v_p}.
+              \]
+              Substituting \(k = \frac{\omega}{c}\sqrt{1 - \omega_p^2/\omega^2}\) yields:
+              \[
+              \boxed{v_g(\omega) = c\sqrt{1 - \frac{\omega_p^2}{\omega^2}} = c\sqrt{1 - \frac{Ne^2}{\epsilon_0 m_e \omega^2}}} \quad (< c, \text{ preserving causality}).
+              \]</p>
+
+              <p><strong>4. Frequency Range for Wave Propagation:</strong></p>
+              <p>For a travelling wave to propagate without exponential attenuation, the wavenumber \(k = \frac{\omega}{c}\sqrt{1 - \omega_p^2/\omega^2}\) must be real and positive, which requires \(1 - \frac{\omega_p^2}{\omega^2} > 0\):
+              \[
+              \boxed{\omega > \omega_p = \sqrt{\frac{Ne^2}{\epsilon_0 m_e}} \quad \left(\text{or in terms of vacuum wavelength, } \lambda_0 < \lambda_p \equiv \frac{2\pi c}{\omega_p}\right)}.
+              \]
+              If \(\omega < \omega_p\), then \(k = i\frac{\omega}{c}\sqrt{\frac{\omega_p^2}{\omega^2} - 1} = i\kappa\) is purely imaginary; the field \(\mathbf{E} \propto e^{-\kappa z}e^{-i\omega t}\) is an evanescent wave that decays exponentially into the plasma and undergoes total reflection.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </details>
+
+    <!-- 1.5 Reflection from conductor -->
+    <details class="year-group">
+      <summary>Reflection of a Plane Wave from a Conducting Medium</summary>
+      <div class="year-content">
+        <div class="question-card">
+          <div class="q-header">2015 Q1(b)</div>
+          <p>A wave \((\mathbf{k},\omega)\) is normally incident on a conductive material with \(\tilde{\epsilon}=\epsilon+i\epsilon_i\) and \(\mu=\mu_0\). Calculate the electric field of the reflected wave.</p>
+          <details class="solution">
+            <summary>Show Full Exam Derivation</summary>
+            <div class="solution-body">
+              <p><strong>1. Wave Setup in Both Media:</strong></p>
+              <p>Let the interface between vacuum (\(z < 0\), where \(\epsilon = \epsilon_0, \mu = \mu_0\)) and the conducting medium (\(z > 0\), where \(\tilde{\epsilon} = \epsilon + i\epsilon_i, \mu = \mu_0\)) lie on the plane \(z = 0\). Take the incident wave to propagate along \(+\hat{\mathbf{z}}\) and be linearly polarized along \(\hat{\mathbf{x}}\):
+              <ul>
+                <li><strong>Incident wave (\(z < 0\)):</strong> With \(k_0 = \frac{\omega}{c} = \omega\sqrt{\mu_0\epsilon_0}\), Faraday's law \(\nabla \times \mathbf{E}_I = i\omega\mathbf{B}_I\) gives \(\mathbf{B}_I = \frac{1}{\omega}(k_0\hat{\mathbf{z}}\times \mathbf{E}_I) = \frac{k_0}{\omega}\hat{\mathbf{z}}\times\mathbf{E}_I\):
+                \[
+                \mathbf{E}_I(z,t) = E_{I0}\,e^{i(k_0 z - \omega t)}\hat{\mathbf{x}}, \qquad \mathbf{B}_I(z,t) = \frac{k_0}{\omega}E_{I0}\,e^{i(k_0 z - \omega t)}\hat{\mathbf{y}}.
+                \]</li>
+                <li><strong>Reflected wave (\(z < 0\)):</strong> Propagating in the \(-\hat{\mathbf{z}}\) direction (\(\mathbf{k}_R = -k_0\hat{\mathbf{z}}\)), so \(\mathbf{B}_R = \frac{1}{\omega}(-k_0\hat{\mathbf{z}}\times\mathbf{E}_R)\):
+                \[
+                \mathbf{E}_R(z,t) = E_{R0}\,e^{i(-k_0 z - \omega t)}\hat{\mathbf{x}}, \qquad \mathbf{B}_R(z,t) = -\frac{k_0}{\omega}E_{R0}\,e^{i(-k_0 z - \omega t)}\hat{\mathbf{y}}.
+                \]</li>
+                <li><strong>Transmitted wave (\(z > 0\)):</strong> Propagating in the \(+\hat{\mathbf{z}}\) direction with complex wavenumber \(\tilde{k} = \tilde{n}k_0\), where \(\tilde{n} = \sqrt{\frac{\tilde{\epsilon}}{\epsilon_0}} = \sqrt{\frac{\epsilon + i\epsilon_i}{\epsilon_0}}\):
+                \[
+                \mathbf{E}_T(z,t) = E_{T0}\,e^{i(\tilde{k} z - \omega t)}\hat{\mathbf{x}}, \qquad \mathbf{B}_T(z,t) = \frac{\tilde{k}}{\omega}E_{T0}\,e^{i(\tilde{k} z - \omega t)}\hat{\mathbf{y}}.
+                \]</li>
+              </ul></p>
+
+              <p><strong>2. Application of Maxwell's Boundary Conditions at \(z = 0\):</strong></p>
+              <p>In the absence of a singular surface current sheet (\(\mathbf{K}_f = 0\), since finite conductivity supports only volume current density \(\mathbf{J}\) over a finite skin depth), the tangential components of \(\mathbf{E}\) and \(\mathbf{H} = \mathbf{B}/\mu_0\) must be continuous across \(z = 0\):
+              <ol>
+                <li>Continuity of \(E_x\) at \(z = 0\):
+                \[
+                E_x(0^-,t) = E_x(0^+,t) \implies E_{I0} + E_{R0} = E_{T0}. \quad (1)
+                \]</li>
+                <li>Continuity of \(H_y = B_y/\mu_0\) at \(z = 0\):
+                \[
+                \frac{1}{\mu_0}B_y(0^-,t) = \frac{1}{\mu_0}B_y(0^+,t) \implies \frac{k_0}{\omega}(E_{I0} - E_{R0}) = \frac{\tilde{k}}{\omega}E_{T0} \implies E_{I0} - E_{R0} = \frac{\tilde{k}}{k_0}E_{T0} = \tilde{n}E_{T0}. \quad (2)
+                \]</li>
+              </ol></p>
+
+              <p><strong>3. Solving for the Reflected Field:</strong></p>
+              <p>Substituting \(E_{T0} = E_{I0} + E_{R0}\) from (1) into (2):
+              \[
+              E_{I0} - E_{R0} = \tilde{n}(E_{I0} + E_{R0}) \implies E_{I0}(1 - \tilde{n}) = E_{R0}(1 + \tilde{n}).
+              \]
+              This gives the complex Fresnel amplitude reflection coefficient \(r\):
+              \[
+              r \equiv \frac{E_{R0}}{E_{I0}} = \frac{1 - \tilde{n}}{1 + \tilde{n}} = \frac{1 - \sqrt{(\epsilon + i\epsilon_i)/\epsilon_0}}{1 + \sqrt{(\epsilon + i\epsilon_i)/\epsilon_0}}.
+              \]
+              Writing \(\tilde{n} = n + i\kappa\) in polar form, the reflected electric field is:
+              \[
+              \boxed{\mathbf{E}_R(\mathbf{r},t) = \left(\frac{1 - \sqrt{\frac{\epsilon + i\epsilon_i}{\epsilon_0}}}{1 + \sqrt{\frac{\epsilon + i\epsilon_i}{\epsilon_0}}}\right)\mathbf{E}_{I0}\,e^{-i(\mathbf{k}\cdot\mathbf{r} + \omega t)} = \frac{1 - n - i\kappa}{1 + n + i\kappa}\mathbf{E}_{I0}\,e^{i(-k_0 z - \omega t)}}.
+              \]</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </details>
+  </div>
+
+  <!-- ================= TOPIC 2: POTENTIALS, GAUGES & RETARDED FIELDS ================= -->
+  <div class="topic-section" data-topic="potentials">
+    <h2 class="topic-title">Potentials, Gauges &amp; Retarded Fields</h2>
+
+    <!-- 2.1 Maxwell in potentials -->
+    <details class="year-group">
+      <summary>Maxwell's Equations in Terms of Scalar and Vector Potentials (Coulomb and Lorentz Gauges)</summary>
+      <div class="year-content">
+        <div class="question-card">
+          <div class="q-header">2014 Q2(a) · 2015 Q1(a)</div>
+          <p>Starting from Maxwell's equations in terms of \(\mathbf{E}\) and \(\mathbf{B}\), derive the equations for the scalar potential \(V\) and vector potential \(\mathbf{A}\) under (i) the Coulomb gauge and (ii) the Lorentz gauge.</p>
+          <details class="solution">
+            <summary>Show Full Exam Derivation</summary>
+            <div class="solution-body">
+              <p><strong>1. Construction of the Potentials from the Homogeneous Maxwell Equations:</strong></p>
+              <p>Maxwell's four equations in vacuum with charge density \(\rho\) and current density \(\mathbf{J}\) are:
+              \[
+              \text{(I)}\;\;\nabla\cdot\mathbf{E} = \frac{\rho}{\epsilon_0}, \qquad \text{(II)}\;\;\nabla\cdot\mathbf{B} = 0, \qquad \text{(III)}\;\;\nabla\times\mathbf{E} = -\frac{\partial\mathbf{B}}{\partial t}, \qquad \text{(IV)}\;\;\nabla\times\mathbf{B} = \mu_0\mathbf{J} + \mu_0\epsilon_0\frac{\partial\mathbf{E}}{\partial t}.
+              \]
+              <ul>
+                <li>From (II), \(\nabla\cdot\mathbf{B} = 0\). By Helmholtz's theorem (Poincaré lemma on \(\mathbb{R}^3\)), a divergence-free vector field can always be written as the curl of a vector potential \(\mathbf{A}\):
+                \[
+                \mathbf{B} = \nabla \times \mathbf{A}.
+                \]</li>
+                <li>Substituting \(\mathbf{B} = \nabla \times \mathbf{A}\) into Faraday's law (III) yields:
+                \[
+                \nabla \times \mathbf{E} = -\frac{\partial}{\partial t}(\nabla \times \mathbf{A}) \implies \nabla \times \left(\mathbf{E} + \frac{\partial\mathbf{A}}{\partial t}\right) = 0.
+                \]
+                Since \(\mathbf{E} + \frac{\partial\mathbf{A}}{\partial t}\) is curl-free, it can be expressed as the negative gradient of a scalar potential \(V\):
+                \[
+                \mathbf{E} + \frac{\partial\mathbf{A}}{\partial t} = -\nabla V \implies \mathbf{E} = -\nabla V - \frac{\partial\mathbf{A}}{\partial t}.
+                \]</li>
+              </ul>
+              Thus, equations (II) and (III) are satisfied identically for any smooth \((V, \mathbf{A})\).</p>
+
+              <p><strong>2. Substitution into the Inhomogeneous Maxwell Equations:</strong></p>
+              <p>Substituting \(\mathbf{E} = -\nabla V - \frac{\partial\mathbf{A}}{\partial t}\) into Gauss's law (I):
+              \[
+              \nabla \cdot \left(-\nabla V - \frac{\partial\mathbf{A}}{\partial t}\right) = \frac{\rho}{\epsilon_0} \implies \nabla^2 V + \frac{\partial}{\partial t}(\nabla\cdot\mathbf{A}) = -\frac{\rho}{\epsilon_0}. \quad (*)
+              \]
+              Next, substituting \(\mathbf{B} = \nabla \times \mathbf{A}\) and \(\mathbf{E} = -\nabla V - \frac{\partial\mathbf{A}}{\partial t}\) into the Ampère-Maxwell equation (IV):
+              \[
+              \nabla \times (\nabla \times \mathbf{A}) = \mu_0\mathbf{J} + \mu_0\epsilon_0\frac{\partial}{\partial t}\left(-\nabla V - \frac{\partial\mathbf{A}}{\partial t}\right).
+              \]
+              Applying the vector identity \(\nabla \times (\nabla \times \mathbf{A}) = \nabla(\nabla\cdot\mathbf{A}) - \nabla^2\mathbf{A}\) and using \(\mu_0\epsilon_0 = 1/c^2\):
+              \[
+              \nabla(\nabla\cdot\mathbf{A}) - \nabla^2\mathbf{A} = \mu_0\mathbf{J} - \frac{1}{c^2}\nabla\left(\frac{\partial V}{\partial t}\right) - \frac{1}{c^2}\frac{\partial^2\mathbf{A}}{\partial t^2}.
+              \]
+              Rearranging terms gives the general coupled wave equation:
+              \[
+              \left(\nabla^2\mathbf{A} - \frac{1}{c^2}\frac{\partial^2\mathbf{A}}{\partial t^2}\right) - \nabla\left(\nabla\cdot\mathbf{A} + \frac{1}{c^2}\frac{\partial V}{\partial t}\right) = -\mu_0\mathbf{J}. \quad (**)
+              \]
+              Because \(\mathbf{E}\) and \(\mathbf{B}\) are invariant under gauge transformations \(\mathbf{A} \to \mathbf{A}' = \mathbf{A} + \nabla\chi\), \(V \to V' = V - \frac{\partial\chi}{\partial t}\), we are free to impose a supplementary constraint on \(\nabla\cdot\mathbf{A}\).</p>
+
+              <p><strong>(i) Coulomb Gauge (\(\nabla\cdot\mathbf{A} = 0\)):</strong></p>
+              <p>Imposing the condition \(\nabla\cdot\mathbf{A} = 0\) into equations \((*)\) and \((**)\) immediately yields:
+              \[
+              \boxed{\nabla^2 V = -\frac{\rho}{\epsilon_0} \quad (\text{Poisson's equation})},
+              \]
+              \[
+              \boxed{\nabla^2\mathbf{A} - \frac{1}{c^2}\frac{\partial^2\mathbf{A}}{\partial t^2} = -\mu_0\mathbf{J} + \frac{1}{c^2}\nabla\left(\frac{\partial V}{\partial t}\right)}.
+              \]</p>
+
+              <p><strong>(ii) Lorentz Gauge (\(\nabla\cdot\mathbf{A} + \frac{1}{c^2}\frac{\partial V}{\partial t} = 0\)):</strong></p>
+              <p>Imposing the Lorentz condition \(\nabla\cdot\mathbf{A} = -\frac{1}{c^2}\frac{\partial V}{\partial t}\) decouples \((*)\) and \((**)\) completely:
+              <ul>
+                <li>In equation \((*)\), \(\frac{\partial}{\partial t}(\nabla\cdot\mathbf{A}) = -\frac{1}{c^2}\frac{\partial^2 V}{\partial t^2}\), so:
+                \[
+                \boxed{\nabla^2 V - \frac{1}{c^2}\frac{\partial^2 V}{\partial t^2} \equiv \Box V = -\frac{\rho}{\epsilon_0}}.
+                \]</li>
+                <li>In equation \((**)\), the bracket \(\nabla\cdot\mathbf{A} + \frac{1}{c^2}\frac{\partial V}{\partial t}\) vanishes identically, leaving:
+                \[
+                \boxed{\nabla^2\mathbf{A} - \frac{1}{c^2}\frac{\partial^2\mathbf{A}}{\partial t^2} \equiv \Box\mathbf{A} = -\mu_0\mathbf{J}}.
+                \]</li>
+              </ul></p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </details>
+
+    <!-- 2.2 Retarded potentials -->
+    <details class="year-group">
+      <summary>Retarded Potentials Satisfy the Lorentz Condition and the Wave Equations</summary>
+      <div class="year-content">
+        <div class="question-card">
+          <div class="q-header">2014 Q2(b) · 2016 Q1 · 2017 Q4 · 2020 Q5 · 2022 Q3</div>
+          <p>Show that the retarded potentials
+          \[
+          V(\mathbf{r},t)=\frac{1}{4\pi\epsilon_0}\int\frac{\rho(\mathbf{r}',t_r)}{|\mathbf{r}-\mathbf{r}'|}\,d^3r',\qquad
+          \mathbf{A}(\mathbf{r},t)=\frac{\mu_0}{4\pi}\int\frac{\mathbf{J}(\mathbf{r}',t_r)}{|\mathbf{r}-\mathbf{r}'|}\,d^3r',
+          \]
+          with \(t_r=t-|\mathbf{r}-\mathbf{r}'|/c\), satisfy (a) the Lorentz condition \(\nabla\cdot\mathbf{A}+\frac{1}{c^2}\frac{\partial V}{\partial t}=0\) and (b) the inhomogeneous wave equations.</p>
+          <details class="solution">
+            <summary>Show Full Exam Derivation</summary>
+            <div class="solution-body">
+              <p><strong>Preliminary Retarded-Time Identities:</strong></p>
+              <p>Let \(\mathbf{R} \equiv \mathbf{r} - \mathbf{r}'\) and \(R \equiv |\mathbf{r} - \mathbf{r}'|\), so that \(t_r = t - \frac{R}{c}\). Note carefully the distinction between derivatives with respect to the field point \(\mathbf{r}\) (\(\nabla\)) and the source point \(\mathbf{r}'\) (\(\nabla'\)):
+              \[
+              \nabla R = \frac{\mathbf{R}}{R} \equiv \hat{\mathbf{R}}, \qquad \nabla' R = -\frac{\mathbf{R}}{R} = -\hat{\mathbf{R}}, \qquad \nabla\left(\frac{1}{R}\right) = -\nabla'\left(\frac{1}{R}\right) = -\frac{\hat{\mathbf{R}}}{R^2}.
+              \]
+              Consequently, for the retarded time \(t_r = t - R/c\):
+              \[
+              \nabla t_r = -\frac{1}{c}\nabla R = -\frac{\hat{\mathbf{R}}}{c}, \qquad \nabla' t_r = -\frac{1}{c}\nabla' R = +\frac{\hat{\mathbf{R}}}{c}, \qquad \frac{\partial t_r}{\partial t} = 1.
+              \]</p>
+
+              <p><strong>(a) Proof of the Lorentz Gauge Condition (\(\nabla\cdot\mathbf{A} + \frac{1}{c^2}\frac{\partial V}{\partial t} = 0\)):</strong></p>
+              <p>Since \(\mathbf{J}(\mathbf{r}', t_r)\) depends on \(\mathbf{r}\) <em>only</em> through \(t_r = t - |\mathbf{r}-\mathbf{r}'|/c\), whereas it depends on \(\mathbf{r}'\) both explicitly (first argument) and implicitly through \(t_r\) (second argument), the chain rule gives:
+              \[
+              \nabla\cdot\mathbf{J}(\mathbf{r}', t_r) = \frac{\partial\mathbf{J}}{\partial t_r}\cdot(\nabla t_r) = -\frac{1}{c}\frac{\partial\mathbf{J}}{\partial t_r}\cdot\hat{\mathbf{R}} = -\frac{1}{c}\frac{\partial\mathbf{J}}{\partial t}\cdot\hat{\mathbf{R}},
+              \]
+              \[
+              \nabla'\cdot\mathbf{J}(\mathbf{r}', t_r) = \left(\nabla'\cdot\mathbf{J}\right)\Big|_{t_r} + \frac{\partial\mathbf{J}}{\partial t_r}\cdot(\nabla' t_r) = \left(\nabla'\cdot\mathbf{J}\right)\Big|_{t_r} + \frac{1}{c}\frac{\partial\mathbf{J}}{\partial t}\cdot\hat{\mathbf{R}},
+              \]
+              where \(\left(\nabla'\cdot\mathbf{J}\right)\big|_{t_r}\) denotes the divergence with respect to the explicit spatial variable \(\mathbf{r}'\) holding \(t_r\) fixed. Adding these two equations eliminates the \(\hat{\mathbf{R}}\) term:
+              \[
+              \nabla\cdot\mathbf{J}(\mathbf{r}', t_r) = -\nabla'\cdot\mathbf{J}(\mathbf{r}', t_r) + \left(\nabla'\cdot\mathbf{J}\right)\Big|_{t_r}.
+              \]
+              By the continuity equation (charge conservation) at the source at time \(t_r\), \(\left(\nabla'\cdot\mathbf{J}\right)\big|_{t_r} = -\frac{\partial\rho(\mathbf{r}', t_r)}{\partial t_r} = -\frac{\partial\rho(\mathbf{r}', t_r)}{\partial t}\). Now take the divergence of \(\mathbf{A}(\mathbf{r},t)\):
+              \[
+              \nabla\cdot\mathbf{A}(\mathbf{r},t) = \frac{\mu_0}{4\pi}\int \nabla\cdot\left(\frac{\mathbf{J}(\mathbf{r}',t_r)}{R}\right) d^3r' = \frac{\mu_0}{4\pi}\int \left[\frac{1}{R}\nabla\cdot\mathbf{J}(\mathbf{r}',t_r) + \mathbf{J}(\mathbf{r}',t_r)\cdot\nabla\left(\frac{1}{R}\right)\right] d^3r'.
+              \]
+              Substitute \(\nabla\cdot\mathbf{J} = -\nabla'\cdot\mathbf{J} - \frac{\partial\rho}{\partial t}\) and \(\nabla(1/R) = -\nabla'(1/R)\):
+              \[
+              \nabla\cdot\mathbf{A} = \frac{\mu_0}{4\pi}\int \left[-\frac{1}{R}\frac{\partial\rho(\mathbf{r}',t_r)}{\partial t} - \frac{1}{R}\nabla'\cdot\mathbf{J}(\mathbf{r}',t_r) - \mathbf{J}(\mathbf{r}',t_r)\cdot\nabla'\left(\frac{1}{R}\right)\right] d^3r'
+              \]
+              \[
+              = -\frac{\mu_0}{4\pi}\frac{\partial}{\partial t}\int \frac{\rho(\mathbf{r}',t_r)}{R}\,d^3r' - \frac{\mu_0}{4\pi}\int \nabla'\cdot\left(\frac{\mathbf{J}(\mathbf{r}',t_r)}{R}\right) d^3r'.
+              \]
+              By the divergence theorem, the second integral converts to a surface integral at infinity, \(\oint_{S_\infty} \frac{\mathbf{J}(\mathbf{r}',t_r)}{R}\cdot d\mathbf{a}' = 0\) for localized sources. Using \(\mu_0 = \frac{1}{\epsilon_0 c^2}\), the first term is precisely \(-\frac{1}{c^2}\frac{\partial V}{\partial t}\):
+              \[
+              \nabla\cdot\mathbf{A} = -\mu_0\epsilon_0\frac{\partial}{\partial t}\left[\frac{1}{4\pi\epsilon_0}\int\frac{\rho(\mathbf{r}',t_r)}{R}\,d^3r'\right] = -\frac{1}{c^2}\frac{\partial V}{\partial t} \implies \boxed{\nabla\cdot\mathbf{A} + \frac{1}{c^2}\frac{\partial V}{\partial t} = 0}.
+              \]</p>
+
+              <p><strong>(b) Proof that \(V\) and \(\mathbf{A}\) Satisfy the Inhomogeneous Wave Equations:</strong></p>
+              <p>We compute \(\nabla^2 V(\mathbf{r},t) = \frac{1}{4\pi\epsilon_0}\int \nabla\cdot\left[\nabla\left(\frac{\rho(\mathbf{r}',t_r)}{R}\right)\right] d^3r'\). First take the gradient of the integrand:
+              \[
+              \nabla\left(\frac{\rho(\mathbf{r}',t_r)}{R}\right) = \rho\nabla\left(\frac{1}{R}\right) + \frac{1}{R}\nabla\rho(\mathbf{r}',t_r).
+              \]
+              By the chain rule, \(\nabla\rho(\mathbf{r}',t_r) = \frac{\partial\rho}{\partial t_r}\nabla t_r = -\frac{1}{c}\dot{\rho}\hat{\mathbf{R}} = -\frac{1}{c}\dot{\rho}R\nabla\left(\frac{1}{R}\right)\cdot(-R) = \frac{\dot{\rho}}{c}\left(-\frac{\mathbf{R}}{R}\right)\), where overdots denote \(\frac{\partial}{\partial t_r} = \frac{\partial}{\partial t}\). Thus:
+              \[
+              \nabla\left(\frac{\rho}{R}\right) = \rho\nabla\left(\frac{1}{R}\right) - \frac{\dot{\rho}}{c}\frac{\hat{\mathbf{R}}}{R}.
+              \]
+              Now take the divergence \(\nabla\cdot\) of this expression:
+              \[
+              \nabla^2\left(\frac{\rho}{R}\right) = \rho\nabla^2\left(\frac{1}{R}\right) + \nabla\rho\cdot\nabla\left(\frac{1}{R}\right) - \frac{1}{c}\nabla\dot{\rho}\cdot\frac{\hat{\mathbf{R}}}{R} - \frac{\dot{\rho}}{c}\nabla\cdot\left(\frac{\hat{\mathbf{R}}}{R}\right).
+              \]
+              Evaluate each of the four pieces explicitly:
+              <ol>
+                <li>\(\nabla^2\left(\frac{1}{R}\right) = -4\pi\delta^3(\mathbf{r}-\mathbf{r}')\).</li>
+                <li>\(\nabla\rho\cdot\nabla\left(\frac{1}{R}\right) = \left(-\frac{\dot{\rho}}{c}\hat{\mathbf{R}}\right)\cdot\left(-\frac{\hat{\mathbf{R}}}{R^2}\right) = +\frac{\dot{\rho}}{cR^2}\).</li>
+                <li>\(-\frac{1}{c}\nabla\dot{\rho}\cdot\frac{\hat{\mathbf{R}}}{R} = -\frac{1}{c}\left(-\frac{\ddot{\rho}}{c}\hat{\mathbf{R}}\right)\cdot\frac{\hat{\mathbf{R}}}{R} = +\frac{\ddot{\rho}}{c^2 R} = \frac{1}{c^2 R}\frac{\partial^2\rho}{\partial t^2}\).</li>
+                <li>Since \(\frac{\hat{\mathbf{R}}}{R} = \frac{\mathbf{R}}{R^2} = -\nabla\left(\frac{1}{R}\right)\), for \(R \neq 0\) we have \(\nabla\cdot\left(\frac{\hat{\mathbf{R}}}{R}\right) = \frac{1}{R^2}\frac{\partial}{\partial R}\left(R^2 \cdot \frac{1}{R}\right) = \frac{1}{R^2}\), so the fourth term is \(-\frac{\dot{\rho}}{cR^2}\).</li>
+              </ol>
+              Notice that terms (2) and (4) cancel identically (\(\frac{\dot{\rho}}{cR^2} - \frac{\dot{\rho}}{cR^2} = 0\))! We are left with:
+              \[
+              \nabla^2\left(\frac{\rho(\mathbf{r}',t_r)}{R}\right) = -4\pi\rho(\mathbf{r}',t_r)\delta^3(\mathbf{r}-\mathbf{r}') + \frac{1}{c^2 R}\frac{\partial^2\rho(\mathbf{r}',t_r)}{\partial t^2}.
+              \]
+              Integrating over \(d^3r'\) and dividing by \(4\pi\epsilon_0\):
+              \[
+              \nabla^2 V(\mathbf{r},t) = \frac{1}{4\pi\epsilon_0}\int \left[-4\pi\rho(\mathbf{r}', t - |\mathbf{r}-\mathbf{r}'|/c)\delta^3(\mathbf{r}-\mathbf{r}') + \frac{1}{c^2}\frac{\partial^2}{\partial t^2}\left(\frac{\rho(\mathbf{r}',t_r)}{R}\right)\right] d^3r'
+              \]
+              \[
+              = -\frac{\rho(\mathbf{r},t)}{\epsilon_0} + \frac{1}{c^2}\frac{\partial^2 V(\mathbf{r},t)}{\partial t^2} \implies \boxed{\nabla^2 V - \frac{1}{c^2}\frac{\partial^2 V}{\partial t^2} = -\frac{\rho(\mathbf{r},t)}{\epsilon_0}}.
+              \]
+              Applying the exact same derivation component-by-component to \(A_i(\mathbf{r},t)\) (replacing \(\frac{\rho}{\epsilon_0} \to \mu_0 J_i\)) yields:
+              \[
+              \boxed{\nabla^2 \mathbf{A} - \frac{1}{c^2}\frac{\partial^2 \mathbf{A}}{\partial t^2} = -\mu_0\mathbf{J}(\mathbf{r},t)}.
+              \]</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </details>
+
+    <!-- 2.3 Lienard-Wiechert -->
+    <details class="year-group">
+      <summary>Liénard–Wiechert Potentials and Gauge Choice</summary>
+      <div class="year-content">
+        <div class="question-card">
+          <div class="q-header">2015 Q4 · 2020 Q3</div>
+          <p>(2015 Q4) Derive the potentials of a point charge moving with constant velocity \(\mathbf{v}\), and show they satisfy the Lorentz gauge condition.</p>
+          <p>(2020 Q3) The Liénard–Wiechert scalar potential for a charge \(q\) on trajectory \(\mathbf{w}(t)\) is
+          \[
+          V(\mathbf{r},t)=\frac{q}{4\pi\epsilon_0\,\left(\Re-\boldsymbol{\Re}\cdot\frac{\mathbf{v}}{c}\right)},\qquad
+          \boldsymbol{\Re}=\mathbf{r}-\mathbf{w}(t_r).
+          \]
+          Can one choose a gauge in which \(V(\mathbf{r},t)=q/(4\pi\epsilon_0\Re)\) — i.e. with no correction factor in the denominator? Why or why not?</p>
+          <details class="solution">
+            <summary>Show Full Exam Derivation</summary>
+            <div class="solution-body">
+              <p><strong>(2015 Q4) Step 1 — General Liénard–Wiechert Integration via Jacobian:</strong></p>
+              <p>A point charge \(q\) moving along trajectory \(\mathbf{w}(t)\) has charge and current densities:
+              \[
+              \rho(\mathbf{r}',t') = q\delta^3\bigl(\mathbf{r}' - \mathbf{w}(t')\bigr), \qquad \mathbf{J}(\mathbf{r}',t') = q\mathbf{v}(t')\delta^3\bigl(\mathbf{r}' - \mathbf{w}(t')\bigr).
+              \]
+              Write the retarded scalar potential using a Dirac delta in time to display the retardation constraint \(t' = t - |\mathbf{r}-\mathbf{r}'|/c\) explicitly:
+              \[
+              V(\mathbf{r},t) = \frac{1}{4\pi\epsilon_0}\int d^3r'\int_{-\infty}^{\infty} dt'\,\frac{q\delta^3(\mathbf{r}'-\mathbf{w}(t'))}{|\mathbf{r}-\mathbf{r}'|}\,\delta\!\left(t' - t + \frac{|\mathbf{r}-\mathbf{r}'|}{c}\right).
+              \]
+              Integrating over \(d^3r'\) first sets \(\mathbf{r}' = \mathbf{w}(t')\):
+              \[
+              V(\mathbf{r},t) = \frac{q}{4\pi\epsilon_0}\int_{-\infty}^{\infty} dt'\,\frac{1}{|\mathbf{r}-\mathbf{w}(t')|}\,\delta\bigl(g(t')\bigr), \qquad g(t') \equiv t' - t + \frac{|\mathbf{r}-\mathbf{w}(t')|}{c}.
+              \]
+              Using the delta-function composition identity \(\delta(g(t')) = \frac{\delta(t'-t_r)}{|dg/dt'|_{t_r}}\), we compute the derivative \(\frac{dg}{dt'}\):
+              \[
+              \frac{dg}{dt'} = 1 + \frac{1}{c}\frac{d}{dt'}|\mathbf{r}-\mathbf{w}(t')| = 1 + \frac{1}{c}\frac{(\mathbf{r}-\mathbf{w}(t'))\cdot(-\dot{\mathbf{w}}(t'))}{|\mathbf{r}-\mathbf{w}(t')|} = 1 - \frac{\boldsymbol{\Re}\cdot\mathbf{v}(t')}{c\Re},
+              \]
+              where \(\boldsymbol{\Re} \equiv \mathbf{r} - \mathbf{w}(t_r)\) and \(\Re = |\boldsymbol{\Re}|\). Therefore:
+              \[
+              V(\mathbf{r},t) = \frac{q}{4\pi\epsilon_0}\frac{1}{\Re - \frac{\boldsymbol{\Re}\cdot\mathbf{v}}{c}}, \qquad \mathbf{A}(\mathbf{r},t) = \frac{\mu_0 q}{4\pi}\frac{\mathbf{v}(t_r)}{\Re - \frac{\boldsymbol{\Re}\cdot\mathbf{v}}{c}} = \frac{\mathbf{v}(t_r)}{c^2}V(\mathbf{r},t).
+              \]</p>
+
+              <p><strong>Step 2 — Explicit Potentials for Constant Velocity \(\mathbf{v}\):</strong></p>
+              <p>Let \(\mathbf{w}(t) = \mathbf{v}t\) with constant \(\mathbf{v}\). Then \(\boldsymbol{\Re} = \mathbf{r} - \mathbf{v}t_r\) and the retardation condition \(\Re = c(t-t_r)\) squared reads:
+              \[
+              |\mathbf{r} - \mathbf{v}t_r|^2 = c^2(t-t_r)^2 \implies r^2 - 2(\mathbf{r}\cdot\mathbf{v})t_r + v^2 t_r^2 = c^2 t^2 - 2c^2 t t_r + c^2 t_r^2.
+              \]
+              Rearranging as a quadratic in \(t-t_r\) by writing \(\mathbf{r} - \mathbf{v}t_r = (\mathbf{r} - \mathbf{v}t) + \mathbf{v}(t-t_r) \equiv \mathbf{R}_0 + \mathbf{v}(t-t_r)\), where \(\mathbf{R}_0 \equiv \mathbf{r} - \mathbf{v}t\) is the present displacement from the charge:
+              \[
+              c^2(t-t_r)^2 = |\mathbf{R}_0 + \mathbf{v}(t-t_r)|^2 = R_0^2 + 2(\mathbf{R}_0\cdot\mathbf{v})(t-t_r) + v^2(t-t_r)^2.
+              \]
+              Now compute the denominator \(\Re - \frac{\boldsymbol{\Re}\cdot\mathbf{v}}{c}\) directly: since \(\Re = c(t-t_r)\) and \(\boldsymbol{\Re}\cdot\mathbf{v} = \mathbf{R}_0\cdot\mathbf{v} + v^2(t-t_r)\), we have:
+              \[
+              \Re - \frac{\boldsymbol{\Re}\cdot\mathbf{v}}{c} = c(t-t_r) - \frac{\mathbf{R}_0\cdot\mathbf{v}}{c} - \frac{v^2}{c}(t-t_r) = c\left(1 - \frac{v^2}{c^2}\right)(t-t_r) - \frac{\mathbf{R}_0\cdot\mathbf{v}}{c}.
+              \]
+              Squaring both sides and substituting \(\left(c^2 - v^2\right)(t-t_r)^2 - 2(\mathbf{R}_0\cdot\mathbf{v})(t-t_r) = R_0^2\) from the quadratic above:
+              \[
+              \left(\Re - \frac{\boldsymbol{\Re}\cdot\mathbf{v}}{c}\right)^2 = \frac{1}{c^2}\left[(c^2-v^2)^2(t-t_r)^2 - 2(c^2-v^2)(\mathbf{R}_0\cdot\mathbf{v})(t-t_r) + (\mathbf{R}_0\cdot\mathbf{v})^2\right]
+              \]
+              \[
+              = \frac{1}{c^2}\left[(c^2-v^2)R_0^2 + (\mathbf{R}_0\cdot\mathbf{v})^2\right] = R_0^2 - \frac{v^2 R_0^2 - (\mathbf{R}_0\cdot\mathbf{v})^2}{c^2} = |\mathbf{r}-\mathbf{v}t|^2 - \frac{|\mathbf{v}\times(\mathbf{r}-\mathbf{v}t)|^2}{c^2},
+              \]
+              where we used Lagrange's identity \(v^2 R_0^2 - (\mathbf{R}_0\cdot\mathbf{v})^2 = |\mathbf{v}\times\mathbf{R}_0|^2 = v^2|\mathbf{r}\times\hat{\mathbf{v}}|^2\). Taking the positive root gives:
+              \[
+              \boxed{V(\mathbf{r},t) = \frac{q}{4\pi\epsilon_0 \sqrt{|\mathbf{r}-\mathbf{v}t|^2 - \dfrac{v^2}{c^2}|\mathbf{r}\times\hat{\mathbf{v}}|^2}}}, \qquad \boxed{\mathbf{A}(\mathbf{r},t) = \frac{\mathbf{v}}{c^2}V(\mathbf{r},t)}.
+              \]</p>
+
+              <p><strong>Step 3 — Proof of the Lorentz Gauge Condition:</strong></p>
+              <p>Notice that \(V(\mathbf{r},t) = f(\mathbf{r}-\mathbf{v}t)\) depends on \(\mathbf{r}\) and \(t\) exclusively through the combination \(\mathbf{R}_0 = \mathbf{r} - \mathbf{v}t\). By the chain rule:
+              \[
+              \frac{\partial V}{\partial t} = \frac{\partial (\mathbf{r}-\mathbf{v}t)_i}{\partial t}\frac{\partial V}{\partial x_i} = -v_i\frac{\partial V}{\partial x_i} = -\mathbf{v}\cdot\nabla V.
+              \]
+              Meanwhile, since \(\mathbf{v}\) is constant and \(\mathbf{A} = \frac{\mathbf{v}}{c^2}V\):
+              \[
+              \nabla\cdot\mathbf{A} = \nabla\cdot\left(\frac{\mathbf{v}}{c^2}V\right) = \frac{\mathbf{v}}{c^2}\cdot\nabla V.
+              \]
+              Adding the two terms together:
+              \[
+              \nabla\cdot\mathbf{A} + \frac{1}{c^2}\frac{\partial V}{\partial t} = \frac{\mathbf{v}}{c^2}\cdot\nabla V + \frac{1}{c^2}(-\mathbf{v}\cdot\nabla V) = 0. \quad \blacksquare
+              \]</p>
+
+              <p><strong>(2020 Q3) Can one choose a gauge where \(V(\mathbf{r},t) = \frac{q}{4\pi\epsilon_0\Re}\) without the \((1 - \hat{\boldsymbol{\Re}}\cdot\mathbf{v}/c)\) factor?</strong></p>
+              <p><strong>Answer:</strong> <strong>Yes, mathematically</strong> as a valid gauge transformation, though it is <strong>not</strong> the Lorentz gauge! Let us explain both aspects carefully for full credit:
+              <ol>
+                <li><strong>Origin of the factor in Lorentz gauge:</strong> In the Lorentz gauge, \(V\) must satisfy \(\Box V = -\rho/\epsilon_0\). As derived in Step 1, integrating the retarded delta function \(\delta(t' - t + |\mathbf{r}-\mathbf{w}(t')|/c)\) over \(dt'\) introduces the Jacobian \(\left|\frac{\partial t}{\partial t_r}\right|^{-1} = \left(1 - \frac{\hat{\boldsymbol{\Re}}\cdot\mathbf{v}}{c}\right)^{-1}\), which accounts for the geometric bunching/stretching of information spheres emitted by a moving source during integration over the past light cone. Without this factor, \(V\) does <em>not</em> satisfy the Lorentz gauge wave equation \(\Box V = -\rho/\epsilon_0\).</li>
+                <li><strong>Existence of a Gauge Transformation to \(V' = \frac{q}{4\pi\epsilon_0\Re}\):</strong> Under a general gauge transformation generated by an arbitrary smooth scalar function \(\Lambda(\mathbf{r},t)\), the potentials transform as:
+                \[
+                V'(\mathbf{r},t) = V(\mathbf{r},t) - \frac{\partial\Lambda}{\partial t}, \qquad \mathbf{A}'(\mathbf{r},t) = \mathbf{A}(\mathbf{r},t) + \nabla\Lambda,
+                \]
+                leaving \(\mathbf{E}\) and \(\mathbf{B}\) completely invariant. One can always define a gauge function \(\Lambda(\mathbf{r},t)\) by integrating the difference in time:
+                \[
+                \Lambda(\mathbf{r},t) \equiv \int_{t_0}^{t} \left[V(\mathbf{r},\tau) - \frac{q}{4\pi\epsilon_0\Re(\mathbf{r},\tau)}\right] d\tau,
+                \]
+                which sets \(V'(\mathbf{r},t) = \frac{q}{4\pi\epsilon_0\Re}\) at the expense of adding \(\nabla\Lambda\) to \(\mathbf{A}'\) and abandoning the Lorentz gauge condition \(\nabla\cdot\mathbf{A}' + \frac{1}{c^2}\frac{\partial V'}{\partial t} = 0\). (In fact, even simpler: in the Coulomb gauge \(\nabla\cdot\mathbf{A}_C = 0\), the scalar potential is the instantaneous potential \(V_C(\mathbf{r},t) = \frac{q}{4\pi\epsilon_0|\mathbf{r}-\mathbf{w}(t)|}\) with no velocity factor at all.)</li>
+              </ol></p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </details>
+
+    <!-- 2.4 Hertz vector -->
+    <details class="year-group">
+      <summary>Hertz Vector Representation of \(\mathbf{E}\) and \(\mathbf{B}\)</summary>
+      <div class="year-content">
+        <div class="question-card">
+          <div class="q-header">2018 Q3</div>
+          <p>\(\mathbf{A}\) and \(V\) satisfy the Lorentz gauge. (i) If a vector function \(\mathbf{Z}(\mathbf{x},t)\) satisfies \(V=-\nabla\cdot\mathbf{Z}\), show that \(\mathbf{A}=\frac{1}{c^2}\partial\mathbf{Z}/\partial t\). (ii) Show that
+          \[
+          \mathbf{E}=\nabla\times(\nabla\times\mathbf{Z})-c^2\mu_0\mathbf{P},\qquad
+          \mathbf{B}=\frac{1}{c^2}\frac{\partial}{\partial t}\nabla\times\mathbf{Z},
+          \]
+          where \(\mathbf{P}\) is the polarization and \(\rho=-\nabla\cdot\mathbf{P}\).</p>
+          <details class="solution">
+            <summary>Show Full Exam Derivation</summary>
+            <div class="solution-body">
+              <p><strong>(i) Derivation of \(\mathbf{A} = \frac{1}{c^2}\frac{\partial\mathbf{Z}}{\partial t}\):</strong></p>
+              <p>The potentials \(V\) and \(\mathbf{A}\) satisfy the Lorentz gauge condition:
+              \[
+              \nabla\cdot\mathbf{A} + \frac{1}{c^2}\frac{\partial V}{\partial t} = 0.
+              \]
+              Substituting the definition of the Hertz polarization potential \(V = -\nabla\cdot\mathbf{Z}\) into the Lorentz condition and using the commutativity of spatial and temporal partial derivatives (\(\frac{\partial}{\partial t}\nabla\cdot\mathbf{Z} = \nabla\cdot\frac{\partial\mathbf{Z}}{\partial t}\)):
+              \[
+              \nabla\cdot\mathbf{A} + \frac{1}{c^2}\frac{\partial}{\partial t}(-\nabla\cdot\mathbf{Z}) = \nabla\cdot\left(\mathbf{A} - \frac{1}{c^2}\frac{\partial\mathbf{Z}}{\partial t}\right) = 0.
+              \]
+              Furthermore, for a medium characterized by polarization \(\mathbf{P}(\mathbf{x},t)\) with bound charge density \(\rho = -\nabla\cdot\mathbf{P}\) and polarization current density \(\mathbf{J} = \frac{\partial\mathbf{P}}{\partial t}\), the inhomogeneous wave equations in the Lorentz gauge are:
+              \[
+              \Box V = -\frac{\rho}{\epsilon_0} = \frac{1}{\epsilon_0}\nabla\cdot\mathbf{P}, \qquad \Box\mathbf{A} = -\mu_0\mathbf{J} = -\mu_0\frac{\partial\mathbf{P}}{\partial t}.
+              \]
+              If \(\mathbf{Z}\) satisfies the inhomogeneous wave equation \(\Box\mathbf{Z} = -\frac{\mathbf{P}}{\epsilon_0}\), then applying \(\frac{1}{c^2}\frac{\partial}{\partial t}\) gives \(\Box\left(\frac{1}{c^2}\frac{\partial\mathbf{Z}}{\partial t}\right) = -\frac{1}{\epsilon_0 c^2}\frac{\partial\mathbf{P}}{\partial t} = -\mu_0\frac{\partial\mathbf{P}}{\partial t} = \Box\mathbf{A}\). Choosing the homogeneous curl-free integration constant to vanish fixes the vector potential uniquely as:
+              \[
+              \boxed{\mathbf{A} = \frac{1}{c^2}\frac{\partial\mathbf{Z}}{\partial t}}.
+              \]</p>
+
+              <p><strong>(ii) Derivation of \(\mathbf{E}\) and \(\mathbf{B}\) in Terms of \(\mathbf{Z}\):</strong></p>
+              <p><em>1. Magnetic Field \(\mathbf{B}\):</em> Using \(\mathbf{B} = \nabla \times \mathbf{A}\) and substituting \(\mathbf{A} = \frac{1}{c^2}\frac{\partial\mathbf{Z}}{\partial t}\):
+              \[
+              \mathbf{B} = \nabla \times \left(\frac{1}{c^2}\frac{\partial\mathbf{Z}}{\partial t}\right) \implies \boxed{\mathbf{B} = \frac{1}{c^2}\frac{\partial}{\partial t}(\nabla \times \mathbf{Z})}.
+              \]
+              <em>2. Electric Field \(\mathbf{E}\):</em> Start from \(\mathbf{E} = -\nabla V - \frac{\partial\mathbf{A}}{\partial t}\) and substitute \(V = -\nabla\cdot\mathbf{Z}\) and \(\mathbf{A} = \frac{1}{c^2}\frac{\partial\mathbf{Z}}{\partial t}\):
+              \[
+              \mathbf{E} = -\nabla(-\nabla\cdot\mathbf{Z}) - \frac{\partial}{\partial t}\left(\frac{1}{c^2}\frac{\partial\mathbf{Z}}{\partial t}\right) = \nabla(\nabla\cdot\mathbf{Z}) - \frac{1}{c^2}\frac{\partial^2\mathbf{Z}}{\partial t^2}. \quad (1)
+              \]
+              Now connect \(\mathbf{Z}\) to the polarization \(\mathbf{P}\). From the scalar potential wave equation \(\Box V = -\frac{\rho}{\epsilon_0}\) with \(V = -\nabla\cdot\mathbf{Z}\) and \(\rho = -\nabla\cdot\mathbf{P}\):
+              \[
+              \left(\nabla^2 - \frac{1}{c^2}\frac{\partial^2}{\partial t^2}\right)(-\nabla\cdot\mathbf{Z}) = -\frac{1}{\epsilon_0}(-\nabla\cdot\mathbf{P}) \implies \nabla\cdot\left(\nabla^2\mathbf{Z} - \frac{1}{c^2}\frac{\partial^2\mathbf{Z}}{\partial t^2} + \frac{\mathbf{P}}{\epsilon_0}\right) = 0,
+              \]
+              which is satisfied by the Hertz vector wave equation:
+              \[
+              \nabla^2\mathbf{Z} - \frac{1}{c^2}\frac{\partial^2\mathbf{Z}}{\partial t^2} = -\frac{\mathbf{P}}{\epsilon_0} \implies -\frac{1}{c^2}\frac{\partial^2\mathbf{Z}}{\partial t^2} = -\nabla^2\mathbf{Z} - \frac{\mathbf{P}}{\epsilon_0}. \quad (2)
+              \]
+              Substituting (2) into (1) and invoking the vector Laplacian identity \(\nabla \times (\nabla \times \mathbf{Z}) = \nabla(\nabla\cdot\mathbf{Z}) - \nabla^2\mathbf{Z}\):
+              \[
+              \mathbf{E} = \nabla(\nabla\cdot\mathbf{Z}) - \nabla^2\mathbf{Z} - \frac{\mathbf{P}}{\epsilon_0} = \nabla \times (\nabla \times \mathbf{Z}) - \frac{\mathbf{P}}{\epsilon_0}.
+              \]
+              Finally, since \(c^2 = \frac{1}{\mu_0\epsilon_0} \implies \frac{1}{\epsilon_0} = c^2\mu_0\), we obtain:
+              \[
+              \boxed{\mathbf{E} = \nabla \times (\nabla \times \mathbf{Z}) - c^2\mu_0\mathbf{P}}.
+              \]</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </details>
+  </div>
+
+  <!-- ================= TOPIC 3: RADIATION & SCATTERING ================= -->
+  <div class="topic-section" data-topic="radiation">
+    <h2 class="topic-title">Radiation &amp; Scattering</h2>
+
+    <!-- 3.1 Electric dipole radiation power -->
+    <details class="year-group">
+      <summary>Larmor / Electric-Dipole Radiation Power</summary>
+      <div class="year-content">
+        <div class="question-card">
+          <div class="q-header">2016 Q4</div>
+          <p>(a) Show that the radiation power of an electric dipole can be approximated as
+          \[
+          P=\frac{\mu_0\,\ddot{p}^{\,2}}{6\pi c}.
+          \]
+          (b) An electron moves in a circular orbit of radius \(R\) under the influence of a constant magnetic field \(B\). Write down the radiation power in terms of the electron speed \(v=|\mathbf{v}|\) (\(v\ll c\)).</p>
+          <details class="solution">
+            <summary>Show Full Exam Derivation</summary>
+            <div class="solution-body">
+              <p><strong>(a) Full Derivation of the Electric-Dipole Radiation Power from Retarded Potentials:</strong></p>
+              <p><em>1. Retarded Vector Potential in the Dipole Approximation:</em> For a localized charge-current distribution of size \(d \ll \lambda \ll r\), we approximate \(|\mathbf{r}-\mathbf{r}'| \approx r\) in the denominator and retain the leading retardation time \(t_r \approx t - r/c\) in the vector potential:
+              \[
+              \mathbf{A}(\mathbf{r},t) = \frac{\mu_0}{4\pi}\int \frac{\mathbf{J}(\mathbf{r}', t - |\mathbf{r}-\mathbf{r}'|/c)}{|\mathbf{r}-\mathbf{r}'|}\,d^3r' \approx \frac{\mu_0}{4\pi r}\int \mathbf{J}(\mathbf{r}', t - r/c)\,d^3r'.
+              \]
+              To relate \(\int \mathbf{J}\,d^3r'\) to the electric dipole moment \(\mathbf{p}(t) = \int \mathbf{r}'\rho(\mathbf{r}',t)\,d^3r'\), integrate \(\nabla'\cdot(x'_i\mathbf{J})\) over a volume bounding the source:
+              \[
+              0 = \oint_{S} x'_i\mathbf{J}\cdot d\mathbf{a}' = \int \nabla'\cdot(x'_i\mathbf{J})\,d^3r' = \int \left[(\nabla' x'_i)\cdot\mathbf{J} + x'_i(\nabla'\cdot\mathbf{J})\right] d^3r' = \int J_i\,d^3r' - \int x'_i\frac{\partial\rho}{\partial t}\,d^3r',
+              \]
+              where we used \(\nabla' x'_i = \hat{\mathbf{e}}_i\) and the continuity equation \(\nabla'\cdot\mathbf{J} = -\frac{\partial\rho}{\partial t}\). Thus \(\int \mathbf{J}\,d^3r' = \frac{d}{dt}\int \mathbf{r}'\rho\,d^3r' = \dot{\mathbf{p}}\), so:
+              \[
+              \mathbf{A}(\mathbf{r},t) = \frac{\mu_0}{4\pi r}\dot{\mathbf{p}}(t - r/c).
+              \]
+              <em>2. Radiation Zone Fields (\(\mathcal{O}(1/r)\)):</em> Keeping only terms proportional to \(1/r\) (where \(\nabla\) acts on the retarded time \(t_r = t - r/c\) via \(\nabla f(t_r) = \dot{f}\nabla t_r = -\frac{\hat{\mathbf{r}}}{c}\dot{f}\), since \(\nabla(1/r) = -\hat{\mathbf{r}}/r^2 \sim \mathcal{O}(1/r^2)\) drops out in the far zone):
+              \[
+              \mathbf{B}_{\mathrm{rad}}(\mathbf{r},t) = (\nabla \times \mathbf{A})_{\mathrm{rad}} = \frac{\mu_0}{4\pi r}\nabla t_r \times \ddot{\mathbf{p}}(t_r) = -\frac{\mu_0}{4\pi r c}\,\hat{\mathbf{r}} \times \ddot{\mathbf{p}}(t_r) = \frac{\mu_0}{4\pi r c}\,\ddot{\mathbf{p}}(t_r) \times \hat{\mathbf{r}}.
+              \]
+              From the Ampère-Maxwell law in free space \(\frac{1}{c^2}\frac{\partial\mathbf{E}_{\mathrm{rad}}}{\partial t} = \nabla \times \mathbf{B}_{\mathrm{rad}} = -\frac{\hat{\mathbf{r}}}{c} \times \frac{\partial\mathbf{B}_{\mathrm{rad}}}{\partial t}\), integrating with respect to time gives:
+              \[
+              \mathbf{E}_{\mathrm{rad}}(\mathbf{r},t) = -c\hat{\mathbf{r}} \times \mathbf{B}_{\mathrm{rad}} = \frac{\mu_0}{4\pi r}\left[(\ddot{\mathbf{p}}(t_r) \times \hat{\mathbf{r}}) \times \hat{\mathbf{r}}\right].
+              \]
+              <em>3. Poynting Vector and Total Radiated Power:</em> The radiative Poynting vector is:
+              \[
+              \mathbf{S} = \frac{1}{\mu_0}\mathbf{E}_{\mathrm{rad}} \times \mathbf{B}_{\mathrm{rad}} = \frac{1}{\mu_0 c}|\mathbf{E}_{\mathrm{rad}}|^2\,\hat{\mathbf{r}} = \frac{\mu_0}{16\pi^2 c r^2}|\ddot{\mathbf{p}}(t_r) \times \hat{\mathbf{r}}|^2\,\hat{\mathbf{r}}.
+              \]
+              Let \(\theta\) be the polar angle between \(\ddot{\mathbf{p}}(t_r)\) and \(\hat{\mathbf{r}}\), so \(|\ddot{\mathbf{p}} \times \hat{\mathbf{r}}|^2 = \ddot{p}^2\sin^2\theta\). Integrating the outward flux through a large sphere of radius \(r\) with area element \(d\mathbf{a} = r^2\sin\theta\,d\theta\,d\phi\,\hat{\mathbf{r}}\):
+              \[
+              P = \oint \mathbf{S}\cdot d\mathbf{a} = \frac{\mu_0 \ddot{p}^2}{16\pi^2 c}\int_{0}^{2\pi} d\phi \int_{0}^{\pi} \sin^3\theta\,d\theta.
+              \]
+              Evaluating the polar integral explicitly:
+              \[
+              \int_{0}^{\pi} \sin^3\theta\,d\theta = \int_{-1}^{1} (1 - u^2)\,du = \left[u - \frac{u^3}{3}\right]_{-1}^{1} = \frac{4}{3}.
+              \]
+              Multiplying by \(\int_0^{2\pi}d\phi = 2\pi\) gives:
+              \[
+              P = \frac{\mu_0 \ddot{p}^2}{16\pi^2 c}(2\pi)\left(\frac{4}{3}\right) \implies \boxed{P = \frac{\mu_0\,\ddot{p}^2}{6\pi c}}.
+              \]</p>
+
+              <p><strong>(b) Radiation Power of an Electron in a Circular Magnetic Orbit:</strong></p>
+              <p>For an electron of charge \(-e\) and mass \(m\) at position \(\mathbf{r}_e(t)\), the electric dipole moment is \(\mathbf{p}(t) = -e\mathbf{r}_e(t)\), so \(\ddot{\mathbf{p}}(t) = -e\ddot{\mathbf{r}}_e(t) = -e\mathbf{a}(t)\) and \(\ddot{p}^2 = e^2 a^2\).<br>
+              In a uniform magnetic field \(B\) with circular orbit radius \(R\) and speed \(v \ll c\), the radial equation of motion is:
+              \[
+              m a = m\frac{v^2}{R} = evB \implies a = \frac{v^2}{R} = \frac{evB}{m}.
+              \]
+              Substituting \(\ddot{p} = ea\) into Larmor's formula from part (a) yields three equivalent exact forms (depending on whether \(R\) or \(B\) is held fixed alongside \(v\)):
+              \[
+              \boxed{P = \frac{\mu_0 e^2 a^2}{6\pi c} = \frac{\mu_0 e^2 v^4}{6\pi c R^2} = \frac{\mu_0 e^4 B^2 v^2}{6\pi m^2 c} = \frac{\mu_0 e^3 B v^3}{6\pi m c R}}.
+              \]</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </details>
+
+    <!-- 3.2 Rotating dipole -->
+    <details class="year-group">
+      <summary>Radiation from a Rotating Electric Dipole</summary>
+      <div class="year-content">
+        <div class="question-card">
+          <div class="q-header">2017 Q5 · 2020 Q6</div>
+          <p>An electric dipole of moment \(p_0\) lies in the \(xy\)-plane and rotates about the \(z\)-axis with angular velocity \(\omega\). Calculate the radiation fields and the radiated power.</p>
+          <details class="solution">
+            <summary>Show Full Exam Derivation</summary>
+            <div class="solution-body">
+              <p><strong>1. Source Trajectory and Spherical Coordinate Basis:</strong></p>
+              <p>The rotating dipole moment in the \(xy\)-plane is:
+              \[
+              \mathbf{p}(t) = p_0\left(\cos\omega t\,\hat{\mathbf{x}} + \sin\omega t\,\hat{\mathbf{y}}\right).
+              \]
+              Evaluating its second time derivative at the retarded time \(t_r = t - r/c\):
+              \[
+              \ddot{\mathbf{p}}(t_r) = -\omega^2 p_0\left(\cos\omega t_r\,\hat{\mathbf{x}} + \sin\omega t_r\,\hat{\mathbf{y}}\right) = -\omega^2\mathbf{p}(t_r).
+              \]
+              At the observation point \((r, \theta, \phi)\), the spherical orthonormal unit vectors are related to Cartesian unit vectors by:
+              \[
+              \begin{aligned}
+              \hat{\mathbf{r}} &= \sin\theta\cos\phi\,\hat{\mathbf{x}} + \sin\theta\sin\phi\,\hat{\mathbf{y}} + \cos\theta\,\hat{\mathbf{z}}, \\
+              \hat{\boldsymbol{\theta}} &= \cos\theta\cos\phi\,\hat{\mathbf{x}} + \cos\theta\sin\phi\,\hat{\mathbf{y}} - \sin\theta\,\hat{\mathbf{z}}, \\
+              \hat{\boldsymbol{\phi}} &= -\sin\phi\,\hat{\mathbf{x}} + \cos\phi\,\hat{\mathbf{y}}.
+              \end{aligned}
+              \]
+              Projecting \(\ddot{\mathbf{p}}(t_r)\) onto \(\hat{\mathbf{r}}\), \(\hat{\boldsymbol{\theta}}\), and \(\hat{\boldsymbol{\phi}}\) using the angle-difference identities \(\cos\alpha\cos\beta + \sin\alpha\sin\beta = \cos(\alpha-\beta)\) and \(\sin\alpha\cos\beta - \cos\alpha\sin\beta = \sin(\alpha-\beta)\):
+              \[
+              \begin{aligned}
+              \ddot{\mathbf{p}}(t_r)\cdot\hat{\mathbf{r}} &= -\omega^2 p_0 \sin\theta\cos(\omega t_r - \phi), \\
+              \ddot{\mathbf{p}}(t_r)\cdot\hat{\boldsymbol{\theta}} &= -\omega^2 p_0 \cos\theta\cos(\omega t_r - \phi), \\
+              \ddot{\mathbf{p}}(t_r)\cdot\hat{\boldsymbol{\phi}} &= -\omega^2 p_0 \sin(\omega t_r - \phi).
+              \end{aligned}
+              \]</p>
+
+              <p><strong>2. Explicit Radiation Fields \(\mathbf{E}_{\mathrm{rad}}\) and \(\mathbf{B}_{\mathrm{rad}}\):</strong></p>
+              <p>In the radiation zone (\(r \gg c/\omega\)), the electric dipole radiation field is:
+              \[
+              \mathbf{E}_{\mathrm{rad}}(\mathbf{r},t) = \frac{\mu_0}{4\pi r}\left[(\ddot{\mathbf{p}}(t_r)\times\hat{\mathbf{r}})\times\hat{\mathbf{r}}\right] = \frac{\mu_0}{4\pi r}\left[(\ddot{\mathbf{p}}(t_r)\cdot\hat{\mathbf{r}})\hat{\mathbf{r}} - \ddot{\mathbf{p}}(t_r)\right] = -\frac{\mu_0}{4\pi r}\left[\left(\ddot{\mathbf{p}}\cdot\hat{\boldsymbol{\theta}}\right)\hat{\boldsymbol{\theta}} + \left(\ddot{\mathbf{p}}\cdot\hat{\boldsymbol{\phi}}\right)\hat{\boldsymbol{\phi}}\right].
+              \]
+              Substituting the spherical projections found above and setting \(t_r = t - r/c\) gives:
+              \[
+              \boxed{\mathbf{E}_{\mathrm{rad}}(r,\theta,\phi,t) = \frac{\mu_0 p_0 \omega^2}{4\pi r}\left[\cos\theta\cos\!\left(\omega\left(t-\frac{r}{c}\right)-\phi\right)\hat{\boldsymbol{\theta}} + \sin\!\left(\omega\left(t-\frac{r}{c}\right)-\phi\right)\hat{\boldsymbol{\phi}}\right]}.
+              \]
+              The corresponding magnetic radiation field is \(\mathbf{B}_{\mathrm{rad}} = \frac{1}{c}\hat{\mathbf{r}}\times\mathbf{E}_{\mathrm{rad}}\) (using \(\hat{\mathbf{r}}\times\hat{\boldsymbol{\theta}} = \hat{\boldsymbol{\phi}}\) and \(\hat{\mathbf{r}}\times\hat{\boldsymbol{\phi}} = -\hat{\boldsymbol{\theta}}\)):
+              \[
+              \boxed{\mathbf{B}_{\mathrm{rad}}(r,\theta,\phi,t) = \frac{\mu_0 p_0 \omega^2}{4\pi r c}\left[-\sin\!\left(\omega\left(t-\frac{r}{c}\right)-\phi\right)\hat{\boldsymbol{\theta}} + \cos\theta\cos\!\left(\omega\left(t-\frac{r}{c}\right)-\phi\right)\hat{\boldsymbol{\phi}}\right]}.
+              \]</p>
+
+              <p><strong>3. Angular Distribution of Intensity and Total Radiated Power:</strong></p>
+              <p>The instantaneous Poynting vector is \(\mathbf{S} = \frac{1}{\mu_0}\mathbf{E}_{\mathrm{rad}}\times\mathbf{B}_{\mathrm{rad}} = \frac{1}{\mu_0 c}|\mathbf{E}_{\mathrm{rad}}|^2\hat{\mathbf{r}}\):
+              \[
+              \mathbf{S}(r,\theta,\phi,t) = \frac{\mu_0 p_0^2 \omega^4}{16\pi^2 c r^2}\left[\cos^2\theta\cos^2(\omega t_r - \phi) + \sin^2(\omega t_r - \phi)\right]\hat{\mathbf{r}}.
+              \]
+              Note that \(\cos^2\theta\cos^2\psi + \sin^2\psi = (1-\sin^2\theta)\cos^2\psi + \sin^2\psi = 1 - \sin^2\theta\cos^2(\omega t_r - \phi)\). Integrating over all solid angles \(d\Omega = \sin\theta\,d\theta\,d\phi\) (or directly using \(|\ddot{\mathbf{p}}(t_r)|^2 = p_0^2\omega^4 = \text{const}\) in Larmor's formula):
+              <ul>
+                <li><strong>Time-averaged angular power distribution:</strong> Since \(\langle\cos^2(\omega t_r - \phi)\rangle = \langle\sin^2(\omega t_r - \phi)\rangle = \frac{1}{2}\),
+                \[
+                \frac{d\langle P\rangle}{d\Omega} = r^2\langle\mathbf{S}\cdot\hat{\mathbf{r}}\rangle = \frac{\mu_0 p_0^2 \omega^4}{32\pi^2 c}(1 + \cos^2\theta).
+                \]</li>
+                <li><strong>Total radiated power (instantaneous and time-averaged are identical because \(|\ddot{\mathbf{p}}| = p_0\omega^2\) is constant in time):</strong>
+                \[
+                P = \int_{0}^{2\pi} d\phi \int_{0}^{\pi} \frac{\mu_0 p_0^2 \omega^4}{32\pi^2 c}(1 + \cos^2\theta)\sin\theta\,d\theta = \frac{\mu_0 p_0^2 \omega^4}{16\pi c}\left[-\cos\theta - \frac{\cos^3\theta}{3}\right]_{0}^{\pi} = \frac{\mu_0 p_0^2 \omega^4}{16\pi c}\left(\frac{8}{3}\right).
+                \]
+                \[
+                \boxed{P = \frac{\mu_0 p_0^2 \omega^4}{6\pi c}}.
+                \]</li>
+              </ul></p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </details>
+
+    <!-- 3.3 Bremsstrahlung -->
+    <details class="year-group">
+      <summary>Bremsstrahlung from a Head-On Coulomb Collision</summary>
+      <div class="year-content">
+        <div class="question-card">
+          <div class="q-header">2021 Q4</div>
+          <p>A non-relativistic particle of charge \(e\), mass \(m\), and initial kinetic energy \(E\) makes a head-on collision with a fixed charge \(ze\). The interaction is repulsive, with potential energy \(V(r)=ze^2/(4\pi\epsilon_0 r)\). Show that the total energy radiated is
+          \[
+          \Delta W = \frac{\mu_0 e^2}{3\pi c\, m^{3/2}\sqrt{2}}
+          \int_{r_{\min}}^{\infty}|\nabla V(r)|^2\frac{dr}{\sqrt{V(r_{\min})-V(r)}}
+          \quad\left(\text{printed on exam paper as }\frac{\mu_0 e^2}{6\pi m^2 c}\cdot 2\sqrt{\frac{m}{2}}\int_{r_{\min}}^{\infty}\dots\right).
+          \]</p>
+          <details class="solution">
+            <summary>Show Full Exam Derivation</summary>
+            <div class="solution-body">
+              <p><strong>1. Instantaneous Radiated Power (Larmor Formula) &amp; Equation of Motion:</strong></p>
+              <p>For a non-relativistic particle of charge \(e\) and mass \(m\) moving with acceleration \(\mathbf{a}(t) = \ddot{\mathbf{r}}(t)\), the instantaneous power radiated is given by the Larmor formula:
+              \[
+              P(t) = \frac{dW}{dt} = \frac{\mu_0 e^2 a^2(t)}{6\pi c}.
+              \]
+              In the repulsive central potential energy \(V(r)\) (where \(V(r) = \frac{ze^2}{4\pi\epsilon_0 r}\), or \(e\Phi(r)\) if \(\Phi\) denotes electrostatic potential), Newton's second law gives the acceleration in terms of the gradient of the potential energy:
+              \[
+              m\mathbf{a} = \mathbf{F} = -\nabla V(r) \implies |\mathbf{a}|^2 = \frac{1}{m^2}|\nabla V(r)|^2.
+              \]
+              Substituting \(a^2\) into the Larmor formula and integrating over the entire collision from \(t = -\infty\) to \(t = +\infty\) yields the total radiated energy:
+              \[
+              \Delta W = \int_{-\infty}^{\infty} P(t)\,dt = \frac{\mu_0 e^2}{6\pi m^2 c}\int_{-\infty}^{\infty} |\nabla V(r)|^2\,dt. \quad (1)
+              \]</p>
+
+              <p><strong>2. Change of Integration Variable via Conservation of Energy:</strong></p>
+              <p>Assuming the radiative energy loss is small compared to the mechanical energy (\(\Delta W \ll E\)), mechanical energy is conserved along the trajectory. For a head-on collision (zero impact parameter, \(\dot{\theta} = 0\)):
+              \[
+              \frac{1}{2}m\dot{r}^2 + V(r) = E.
+              \]
+              At the distance of closest approach \(r = r_{\min}\), the radial velocity vanishes (\(\dot{r} = 0\)), so the total energy is related to \(r_{\min}\) by:
+              \[
+              E = V(r_{\min}).
+              \]
+              Substituting \(E = V(r_{\min})\) into the energy conservation equation gives the radial speed at any radius \(r \ge r_{\min}\):
+              \[
+              \frac{1}{2}m\dot{r}^2 = V(r_{\min}) - V(r) \implies |\dot{r}| = \sqrt{\frac{2}{m}\bigl[V(r_{\min}) - V(r)\bigr]} = \sqrt{\frac{2}{m}}\sqrt{V(r_{\min}) - V(r)}.
+              \]
+              Therefore, the differential time element \(dt\) is related to \(dr\) by:
+              \[
+              dt = \frac{dr}{|\dot{r}|} = \sqrt{\frac{m}{2}}\frac{dr}{\sqrt{V(r_{\min}) - V(r)}}.
+              \]</p>
+
+              <p><strong>3. Integration Over Approach and Recession Branches:</strong></p>
+              <p>By time-reversal symmetry of the trajectory about the turning point \(t = 0\) (\(r = r_{\min}\)), the incoming branch (\(r: \infty \to r_{\min}\) for \(t \in (-\infty, 0]\)) and the outgoing branch (\(r: r_{\min} \to \infty\) for \(t \in [0, \infty)\)) contribute equally to the integral (1):
+              \[
+              \Delta W = 2\int_{0}^{\infty} P(t)\,dt = 2 \cdot \frac{\mu_0 e^2}{6\pi m^2 c}\int_{r_{\min}}^{\infty} |\nabla V(r)|^2 \left(\sqrt{\frac{m}{2}}\frac{dr}{\sqrt{V(r_{\min}) - V(r)}}\right).
+              \]
+              Simplifying the prefactor reproduces the exact formula required:
+              \[
+              \boxed{\Delta W = \frac{\mu_0 e^2}{3\pi m^2 c}\sqrt{\frac{m}{2}}\int_{r_{\min}}^{\infty} |\nabla V(r)|^2\frac{dr}{\sqrt{V(r_{\min}) - V(r)}} = \frac{\mu_0 e^2}{3\sqrt{2}\pi m^{3/2}c}\int_{r_{\min}}^{\infty} |\nabla V(r)|^2\frac{dr}{\sqrt{V(r_{\min}) - V(r)}}}.
+              \]
+              <em>(Bonus explicit evaluation for Coulomb potential: With \(V(r) = \frac{\alpha}{r}\) where \(\alpha = \frac{ze^2}{4\pi\epsilon_0}\) and \(E = \frac{\alpha}{r_{\min}} = \frac{1}{2}mv_0^2\), substituting \(u = r_{\min}/r \in [0,1]\) gives \(\int_{r_{\min}}^\infty \frac{\alpha^2}{r^4}\frac{dr}{\sqrt{\alpha/r_{\min} - \alpha/r}} = \frac{\alpha^{3/2}}{r_{\min}^{5/2}}\int_0^1 \frac{u^2\,du}{\sqrt{1-u}} = \frac{16}{15}\frac{\alpha^{3/2}}{r_{\min}^{5/2}}\), yielding \(\Delta W = \frac{8}{45}\frac{\mu_0 e^2 m v_0^5}{\pi c \alpha} = \frac{2}{45}\frac{e^2 v_0^5}{\pi^2\epsilon_0^2 c^3}\frac{m}{ze^2}\).)</em></p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </details>
+
+    <!-- 3.4 Collision dipole radiation -->
+    <details class="year-group">
+      <summary>Electric and Magnetic Dipole Radiation from a Two-Particle Collision</summary>
+      <div class="year-content">
+        <div class="question-card">
+          <div class="q-header">2018 Q4</div>
+          <p>Two particles with the same charge \(q\) and the same mass \(m\) move towards each other in opposite directions and collide. Calculate the electric-dipole and magnetic-dipole radiation.</p>
+          <details class="solution">
+            <summary>Show Full Exam Derivation</summary>
+            <div class="solution-body">
+              <p><strong>1. Center-of-Mass / Lab Frame Kinematics:</strong></p>
+              <p>Let the two identical particles of mass \(m_1 = m_2 = m\) and charge \(q_1 = q_2 = q\) have position vectors \(\mathbf{r}_1(t)\) and \(\mathbf{r}_2(t)\). In the center-of-mass frame (where the two particles approach each other with equal and opposite velocities \(\mathbf{v}_2 = -\mathbf{v}_1\)), the center of mass is fixed at the origin:
+              \[
+              \mathbf{R}_{\mathrm{CM}} = \frac{m\mathbf{r}_1 + m\mathbf{r}_2}{2m} = \frac{1}{2}(\mathbf{r}_1 + \mathbf{r}_2) = \mathbf{0} \implies \mathbf{r}_2(t) = -\mathbf{r}_1(t).
+              \]
+              More generally, in <em>any</em> inertial frame with no external forces, total linear momentum \(\mathbf{P}_{\mathrm{tot}} = m\dot{\mathbf{r}}_1 + m\dot{\mathbf{r}}_2\) is conserved, so \(\ddot{\mathbf{r}}_1 + \ddot{\mathbf{r}}_2 = \frac{1}{m}\dot{\mathbf{P}}_{\mathrm{tot}} = \mathbf{0}\).</p>
+
+              <p><strong>2. Electric-Dipole Radiation (\(\mathbf{E}_{\mathrm{E1}}, P_{\mathrm{E1}}\)):</strong></p>
+              <p>The total electric dipole moment of a system of point charges is:
+              \[
+              \mathbf{p}(t) = \sum_{i=1}^{2} q_i\mathbf{r}_i(t) = q\mathbf{r}_1(t) + q\mathbf{r}_2(t) = q\bigl(\mathbf{r}_1(t) + \mathbf{r}_2(t)\bigr) = \frac{q}{m}\left(m\mathbf{r}_1 + m\mathbf{r}_2\right) = \frac{2q}{m}M_{\mathrm{tot}}\mathbf{R}_{\mathrm{CM}}.
+              \]
+              Differentiating twice with respect to time and using conservation of total linear momentum (\(m\ddot{\mathbf{r}}_1 + m\ddot{\mathbf{r}}_2 = \mathbf{F}_{12} + \mathbf{F}_{21} = \mathbf{0}\) by Newton's third law):
+              \[
+              \ddot{\mathbf{p}}(t) = \frac{q}{m}\left(m\ddot{\mathbf{r}}_1 + m\ddot{\mathbf{r}}_2\right) = \frac{q}{m}\frac{d\mathbf{P}_{\mathrm{tot}}}{dt} = \mathbf{0}.
+              \]
+              Since the electric-dipole radiation fields and radiated power are proportional to \(\ddot{\mathbf{p}}\):
+              \[
+              \boxed{\mathbf{E}_{\mathrm{E1}} = \frac{\mu_0}{4\pi r}\left[(\ddot{\mathbf{p}}\times\hat{\mathbf{r}})\times\hat{\mathbf{r}}\right] = \mathbf{0}, \qquad P_{\mathrm{E1}} = \frac{\mu_0}{6\pi c}|\ddot{\mathbf{p}}|^2 = 0}.
+              \]
+              <em>(In general, for any isolated system of particles with identical charge-to-mass ratios \(q_i/m_i = \text{const}\), electric-dipole radiation vanishes identically!)</em></p>
+
+              <p><strong>3. Magnetic-Dipole Radiation (\(\mathbf{E}_{\mathrm{M1}}, P_{\mathrm{M1}}\)):</strong></p>
+              <p>The total magnetic dipole moment of the two-particle system is:
+              \[
+              \mathbf{m}(t) = \frac{1}{2}\sum_{i=1}^{2} q_i\bigl(\mathbf{r}_i(t) \times \dot{\mathbf{r}}_i(t)\bigr) = \frac{q}{2}\left(\mathbf{r}_1 \times \mathbf{v}_1 + \mathbf{r}_2 \times \mathbf{v}_2\right).
+              \]
+              Expressing this in terms of the total orbital angular momentum \(\mathbf{L}_{\mathrm{tot}} = \sum_{i=1}^{2} m_i(\mathbf{r}_i \times \mathbf{v}_i) = m(\mathbf{r}_1 \times \mathbf{v}_1 + \mathbf{r}_2 \times \mathbf{v}_2)\):
+              \[
+              \mathbf{m}(t) = \frac{q}{2m}\left(m\mathbf{r}_1 \times \mathbf{v}_1 + m\mathbf{r}_2 \times \mathbf{v}_2\right) = \frac{q}{2m}\mathbf{L}_{\mathrm{tot}}.
+              \]
+              Because the particles interact via a central force \(\mathbf{F}_{12} \parallel (\mathbf{r}_1 - \mathbf{r}_2)\) with no external torques, total angular momentum \(\mathbf{L}_{\mathrm{tot}}\) is strictly conserved (\(\frac{d\mathbf{L}_{\mathrm{tot}}}{dt} = \mathbf{0}\))! Explicitly:
+              \[
+              \dot{\mathbf{m}}(t) = \frac{q}{2m}\frac{d\mathbf{L}_{\mathrm{tot}}}{dt} = \frac{q}{2}\left(\mathbf{v}_1\times\mathbf{v}_1 + \mathbf{r}_1\times\mathbf{a}_1 + \mathbf{v}_2\times\mathbf{v}_2 + \mathbf{r}_2\times\mathbf{a}_2\right) = \frac{q}{2m}(\mathbf{r}_1 - \mathbf{r}_2)\times\mathbf{F}_{12} = \mathbf{0},
+              \]
+              and therefore \(\ddot{\mathbf{m}}(t) = \mathbf{0}\) as well. Since the magnetic-dipole radiation fields and radiated power are proportional to \(\ddot{\mathbf{m}}\):
+              \[
+              \boxed{\mathbf{E}_{\mathrm{M1}} = \frac{\mu_0}{4\pi r c}\left(\hat{\mathbf{r}}\times\ddot{\mathbf{m}}\right) = \mathbf{0}, \qquad P_{\mathrm{M1}} = \frac{\mu_0}{6\pi c^3}|\ddot{\mathbf{m}}|^2 = 0}.
+              \]
+              Thus, for two identical particles (\(q_1=q_2=q, m_1=m_2=m\)), <strong>both electric-dipole (E1) and magnetic-dipole (M1) radiation vanish identically</strong> by conservation of linear momentum and angular momentum; the leading non-vanishing radiation is <strong>electric-quadrupole (E2) radiation</strong> (\(P_{\mathrm{E2}} = \frac{\mu_0}{180\pi c^3}\dddot{Q}_{ij}\dddot{Q}_{ij}\)).</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </details>
+
+    <!-- 3.5 Rayleigh scattering -->
+    <details class="year-group">
+      <summary>Rayleigh Scattering of Light by Air</summary>
+      <div class="year-content">
+        <div class="question-card">
+          <div class="q-header">2014 Q2(d)</div>
+          <p>Elaborate the Rayleigh scattering process of a plane EM wave by air. Include the wavelength dependence and the scattering-angle distribution.</p>
+          <details class="solution">
+            <summary>Show Full Exam Derivation</summary>
+            <div class="solution-body">
+              <p><strong>1. Physical Mechanism (Lorentz Oscillator / Induced Dipole Model):</strong></p>
+              <p>Air molecules (\(\mathrm{N}_2, \mathrm{O}_2\)) have characteristic size \(a \sim 10^{-10}\,\mathrm{m}\), which is much smaller than visible wavelengths \(\lambda \sim 400\text{--}700\,\mathrm{nm}\) (\(a \ll \lambda\)). Under an incident monochromatic plane wave \(\mathbf{E}_{\mathrm{inc}}(\mathbf{r},t) = \mathbf{E}_0 e^{i(\mathbf{k}_0\cdot\mathbf{r} - \omega t)}\), the spatial variation across a single molecule at \(\mathbf{r} = \mathbf{0}\) is negligible. A bound electron of mass \(m_e\), charge \(-e\), and natural resonant frequency \(\omega_0\) (in the ultraviolet, \(\omega_0 \gg \omega_{\mathrm{vis}}\)) obeys the driven oscillator equation (neglecting small damping \(\gamma \ll \omega_0\)):
+              \[
+              \ddot{\mathbf{x}} + \omega_0^2\mathbf{x} = -\frac{e}{m_e}\mathbf{E}_0 e^{-i\omega t} \implies (\omega_0^2 - \omega^2)\mathbf{x} = -\frac{e}{m_e}\mathbf{E}_0 e^{-i\omega t}.
+              \]
+              This induces an oscillating electric dipole moment \(\mathbf{p}(t) = -e\mathbf{x}(t) = \alpha(\omega)\mathbf{E}_0 e^{-i\omega t}\), where the molecular polarizability is:
+              \[
+              \alpha(\omega) = \frac{e^2/m_e}{\omega_0^2 - \omega^2} \approx \frac{e^2}{m_e\omega_0^2} \equiv \alpha_0 \quad (\text{approximately constant for }\omega \ll \omega_0).
+              \]</p>
+
+              <p><strong>2. Wavelength Dependence (\(\lambda^{-4}\) Law):</strong></p>
+              <p>The induced dipole \(\mathbf{p}(t) = \mathbf{p}_0 e^{-i\omega t}\) (with \(\mathbf{p}_0 = \alpha_0\mathbf{E}_0\)) accelerates with \(\ddot{\mathbf{p}}(t) = -\omega^2\mathbf{p}_0 e^{-i\omega t}\) and re-radiates electromagnetic energy in all directions. In the radiation zone (\(r \gg \lambda\)), the scattered electric field is:
+              \[
+              \mathbf{E}_{\mathrm{scat}}(\mathbf{r},t) = \frac{\mu_0}{4\pi r}\left[(\ddot{\mathbf{p}}(t_r)\times\hat{\mathbf{r}})\times\hat{\mathbf{r}}\right] = -\frac{\mu_0\omega^2\alpha_0}{4\pi r}\left[(\mathbf{E}_0\times\hat{\mathbf{r}})\times\hat{\mathbf{r}}\right]e^{i(kr-\omega t)}.
+              \]
+              The time-averaged scattered intensity at distance \(r\) is \(\langle S_{\mathrm{scat}}\rangle = \frac{1}{2}\epsilon_0 c|\mathbf{E}_{\mathrm{scat}}|^2\), while the incident intensity is \(I_0 = \frac{1}{2}\epsilon_0 c|\mathbf{E}_0|^2\). The total time-averaged power scattered into all solid angles is:
+              \[
+              \langle P_{\mathrm{scat}}\rangle = \frac{\mu_0|\ddot{\mathbf{p}}_0|^2}{12\pi c} = \frac{\mu_0\alpha_0^2\omega^4|\mathbf{E}_0|^2}{12\pi c}.
+              \]
+              Using \(\omega = \frac{2\pi c}{\lambda}\), the total Rayleigh scattering cross-section \(\sigma_{\mathrm{tot}} \equiv \frac{\langle P_{\mathrm{scat}}\rangle}{I_0}\) is:
+              \[
+              \boxed{\sigma_{\mathrm{tot}}(\lambda) = \frac{\mu_0^2 c^2 \alpha_0^2 \omega^4}{6\pi} = \frac{8\pi^3 \alpha_0^2}{3\epsilon_0^2 \lambda^4} \propto \frac{1}{\lambda^4}}.
+              \]
+              Because \(\sigma_{\mathrm{tot}} \propto \lambda^{-4}\), short-wavelength blue/violet light (\(\lambda \approx 450\,\mathrm{nm}\)) is scattered almost an order of magnitude more strongly than long-wavelength red light (\(\lambda \approx 650\,\mathrm{nm}\)), accounting for the blue daytime sky and red sunsets.</p>
+
+              <p><strong>3. Scattering-Angle Distribution (Polarized and Unpolarized Incident Light):</strong></p>
+              <p>Let the incident wave propagate along the \(z\)-axis (\(\hat{\mathbf{k}}_0 = \hat{\mathbf{z}}\)) and be scattered into direction \(\hat{\mathbf{r}}\) making scattering angle \(\theta\) with \(\hat{\mathbf{z}}\) (so \(\hat{\mathbf{r}}\cdot\hat{\mathbf{z}} = \cos\theta\)) and azimuthal angle \(\phi\) in the \(xy\)-plane:
+              <ul>
+                <li><strong>Linearly Polarized Incident Light:</strong> If \(\mathbf{E}_0\) is polarized at angle \(\psi\) to the scattering plane (or along \(\hat{\mathbf{x}}\)), let \(\Theta\) be the angle between \(\mathbf{E}_0\) and \(\hat{\mathbf{r}}\). Then \(|(\mathbf{E}_0\times\hat{\mathbf{r}})\times\hat{\mathbf{r}}|^2 = |\mathbf{E}_0|^2\sin^2\Theta\), giving the differential cross-section:
+                \[
+                \left(\frac{d\sigma}{d\Omega}\right)_{\mathrm{pol}} = \frac{r^2\langle S_{\mathrm{scat}}\rangle}{I_0} = \left(\frac{\pi\alpha_0}{\epsilon_0\lambda^2}\right)^2\sin^2\Theta.
+                \]</li>
+                <li><strong>Unpolarized Incident Light (Sunlight):</strong> Unpolarized light is an incoherent superposition of two orthogonal linear polarizations in the \(xy\)-plane:
+                  <ol>
+                    <li>Polarization \(\hat{\boldsymbol{\epsilon}}_1\) perpendicular to the scattering plane: \(\hat{\boldsymbol{\epsilon}}_1 \perp \hat{\mathbf{r}} \implies \Theta_1 = \frac{\pi}{2} \implies \sin^2\Theta_1 = 1\).</li>
+                    <li>Polarization \(\hat{\boldsymbol{\epsilon}}_2\) lying inside the scattering plane (perpendicular to \(\hat{\mathbf{z}}\)): \(\Theta_2 = \frac{\pi}{2} - \theta \implies \sin^2\Theta_2 = \cos^2\theta\).</li>
+                  </ol>
+                  Averaging equally over the two independent polarization states yields the unpolarized angular distribution:
+                  \[
+                  \boxed{\left(\frac{d\sigma}{d\Omega}\right)_{\mathrm{unpol}} = \frac{1}{2}\left(\frac{\pi\alpha_0}{\epsilon_0\lambda^2}\right)^2\left(1 + \cos^2\theta\right) \propto \frac{1 + \cos^2\theta}{\lambda^4}}.
+                  \]
+                  Note that at \(\theta = 90^\circ\), the \(\cos^2\theta\) component vanishes, so skylight scattered at \(90^\circ\) from the Sun is completely linearly polarized!</li>
+              </ul></p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </details>
+
+    <!-- 3.6 Electron gas scattering -->
+    <details class="year-group">
+      <summary>Scattering by a Thin Slab of Free-Electron Gas</summary>
+      <div class="year-content">
+        <div class="question-card">
+          <div class="q-header">2015 Q3</div>
+          <p>A linearly polarized monochromatic plane wave is scattered by a thin slab of a uniformly distributed free-electron gas with number density \(n_0\) (denoted \(\rho\) in exam). Calculate the scattered EM wave distribution.</p>
+          <details class="solution">
+            <summary>Show Full Exam Derivation</summary>
+            <div class="solution-body">
+              <p><strong>1. Single-Electron Induced Dipole Response (Thomson Scattering Element):</strong></p>
+              <p>Let the thin slab of thickness \(d \ll \lambda\) and transverse area \(A\) lie in the \(xy\)-plane at \(z' \approx 0\), with uniform electron number density \(n_0\) (denoted \(\rho\) in the problem statement). Suppose the incident linearly polarized monochromatic plane wave propagates along \(+\hat{\mathbf{z}}\) with polarization along \(\hat{\mathbf{x}}\):
+              \[
+              \mathbf{E}_{\mathrm{inc}}(\mathbf{r}',t) = E_0\hat{\mathbf{x}}\,e^{i(kz' - \omega t)}, \qquad k = \frac{\omega}{c}.
+              \]
+              For a free electron of charge \(-e\) and mass \(m\) located at \(\mathbf{r}' = (x', y', 0)\) inside the thin slab (\(z' \approx 0\)), Newton's second law in the non-relativistic regime gives its acceleration:
+              \[
+              m\ddot{\mathbf{s}}(\mathbf{r}',t) = -e\mathbf{E}_{\mathrm{inc}}(\mathbf{r}',t) = -eE_0\hat{\mathbf{x}}\,e^{-i\omega t}.
+              \]
+              The second time derivative of its induced dipole moment \(\mathbf{p}_1 = -e\mathbf{s}\) is therefore:
+              \[
+              \ddot{\mathbf{p}}_1(t) = -e\ddot{\mathbf{s}}(t) = \frac{e^2}{m}E_0\hat{\mathbf{x}}\,e^{-i\omega t}.
+              \]
+              In the far zone (\(|\mathbf{r}-\mathbf{r}'| \approx r - \hat{\mathbf{r}}\cdot\mathbf{r}'\) in the phase and \(|\mathbf{r}-\mathbf{r}'| \approx r\) in the amplitude), the electric field radiated at observation point \(\mathbf{r} = r\hat{\mathbf{r}}\) by a volume element \(d^3r' = dx'\,dy'\,dz'\) containing \(dN = \rho\,d^3r'\) electrons is:
+              \[
+              d\mathbf{E}_{\mathrm{scat}}(\mathbf{r},t) = \frac{\mu_0}{4\pi|\mathbf{r}-\mathbf{r}'|}\left[\bigl(\ddot{\mathbf{p}}_1(t - |\mathbf{r}-\mathbf{r}'|/c)\times\hat{\mathbf{r}}\bigr)\times\hat{\mathbf{r}}\right]\rho\,d^3r'
+              \]
+              \[
+              = \frac{\mu_0 e^2 E_0 \rho}{4\pi m r}\left[(\hat{\mathbf{x}}\times\hat{\mathbf{r}})\times\hat{\mathbf{r}}\right]e^{i(kr - \omega t)}e^{i(kz' - k\hat{\mathbf{r}}\cdot\mathbf{r}')}\,dx'\,dy'\,dz'.
+              \]</p>
+
+              <p><strong>2. Integration Over the Thin Slab &amp; Angular Distribution:</strong></p>
+              <p>Because the slab is thin (\(d \ll \lambda \implies kz' \ll 1\)), the integration over \(z' \in [0, d]\) simply yields a factor of \(d\). Defining the momentum transfer wavevector \(\mathbf{q} \equiv k\hat{\mathbf{r}} - k\hat{\mathbf{z}}\), the total scattered electric field in the far zone is:
+              \[
+              \mathbf{E}_{\mathrm{scat}}(\mathbf{r},t) = \frac{\mu_0 e^2 E_0 \rho d}{4\pi m r}\left[(\hat{\mathbf{x}}\times\hat{\mathbf{r}})\times\hat{\mathbf{r}}\right]e^{i(kr - \omega t)} \iint_{\text{Slab}} e^{-ik(x'\sin\theta\cos\phi + y'\sin\theta\sin\phi)}\,dx'\,dy'.
+              \]
+               Defining the structure/form factor \(F(\theta,\phi) \equiv \frac{1}{A}\iint_{\text{Slab}} e^{-i\mathbf{k}_\perp\cdot\mathbf{r}'_\perp}\,dx'\,dy'\) (where \(F = 1\) for a patch smaller than \(\lambda\) or in the forward/specular directions \(\theta = 0, \pi\)) and total electron number \(N = \rho A d\):
+              \[
+              \boxed{\mathbf{E}_{\mathrm{scat}}(\mathbf{r},t) = \frac{\mu_0 e^2 \rho A d\,E_0}{4\pi m r}\,F(\theta,\phi)\left[(\hat{\mathbf{x}}\times\hat{\mathbf{r}})\times\hat{\mathbf{r}}\right]e^{i(kr - \omega t)}}.
+              \]
+              Let \(\Theta\) be the angle between the polarization direction \(\hat{\mathbf{x}}\) and the observation direction \(\hat{\mathbf{r}}\) (so \(\cos\Theta = \hat{\mathbf{x}}\cdot\hat{\mathbf{r}} = \sin\theta\cos\phi\)). Then \(|(\hat{\mathbf{x}}\times\hat{\mathbf{r}})\times\hat{\mathbf{r}}|^2 = \sin^2\Theta = 1 - \sin^2\theta\cos^2\phi\), and the scattered intensity distribution is:
+              \[
+              \boxed{I_{\mathrm{scat}}(\theta,\phi) = \frac{1}{2}\epsilon_0 c|\mathbf{E}_{\mathrm{scat}}|^2 = I_0\left(\frac{\mu_0 e^2 \rho A d}{4\pi m r}\right)^2 |F(\theta,\phi)|^2 \left(1 - \sin^2\theta\cos^2\phi\right)}.
+              \]
+              <em>(Note: If the slab is laterally infinite in the \(xy\)-plane, \(\iint_{-\infty}^{\infty} e^{-i(k_x x' + k_y y')}\,dx'\,dy' = (2\pi)^2\delta(k_x)\delta(k_y)\), so coherent radiation occurs strictly along the forward/backward directions \(\hat{\mathbf{r}} = \pm\hat{\mathbf{z}}\) via Fresnel stationary phase integration, yielding the plane wave \(\mathbf{E}_{\mathrm{scat}}(z,t) = \frac{i\mu_0 e^2 \rho d c}{2m\omega}E_0\hat{\mathbf{x}}\,e^{i(k|z|-\omega t)}\).)</em></p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </details>
+
+    <!-- 3.7 Atom photon -->
+    <details class="year-group">
+      <summary>Photon Absorption by an Atom (Relativistic Recoil Correction)</summary>
+      <div class="year-content">
+        <div class="question-card">
+          <div class="q-header">2020 Q2</div>
+          <p>A static atom of mass \(M\) in its ground state is excited by absorbing a photon. If the energy difference between ground and excited states is \(\Delta\), what is the frequency of the photon?</p>
+          <details class="solution">
+            <summary>Show Full Exam Derivation</summary>
+            <div class="solution-body">
+              <p><strong>Method 1 — Exact Relativistic 4-Momentum Conservation (Full Credit):</strong></p>
+              <p>Let the atom initially at rest in the ground state have rest mass \(M\), and let the excited state have rest mass \(M^* = M + \frac{\Delta}{c^2}\) (since its internal rest energy increases by \(\Delta\)).
+              <ul>
+                <li><strong>Initial 4-momenta:</strong> The static ground-state atom has \(P_i^\mu = (Mc, \mathbf{0})\), and the incident photon of angular frequency \(\omega\) propagating along \(\hat{\mathbf{n}}\) has 4-momentum \(k^\mu = \left(\frac{\hbar\omega}{c}, \frac{\hbar\omega}{c}\hat{\mathbf{n}}\right)\) with \(k^\mu k_\mu = 0\).</li>
+                <li><strong>Final 4-momentum:</strong> After absorbing the photon, the excited atom has 4-momentum \(P_f^\mu = (E_f/c, \mathbf{p}_f)\) satisfying the mass-shell invariant \(P_f^\mu P_{f,\mu} = (M^* c)^2 = \left(Mc + \frac{\Delta}{c}\right)^2\).</li>
+              </ul>
+              By conservation of 4-momentum, \(P_f^\mu = P_i^\mu + k^\mu\). Squaring both sides using the Minkowski metric \(\eta_{\mu\nu} = \mathrm{diag}(+1,-1,-1,-1)\):
+              \[
+              P_f^\mu P_{f,\mu} = (P_i + k)^\mu(P_i + k)_\mu = P_i^\mu P_{i,\mu} + 2P_i^\mu k_\mu + k^\mu k_\mu.
+              \]
+              Evaluating each Lorentz invariant in the lab frame:
+              \[
+              P_i^\mu P_{i,\mu} = M^2 c^2, \qquad k^\mu k_\mu = 0, \qquad P_i^\mu k_\mu = (Mc)\left(\frac{\hbar\omega}{c}\right) - \mathbf{0}\cdot\mathbf{k} = M\hbar\omega.
+              \]
+              Equating to \(P_f^\mu P_{f,\mu} = \left(Mc + \frac{\Delta}{c}\right)^2 = M^2 c^2 + 2M\Delta + \frac{\Delta^2}{c^2}\):
+              \[
+              M^2 c^2 + 2M\hbar\omega = M^2 c^2 + 2M\Delta + \frac{\Delta^2}{c^2} \implies 2M\hbar\omega = 2M\Delta + \frac{\Delta^2}{c^2}.
+              \]
+              Dividing both sides by \(2M\hbar\) yields the exact relativistic photon frequency:
+              \[
+              \boxed{\omega = \frac{\Delta}{\hbar}\left(1 + \frac{\Delta}{2Mc^2}\right) \quad \left(\text{or } f = \frac{\omega}{2\pi} = \frac{\Delta}{h}\left[1 + \frac{\Delta}{2Mc^2}\right]\right)}.
+              \]</p>
+
+              <p><strong>Method 2 — Non-Relativistic Energy &amp; Momentum Conservation:</strong></p>
+              <p>Conserving 3-momentum and non-relativistic energy before and after absorption:
+              \[
+              \text{Momentum:}\quad p_{\mathrm{atom}} = p_{\gamma} = \frac{\hbar\omega}{c}.
+              \]
+              \[
+              \text{Energy:}\quad \hbar\omega = \Delta + K_{\mathrm{recoil}} = \Delta + \frac{p_{\mathrm{atom}}^2}{2M} = \Delta + \frac{(\hbar\omega)^2}{2Mc^2}.
+              \]
+              Rearranging as a quadratic equation in \(\hbar\omega\):
+              \[
+              \frac{1}{2Mc^2}(\hbar\omega)^2 - \hbar\omega + \Delta = 0 \implies \hbar\omega = Mc^2\left(1 - \sqrt{1 - \frac{2\Delta}{Mc^2}}\right).
+              \]
+              Expanding to leading order in \(\frac{\Delta}{Mc^2} \ll 1\) via \(\sqrt{1-x} = 1 - \frac{1}{2}x - \frac{1}{8}x^2 - \dots\) gives:
+              \[
+              \hbar\omega \approx Mc^2\left[\frac{\Delta}{Mc^2} + \frac{1}{2}\left(\frac{\Delta}{Mc^2}\right)^2\right] = \Delta\left(1 + \frac{\Delta}{2Mc^2}\right) \implies \boxed{\omega \approx \frac{\Delta}{\hbar}\left(1 + \frac{\Delta}{2Mc^2}\right)}.
+              \]</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </details>
+  </div>
+
+  <!-- ================= TOPIC 4: SPECIAL RELATIVITY & E&M ================= -->
+  <div class="topic-section" data-topic="relativity">
+    <h2 class="topic-title">Special Relativity &amp; Electromagnetism</h2>
+
+    <!-- 4.1 Doppler -->
+    <details class="year-group">
+      <summary>Relativistic Optical Doppler Effect</summary>
+      <div class="year-content">
+        <div class="question-card">
+          <div class="q-header">2014 Q4</div>
+          <p>Show that the optical Doppler effect is
+          \[
+          \omega'=\omega\,\gamma\left(1-\frac{v}{c}\cos\theta\right),
+          \]
+          where \(\theta\) is the angle between the light propagation direction and the velocity \(\mathbf{v}\) of the frame.</p>
+          <details class="solution">
+            <summary>Show Full Exam Derivation</summary>
+            <div class="solution-body">
+              <p><strong>Derivation 1 — Invariance of Phase &amp; Wave Four-Vector:</strong></p>
+              <p>Consider a monochromatic plane electromagnetic wave in inertial frame \(S\):
+              \[
+              \mathbf{E}(\mathbf{r},t) = \mathbf{E}_0 e^{i(\mathbf{k}\cdot\mathbf{r} - \omega t)} = \mathbf{E}_0 e^{-i k_\mu x^\mu},
+              \]
+              where \(x^\mu = (ct, x, y, z)\) is the spacetime position four-vector. Because the phase \(\Phi \equiv \omega t - \mathbf{k}\cdot\mathbf{r}\) counts the number of wave crests passing an event, it must be a Lorentz scalar invariant (\(\Phi' = \Phi\), i.e., \(k'_\mu x'^\mu = k_\mu x^\mu\)). By the quotient theorem, since \(x^\mu\) is an arbitrary four-vector, the wave quantities form a contravariant four-vector:
+              \[
+              k^\mu = \left(\frac{\omega}{c}, \mathbf{k}\right) = \left(\frac{\omega}{c}, k_x, k_y, k_z\right), \qquad \text{with } |\mathbf{k}| = \frac{\omega}{c}.
+              \]
+              Let frame \(S'\) move with velocity \(\mathbf{v} = v\hat{\mathbf{x}}\) along the \(+x\)-axis relative to frame \(S\). In frame \(S\), suppose the wave propagates in a direction making angle \(\theta\) with the \(x\)-axis (the direction of \(\mathbf{v}\)), so that:
+              \[
+              k_x = |\mathbf{k}|\cos\theta = \frac{\omega}{c}\cos\theta.
+              \]
+              Applying the standard Lorentz boost matrix \(\Lambda^\mu{}_\nu\) along the \(x\)-axis (\(\beta \equiv v/c\), \(\gamma \equiv (1-\beta^2)^{-1/2}\)) to \(k^\mu\):
+              \[
+              \begin{pmatrix} \omega'/c \\ k'_x \\ k'_y \\ k'_z \end{pmatrix} = \begin{pmatrix} \gamma & -\gamma\beta & 0 & 0 \\ -\gamma\beta & \gamma & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \end{pmatrix} \begin{pmatrix} \omega/c \\ k_x \\ k_y \\ k_z \end{pmatrix}.
+              \]
+              Reading off the zeroth component \(k'^0 = \gamma(k^0 - \beta k^1)\):
+              \[
+              \frac{\omega'}{c} = \gamma\left(\frac{\omega}{c} - \beta k_x\right) = \gamma\left(\frac{\omega}{c} - \frac{v}{c}\frac{\omega}{c}\cos\theta\right) = \frac{\omega}{c}\gamma\left(1 - \frac{v}{c}\cos\theta\right).
+              \]
+              Multiplying both sides by \(c\) yields the relativistic Doppler shift formula:
+              \[
+              \boxed{\omega' = \omega\,\gamma\left(1 - \frac{v}{c}\cos\theta\right)}.
+              \]
+              <em>(Note on conventions: If \(\theta'\) is measured in \(S'\) and we transform from \(S'\) to \(S\) with velocity \(-\mathbf{v}\), or define \(\theta\) relative to the inverse boost, one writes \(\omega = \omega'\gamma(1 - \frac{v}{c}\cos\theta_{\text{obs}})\).)</em></p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </details>
+
+    <!-- 4.2 Spacetime interval -->
+    <details class="year-group">
+      <summary>Invariance of the Space-Time Interval under Lorentz Transformation</summary>
+      <div class="year-content">
+        <div class="question-card">
+          <div class="q-header">2014 Q2(c)</div>
+          <p>Show that the space-time interval is invariant under the Lorentz transformation.</p>
+          <details class="solution">
+            <summary>Show Full Exam Derivation</summary>
+            <div class="solution-body">
+              <p><strong>1. Definition of the Spacetime Interval and Lorentz Transformation:</strong></p>
+              <p>Between any two spacetime events separated by \((\Delta ct, \Delta x, \Delta y, \Delta z)\) in an inertial frame \(S\), the squared spacetime interval \(\Delta s^2\) is defined as:
+              \[
+              \Delta s^2 \equiv c^2(\Delta t)^2 - (\Delta x)^2 - (\Delta y)^2 - (\Delta z)^2.
+              \]
+              Let a second inertial frame \(S'\) move with uniform velocity \(v\) along the \(+x\)-axis relative to \(S\). With \(\beta \equiv \frac{v}{c}\) and the Lorentz factor \(\gamma \equiv \frac{1}{\sqrt{1-\beta^2}}\) (note the fundamental identity \(\gamma^2(1-\beta^2) = 1\)), the coordinate differences in \(S'\) are given by the Lorentz boost:
+              \[
+              c\Delta t' = \gamma\left(c\Delta t - \beta\Delta x\right), \qquad \Delta x' = \gamma\left(\Delta x - \beta c\Delta t\right), \qquad \Delta y' = \Delta y, \qquad \Delta z' = \Delta z.
+              \]</p>
+
+              <p><strong>2. Direct Algebraic Verification of Invariance:</strong></p>
+              <p>In frame \(S'\), the squared spacetime interval is:
+              \[
+              \Delta s'^2 = (c\Delta t')^2 - (\Delta x')^2 - (\Delta y')^2 - (\Delta z')^2.
+              \]
+              Substituting the Lorentz transformation relations into the first two terms:
+              \[
+              \begin{aligned}
+              (c\Delta t')^2 - (\Delta x')^2 &= \gamma^2(c\Delta t - \beta\Delta x)^2 - \gamma^2(\Delta x - \beta c\Delta t)^2 \\
+              &= \gamma^2\left[\left(c^2(\Delta t)^2 - 2\beta c\Delta t\Delta x + \beta^2(\Delta x)^2\right) - \left((\Delta x)^2 - 2\beta c\Delta t\Delta x + \beta^2 c^2(\Delta t)^2\right)\right] \\
+              &= \gamma^2\left[c^2(\Delta t)^2(1 - \beta^2) - (\Delta x)^2(1 - \beta^2)\right] \\
+              &= \gamma^2(1 - \beta^2)\left[c^2(\Delta t)^2 - (\Delta x)^2\right].
+              \end{aligned}
+              \]
+              Using \(\gamma^2(1 - \beta^2) = 1\) and \(\Delta y' = \Delta y\), \(\Delta z' = \Delta z\), we immediately obtain:
+              \[
+              \Delta s'^2 = c^2(\Delta t)^2 - (\Delta x)^2 - (\Delta y)^2 - (\Delta z)^2 = \Delta s^2 \implies \boxed{\Delta s'^2 = \Delta s^2}.
+              \]</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </details>
+
+    <!-- 4.3 Tensor symmetry -->
+    <details class="year-group">
+      <summary>Symmetry of the Field Tensor is Preserved by Lorentz Transformation</summary>
+      <div class="year-content">
+        <div class="question-card">
+          <div class="q-header">2015 Q1(c)</div>
+          <p>Prove that the symmetry of a field tensor is preserved by the Lorentz transformation: if \(t^{\mu\nu}\) is symmetric, show that \(\tilde{t}^{\mu\nu}\) is also symmetric.</p>
+          <details class="solution">
+            <summary>Show Full Exam Derivation</summary>
+            <div class="solution-body">
+              <p><strong>Proof (Symmetric &amp; Antisymmetric Cases):</strong></p>
+              <p>Let \(t^{\alpha\beta}\) be a contravariant rank-2 tensor in frame \(S\) that is symmetric, i.e.,
+              \[
+              t^{\alpha\beta} = t^{\beta\alpha} \qquad \forall\,\alpha,\beta \in \{0,1,2,3\}.
+              \]
+              Under a Lorentz transformation \(\Lambda^\mu{}_\alpha = \frac{\partial \tilde{x}^\mu}{\partial x^\alpha}\) to frame \(\tilde{S}\), the components of a rank-2 contravariant tensor transform according to the tensor transformation law (using the Einstein summation convention over repeated indices \(\alpha,\beta\)):
+              \[
+              \tilde{t}^{\mu\nu} = \Lambda^\mu{}_\alpha \Lambda^\nu{}_\beta\, t^{\alpha\beta}. \quad (1)
+              \]
+              Now consider the transposed component \(\tilde{t}^{\nu\mu}\) obtained by interchanging the free indices \(\mu \leftrightarrow \nu\):
+              \[
+              \tilde{t}^{\nu\mu} = \Lambda^\nu{}_\alpha \Lambda^\mu{}_\beta\, t^{\alpha\beta}.
+              \]
+              Because \(\alpha\) and \(\beta\) are dummy summation indices (summed over \(0,1,2,3\)), we can freely relabel \(\alpha \leftrightarrow \beta\):
+              \[
+              \tilde{t}^{\nu\mu} = \Lambda^\nu{}_\beta \Lambda^\mu{}_\alpha\, t^{\beta\alpha}.
+              \]
+              Since the matrix elements \(\Lambda^\mu{}_\alpha\) and \(\Lambda^\nu{}_\beta\) are real numbers (scalars with respect to multiplication), their product commutes (\(\Lambda^\nu{}_\beta \Lambda^\mu{}_\alpha = \Lambda^\mu{}_\alpha \Lambda^\nu{}_\beta\)). Using the symmetry assumption \(t^{\beta\alpha} = t^{\alpha\beta}\):
+              \[
+              \tilde{t}^{\nu\mu} = \Lambda^\mu{}_\alpha \Lambda^\nu{}_\beta\, t^{\alpha\beta} = \tilde{t}^{\mu\nu}.
+              \]
+              Hence:
+              \[
+              \boxed{\tilde{t}^{\mu\nu} = \tilde{t}^{\nu\mu} \quad (\text{symmetry is Lorentz-invariant})}.
+              \]
+              <em>(Remark: By the exact same steps, if \(F^{\alpha\beta} = -F^{\beta\alpha}\) is antisymmetric—such as the electromagnetic field strength tensor—then \(\tilde{F}^{\nu\mu} = \Lambda^\nu{}_\beta\Lambda^\mu{}_\alpha F^{\beta\alpha} = -\Lambda^\mu{}_\alpha\Lambda^\nu{}_\beta F^{\alpha\beta} = -\tilde{F}^{\mu\nu}\), so antisymmetry is also preserved under all Lorentz transformations.)</em></p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </details>
+
+    <!-- 4.4 Charge conservation -->
+    <details class="year-group">
+      <summary>Charge Conservation from the Field Tensor Equation</summary>
+      <div class="year-content">
+        <div class="question-card">
+          <div class="q-header">2015 Q1(d)</div>
+          <p>Show that the charge conservation law follows from
+          \[
+          \frac{\partial F^{\mu\nu}}{\partial x^\nu}=\mu_0 J^\mu.
+          \]</p>
+          <details class="solution">
+            <summary>Show Full Exam Derivation</summary>
+            <div class="solution-body">
+              <p><strong>1. Covariant Derivation Using Antisymmetry of \(F^{\mu\nu}\):</strong></p>
+              <p>Recall that the electromagnetic field tensor \(F^{\mu\nu} = \partial^\mu A^\nu - \partial^\nu A^\mu\) is strictly antisymmetric under index exchange:
+              \[
+              F^{\mu\nu} = -F^{\nu\mu}.
+              \]
+              Start from the covariant inhomogeneous Maxwell equation:
+              \[
+              \partial_\nu F^{\mu\nu} = \frac{\partial F^{\mu\nu}}{\partial x^\nu} = \mu_0 J^\mu,
+              \]
+              where \(x^\mu = (ct, x, y, z)\) and \(J^\mu = (c\rho, \mathbf{J})\) is the four-current density. Apply the four-divergence \(\partial_\mu = \frac{\partial}{\partial x^\mu}\) to both sides:
+              \[
+              \mu_0\,\partial_\mu J^\mu = \partial_\mu \partial_\nu F^{\mu\nu}. \quad (1)
+              \]
+              Now examine the double contraction \(\partial_\mu \partial_\nu F^{\mu\nu}\):
+              <ol>
+                <li>Relabel the dummy summation indices \(\mu \leftrightarrow \nu\):
+                \[
+                \partial_\mu \partial_\nu F^{\mu\nu} = \partial_\nu \partial_\mu F^{\nu\mu}.
+                \]</li>
+                <li>By Clairaut's theorem for smooth fields, mixed partial derivatives commute (\(\partial_\nu \partial_\mu = \partial_\mu \partial_\nu\)), while \(F^{\nu\mu} = -F^{\mu\nu}\) by antisymmetry:
+                \[
+                \partial_\mu \partial_\nu F^{\mu\nu} = \partial_\mu \partial_\nu (-F^{\mu\nu}) = -\partial_\mu \partial_\nu F^{\mu\nu}.
+                \]</li>
+              </ol>
+              Since a quantity equal to its own negative must vanish (\(2\partial_\mu\partial_\nu F^{\mu\nu} = 0\)), we have \(\partial_\mu \partial_\nu F^{\mu\nu} = 0\). Because \(\mu_0 \neq 0\), equation (1) yields:
+              \[
+              \boxed{\partial_\mu J^\mu = \frac{\partial J^\mu}{\partial x^\mu} = 0}.
+              \]</p>
+
+              <p><strong>2. Expansion into 3-Vector Continuity Equation:</strong></p>
+              <p>Expanding \(\partial_\mu J^\mu = \partial_0 J^0 + \partial_1 J^1 + \partial_2 J^2 + \partial_3 J^3 = 0\) with \(x^0 = ct\) and \(J^\mu = (c\rho, J_x, J_y, J_z)\):
+              \[
+              \frac{\partial (c\rho)}{\partial (ct)} + \frac{\partial J_x}{\partial x} + \frac{\partial J_y}{\partial y} + \frac{\partial J_z}{\partial z} = 0 \implies \boxed{\frac{\partial\rho}{\partial t} + \nabla\cdot\mathbf{J} = 0},
+              \]
+              which is the differential continuity equation expressing local conservation of electric charge.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </details>
+
+    <!-- 4.5 Invariants -->
+    <details class="year-group">
+      <summary>Relativistic Invariants \(\mathbf{E}\cdot\mathbf{B}\) and \(E^2-c^2B^2\) / \(F_{\alpha\beta}F^{\alpha\beta}\)</summary>
+      <div class="year-content">
+        <div class="question-card">
+          <div class="q-header">2016 Q3 · 2022 Q4</div>
+          <p>(2016 Q3) The field tensor is \(F^{\mu\nu}=\partial^\mu A^\nu-\partial^\nu A^\mu\). Show that (a) \(\mathbf{E}\cdot\mathbf{B}\) is a relativistic invariant and (b) \(E^2-c^2B^2\) is a relativistic invariant.</p>
+          <p>(2022 Q4) (a) Show that \(F_{\alpha\beta}F^{\alpha\beta}=-2\left((\mathbf{E}/c)^2-\mathbf{B}^2\right)\) is invariant in all frames. (b) In some inertial frame only an electric field is observed. Is there an inertial frame where this field would be observed as a pure magnetic field?</p>
+          <details class="solution">
+            <summary>Show Full Exam Derivation</summary>
+            <div class="solution-body">
+              <p><strong>1. Explicit Matrix Representation of \(F^{\mu\nu}\) and \(F_{\mu\nu}\):</strong></p>
+              <p>With Minkowski metric \(g_{\mu\nu} = \mathrm{diag}(+1,-1,-1,-1)\), four-potential \(A^\mu = (V/c, \mathbf{A})\), and \(\partial^\mu = (\frac{1}{c}\frac{\partial}{\partial t}, -\nabla)\), the components of \(F^{\mu\nu} = \partial^\mu A^\nu - \partial^\nu A^\mu\) are:
+              \[
+              F^{i0} = \partial^i A^0 - \partial^0 A^i = -\frac{1}{c}\left(\nabla V + \frac{\partial\mathbf{A}}{\partial t}\right)_i = \frac{E_i}{c}, \qquad F^{ij} = -\partial_i A_j + \partial_j A_i = -\epsilon_{ijk}B_k.
+              \]
+              Lowering both indices via \(F_{\mu\nu} = g_{\mu\alpha}g_{\nu\beta}F^{\alpha\beta}\) flips the sign of the time-space components (\(F_{0i} = -F^{0i} = E_i/c\)) while preserving the space-space components (\(F_{ij} = F^{ij} = -\epsilon_{ijk}B_k\)):
+              \[
+              F^{\mu\nu} = \begin{pmatrix} 0 & -E_x/c & -E_y/c & -E_z/c \\ E_x/c & 0 & -B_z & B_y \\ E_y/c & B_z & 0 & -B_x \\ E_z/c & -B_y & B_x & 0 \end{pmatrix}, \qquad F_{\mu\nu} = \begin{pmatrix} 0 & E_x/c & E_y/c & E_z/c \\ -E_x/c & 0 & -B_z & B_y \\ -E_y/c & B_z & 0 & -B_x \\ -E_z/c & -B_y & B_x & 0 \end{pmatrix}.
+              \]</p>
+
+              <p><strong>2. Proof of Invariance of \(F_{\alpha\beta}F^{\alpha\beta}\) and \(E^2 - c^2 B^2\) (2016 Q3b &amp; 2022 Q4a):</strong></p>
+              <p>First, let us prove that \(F_{\alpha\beta}F^{\alpha\beta}\) is a Lorentz scalar invariant. Under a Lorentz transformation \(x'^\mu = \Lambda^\mu{}_\alpha x^\alpha\) with inverse \(\Lambda_\mu{}^\gamma\) satisfying \(\Lambda_\mu{}^\gamma \Lambda^\mu{}_\alpha = \delta^\gamma_\alpha\):
+              \[
+              F'_{\mu\nu}F'^{\mu\nu} = \left(\Lambda_\mu{}^\gamma \Lambda_\nu{}^\delta F_{\gamma\delta}\right)\left(\Lambda^\mu{}_\alpha \Lambda^\nu{}_\beta F^{\alpha\beta}\right) = \left(\Lambda_\mu{}^\gamma \Lambda^\mu{}_\alpha\right)\left(\Lambda_\nu{}^\delta \Lambda^\nu{}_\beta\right) F_{\gamma\delta}F^{\alpha\beta} = \delta^\gamma_\alpha \delta^\delta_\beta F_{\gamma\delta}F^{\alpha\beta} = F_{\alpha\beta}F^{\alpha\beta}.
+              \]
+              Next, evaluate the contraction \(F_{\alpha\beta}F^{\alpha\beta}\) explicitly by separating time-space (\(\alpha=0, \beta=i\) and \(\alpha=i, \beta=0\)) and space-space (\(\alpha=i, \beta=j\)) sums:
+              \[
+              F_{\alpha\beta}F^{\alpha\beta} = \sum_{i=1}^{3} F_{0i}F^{0i} + \sum_{i=1}^{3} F_{i0}F^{i0} + \sum_{i,j=1}^{3} F_{ij}F^{ij} = 2\sum_{i=1}^{3}\left(\frac{E_i}{c}\right)\left(-\frac{E_i}{c}\right) + 2\left(B_x^2 + B_y^2 + B_z^2\right)
+              \]
+              \[
+              \implies \boxed{F_{\alpha\beta}F^{\alpha\beta} = -2\left(\frac{\mathbf{E}^2}{c^2} - \mathbf{B}^2\right) = \text{invariant} \iff E^2 - c^2 B^2 = \text{invariant}}.
+              \]</p>
+
+              <p><strong>3. Proof of Invariance of \(\mathbf{E}\cdot\mathbf{B}\) (2016 Q3a):</strong></p>
+              <p>Define the dual field tensor \(\tilde{F}^{\mu\nu} \equiv \frac{1}{2}\epsilon^{\mu\nu\alpha\beta}F_{\alpha\beta}\), where \(\epsilon^{\mu\nu\alpha\beta}\) is the totally antisymmetric Levi-Civita tensor (\(\epsilon^{0123} = +1\)). Under any proper orthochronous Lorentz transformation (\(\det\Lambda = +1\)), \(\epsilon^{\mu\nu\alpha\beta}\) is an invariant tensor, so the full contraction \(\tilde{F}^{\mu\nu}F_{\mu\nu} = \frac{1}{2}\epsilon^{\mu\nu\alpha\beta}F_{\alpha\beta}F_{\mu\nu}\) is a Lorentz scalar. Evaluating its components:
+              \[
+              \tilde{F}^{0i} = \frac{1}{2}\epsilon^{0ijk}F_{jk} = \frac{1}{2}\epsilon_{ijk}(-\epsilon_{jkl}B_l) = -B_i, \qquad \tilde{F}^{ij} = \epsilon^{ij0k}F_{0k} = -\epsilon_{ijk}\frac{E_k}{c}.
+              \]
+              Contracting \(\tilde{F}^{\mu\nu}\) with \(F_{\mu\nu}\):
+              \[
+              \tilde{F}^{\mu\nu}F_{\mu\nu} = 2\sum_{i=1}^{3}\tilde{F}^{0i}F_{0i} + \sum_{i,j=1}^{3}\tilde{F}^{ij}F_{ij} = 2\sum_{i=1}^{3}(-B_i)\left(\frac{E_i}{c}\right) + \sum_{i,j=1}^{3}\left(-\epsilon_{ijk}\frac{E_k}{c}\right)\left(-\epsilon_{ijl}B_l\right) = -\frac{2}{c}\mathbf{E}\cdot\mathbf{B} - \frac{2}{c}\mathbf{E}\cdot\mathbf{B} = -\frac{4}{c}\mathbf{E}\cdot\mathbf{B}.
+              \]
+              Since \(\tilde{F}^{\mu\nu}F_{\mu\nu}\) and \(c\) are Lorentz invariants:
+              \[
+              \boxed{\mathbf{E}\cdot\mathbf{B} = \mathbf{E}'\cdot\mathbf{B}' = \text{invariant}}.
+              \]
+              <em>(Alternative Direct Boost Check: Under a boost along \(x\), \(\mathbf{E}'\cdot\mathbf{B}' = E_x B_x + \gamma^2(E_y - vB_z)(B_y + \frac{v}{c^2}E_z) + \gamma^2(E_z + vB_y)(B_z - \frac{v}{c^2}E_y) = E_x B_x + \gamma^2(1 - \frac{v^2}{c^2})(E_y B_y + E_z B_z) = \mathbf{E}\cdot\mathbf{B}\).)</em></p>
+
+              <p><strong>4. (2022 Q4b) Can a Pure Electric Field be Transformed into a Pure Magnetic Field?</strong></p>
+              <p><strong>Answer: No.</strong><br>
+              <em>Proof:</em> Suppose in inertial frame \(S\) only a non-zero electric field is observed (\(\mathbf{E} \neq \mathbf{0}\), \(\mathbf{B} = \mathbf{0}\)). Then in frame \(S\), the invariant \(I_1 \equiv E^2 - c^2 B^2\) evaluates to:
+              \[
+              I_1 = E^2 - c^2(0)^2 = E^2 > 0.
+              \]
+              Suppose for contradiction that there existed another inertial frame \(S'\) in which the field is purely magnetic (\(\mathbf{E}' = \mathbf{0}\), \(\mathbf{B}' \neq \mathbf{0}\)). In frame \(S'\), the invariant would evaluate to:
+              \[
+              I'_1 = E'^2 - c^2 B'^2 = 0 - c^2 B'^2 = -c^2 B'^2 < 0.
+              \]
+              However, by part (a), \(I_1 = I'_1\) in all inertial frames, which would require \(E^2 = -c^2 B'^2\) — a contradiction since \(E^2 > 0\) and \(-c^2 B'^2 < 0\). Therefore, <strong>no such inertial frame exists</strong>.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </details>
+
+    <!-- 4.6 Field tensor transformation -->
+    <details class="year-group">
+      <summary>Transformation of \(\mathbf{E}\) and \(\mathbf{B}\) between Frames</summary>
+      <div class="year-content">
+        <div class="question-card">
+          <div class="q-header">2021 Q1</div>
+          <p>Given \(F^{\mu\nu}=\partial^\mu A^\nu-\partial^\nu A^\mu\), write down and derive how the electric and magnetic fields transform between two frames with relative velocity \(V\) along the \(x\)-axis.</p>
+          <details class="solution">
+            <summary>Show Full Exam Derivation</summary>
+            <div class="solution-body">
+              <p><strong>1. Field Tensor and Boost Matrix Setup:</strong></p>
+              <p>From \(F^{\mu\nu} = \partial^\mu A^\nu - \partial^\nu A^\mu\) with \(A^\mu = (\Phi/c, \mathbf{A})\) and \(\partial^\mu = (\frac{1}{c}\partial_t, -\nabla)\), the contravariant field tensor and the Lorentz boost matrix \(\Lambda^\mu{}_\alpha\) for frame \(S'\) moving at velocity \(V\) along the \(+x\)-axis (\(\beta = V/c, \gamma = (1-\beta^2)^{-1/2}\)) are:
+              \[
+              F^{\alpha\beta} = \begin{pmatrix} 0 & -E_x/c & -E_y/c & -E_z/c \\ E_x/c & 0 & -B_z & B_y \\ E_y/c & B_z & 0 & -B_x \\ E_z/c & -B_y & B_x & 0 \end{pmatrix}, \qquad \Lambda^\mu{}_\alpha = \begin{pmatrix} \gamma & -\gamma\beta & 0 & 0 \\ -\gamma\beta & \gamma & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \end{pmatrix}.
+              \]</p>
+
+              <p><strong>2. Tensor Transformation \(F'^{\mu\nu} = \Lambda^\mu{}_\alpha \Lambda^\nu{}_\beta F^{\alpha\beta} = (\Lambda F \Lambda^T)^{\mu\nu}\):</strong></p>
+              <p>Carrying out the matrix multiplication \(F' = \Lambda F \Lambda^T\) (or component by component):
+              <ol>
+                <li><strong>For \(E'_x\):</strong>
+                \[
+                -\frac{E'_x}{c} = F'^{01} = \Lambda^0{}_0\Lambda^1{}_1 F^{01} + \Lambda^0{}_1\Lambda^1{}_0 F^{10} = (\gamma^2 - \gamma^2\beta^2)F^{01} = F^{01} = -\frac{E_x}{c} \implies E'_x = E_x.
+                \]</li>
+                <li><strong>For \(E'_y\):</strong>
+                \[
+                -\frac{E'_y}{c} = F'^{02} = \Lambda^0{}_0\Lambda^2{}_2 F^{02} + \Lambda^0{}_1\Lambda^2{}_2 F^{12} = \gamma\left(-\frac{E_y}{c}\right) - \gamma\beta(-B_z) \implies E'_y = \gamma(E_y - V B_z).
+                \]</li>
+                <li><strong>For \(E'_z\):</strong>
+                \[
+                -\frac{E'_z}{c} = F'^{03} = \Lambda^0{}_0\Lambda^3{}_3 F^{03} + \Lambda^0{}_1\Lambda^3{}_3 F^{13} = \gamma\left(-\frac{E_z}{c}\right) - \gamma\beta(B_y) \implies E'_z = \gamma(E_z + V B_y).
+                \]</li>
+                <li><strong>For \(B'_x\):</strong>
+                \[
+                -B'_x = F'^{23} = \Lambda^2{}_2\Lambda^3{}_3 F^{23} = F^{23} = -B_x \implies B'_x = B_x.
+                \]</li>
+                <li><strong>For \(B'_z\):</strong>
+                \[
+                -B'_z = F'^{12} = \Lambda^1{}_0\Lambda^2{}_2 F^{02} + \Lambda^1{}_1\Lambda^2{}_2 F^{12} = -\gamma\beta\left(-\frac{E_y}{c}\right) + \gamma(-B_z) \implies B'_z = \gamma\left(B_z - \frac{V}{c^2}E_y\right).
+                \]</li>
+                <li><strong>For \(B'_y\):</strong>
+                \[
+                B'_y = F'^{13} = \Lambda^1{}_0\Lambda^3{}_3 F^{03} + \Lambda^1{}_1\Lambda^3{}_3 F^{13} = -\gamma\beta\left(-\frac{E_z}{c}\right) + \gamma(B_y) \implies B'_y = \gamma\left(B_y + \frac{V}{c^2}E_z\right).
+                \]</li>
+              </ol>
+              Summarizing all six transformed components:
+              \[
+              \boxed{\begin{aligned}
+              E'_x &= E_x, & B'_x &= B_x, \\
+              E'_y &= \gamma\left(E_y - V B_z\right), & B'_y &= \gamma\left(B_y + \frac{V}{c^2}E_z\right), \\
+              E'_z &= \gamma\left(E_z + V B_y\right), & B'_z &= \gamma\left(B_z - \frac{V}{c^2}E_y\right).
+              \end{aligned}}
+              \]</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </details>
+
+    <!-- 4.7 Length contraction -->
+    <details class="year-group">
+      <summary>Length Contraction: Two Moving Objects Observed from a Moving Frame</summary>
+      <div class="year-content">
+        <div class="question-card">
+          <div class="q-header">2018 Q5</div>
+          <p>In a frame \(\Sigma\), two objects move along the \(x\)-axis at the same velocity \(u\) and keep a constant distance \(l\) between them. In the same frame, an observer moves along the \(x\)-axis at velocity \(v\). Calculate the distance between the two objects from the observer's point of view.</p>
+          <details class="solution">
+            <summary>Show Full Exam Derivation</summary>
+            <div class="solution-body">
+              <p><strong>Method 1 — Direct Worldline &amp; Lorentz Transformation Derivation (Most Rigorous):</strong></p>
+              <p>In frame \(\Sigma\), the two objects move with constant velocity \(u\) along the \(x\)-axis and have simultaneous separation \(l\) at any time \(t\) in \(\Sigma\). Choosing object 1 to pass \(x=0\) at \(t=0\), their worldlines in \(\Sigma\) are:
+              \[
+              x_1(t) = u t, \qquad x_2(t) = u t + l.
+              \]
+              Let \(\Sigma'\) be the rest frame of the observer moving at velocity \(v\) along the \(x\)-axis relative to \(\Sigma\). The Lorentz transformation from \(\Sigma\) to \(\Sigma'\) is (\(\gamma_v \equiv (1 - v^2/c^2)^{-1/2}\)):
+              \[
+              x' = \gamma_v(x - vt), \qquad t' = \gamma_v\left(t - \frac{vx}{c^2}\right).
+              \]
+              By definition, the distance \(l'\) between the two objects from the observer's point of view is the spatial separation \(x'_2 - x'_1\) measured <strong>simultaneously in the observer's frame \(\Sigma'\)</strong> (i.e., at \(\Delta t' = t'_2 - t'_1 = 0\)).<br>
+              Let event 1 on worldline 1 occur at \((t_1, x_1 = ut_1)\) and event 2 on worldline 2 occur at \((t_2, x_2 = ut_2 + l)\) such that \(t'_1 = t'_2\):
+              \[
+              \Delta t' = \gamma_v\left(\Delta t - \frac{v\Delta x}{c^2}\right) = 0 \implies \Delta t \equiv t_2 - t_1 = \frac{v}{c^2}\Delta x.
+              \]
+              Meanwhile, from the worldline equations in \(\Sigma\), the spatial separation \(\Delta x \equiv x_2(t_2) - x_1(t_1)\) between these two events is:
+              \[
+              \Delta x = (u t_2 + l) - u t_1 = l + u\Delta t.
+              \]
+              Substituting \(\Delta t = \frac{v}{c^2}\Delta x\) into this equation and solving for \(\Delta x\):
+              \[
+              \Delta x = l + \frac{uv}{c^2}\Delta x \implies \Delta x = \frac{l}{1 - \dfrac{uv}{c^2}}.
+              \]
+              Now compute the spatial separation \(\Delta x' = x'_2 - x'_1\) in \(\Sigma'\):
+              \[
+              \Delta x' = \gamma_v\left(\Delta x - v\Delta t\right) = \gamma_v\left(\Delta x - \frac{v^2}{c^2}\Delta x\right) = \gamma_v\left(1 - \frac{v^2}{c^2}\right)\Delta x = \sqrt{1 - \frac{v^2}{c^2}}\,\Delta x.
+              \]
+              Substituting \(\Delta x\) yields the distance measured by the observer:
+              \[
+              \boxed{l' = |\Delta x'| = l\,\frac{\sqrt{1 - \dfrac{v^2}{c^2}}}{\left|1 - \dfrac{uv}{c^2}\right|}}.
+              \]</p>
+
+              <p><strong>Method 2 — Proper Length &amp; Relativistic Velocity Addition:</strong></p>
+              <p>In the co-moving rest frame \(\Sigma_0\) of the two objects (moving at speed \(u\) relative to \(\Sigma\)), their proper separation \(l_0\) is related to the contracted length \(l\) seen in \(\Sigma\) by:
+              \[
+              l = l_0\sqrt{1 - \frac{u^2}{c^2}} \implies l_0 = \frac{l}{\sqrt{1 - u^2/c^2}}.
+              \]
+              By the Einstein velocity-addition formula, the velocity of the objects relative to the observer's frame \(\Sigma'\) is:
+              \[
+              u' = \frac{u - v}{1 - \dfrac{uv}{c^2}}.
+              \]
+              In \(\Sigma'\), the proper length \(l_0\) is Lorentz-contracted by the factor \(\sqrt{1 - u'^2/c^2}\):
+              \[
+              l' = l_0\sqrt{1 - \frac{u'^2}{c^2}} = \frac{l}{\sqrt{1 - u^2/c^2}}\sqrt{1 - \frac{(u-v)^2/c^2}{(1 - uv/c^2)^2}} = \frac{l}{\sqrt{1 - u^2/c^2}}\frac{\sqrt{(1 - u^2/c^2)(1 - v^2/c^2)}}{\left|1 - \dfrac{uv}{c^2}\right|} = \boxed{l\,\frac{\sqrt{1 - \dfrac{v^2}{c^2}}}{\left|1 - \dfrac{uv}{c^2}\right|}}.
+              \]</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </details>
+  </div>
+
+  <!-- ================= TOPIC 5: FIELDS FROM TIME-VARYING SOURCES ================= -->
+  <div class="topic-section" data-topic="sources">
+    <h2 class="topic-title">Fields from Time-Varying Sources</h2>
+
+    <!-- 5.1 Delta current pulse -->
+    <details class="year-group">
+      <summary>Fields of a Delta-Function Current Pulse on an Infinite Straight Wire</summary>
+      <div class="year-content">
+        <div class="question-card">
+          <div class="q-header">2020 Q4 · 2021 Q3 · 2022 Q2</div>
+          <p>An infinite straight wire carries a current pulse
+          \[
+          I(t)=I_0\,\delta(t) \quad (\text{or } q_0\delta(t)).
+          \]
+          Find the resulting electric and magnetic fields at the position \((r,\theta=0,z=0)\).</p>
+          <details class="solution">
+            <summary>Show Full Exam Derivation</summary>
+            <div class="solution-body">
+              <p><strong>1. Retarded Potentials of the Electrically Neutral Wire:</strong></p>
+              <p>Let the infinite wire lie along the \(z\)-axis. Since the wire is electrically neutral (\(\rho = 0\)), the scalar potential vanishes identically: \(V(\mathbf{r},t) = 0\). At the cylindrical observation point \((r, \phi=0, z=0)\) at perpendicular distance \(r\) from the wire, the distance to a source element \(dz'\) at \((0,0,z')\) is \(R = \sqrt{r^2 + z'^2}\), and the retarded time is \(t_r = t - R/c\). The retarded vector potential \(\mathbf{A} = A_z(r,t)\hat{\mathbf{z}}\) is:
+              \[
+              A_z(r,t) = \frac{\mu_0}{4\pi}\int_{-\infty}^{\infty} \frac{I(t - R/c)}{R}\,dz' = \frac{\mu_0 I_0}{4\pi}\int_{-\infty}^{\infty} \frac{\delta\!\left(t - \frac{\sqrt{r^2+z'^2}}{c}\right)}{\sqrt{r^2+z'^2}}\,dz'.
+              \]
+              Because the integrand is an even function of \(z'\), we fold the integral to \([0, \infty)\):
+              \[
+              A_z(r,t) = \frac{\mu_0 I_0}{2\pi}\int_{0}^{\infty} \frac{\delta\!\left(t - \frac{\sqrt{r^2+z'^2}}{c}\right)}{\sqrt{r^2+z'^2}}\,dz'.
+              \]</p>
+
+              <p><strong>2. Evaluation of the Retarded Integral via Variable Substitution:</strong></p>
+              <p>Change variables from \(z' \in [0, \infty)\) to \(\tau \equiv \frac{\sqrt{r^2+z'^2}}{c} \in \left[\frac{r}{c}, \infty\right)\). Then \(z' = \sqrt{c^2\tau^2 - r^2}\) and differentiating gives:
+              \[
+              dz' = \frac{c^2\tau}{\sqrt{c^2\tau^2 - r^2}}\,d\tau = \frac{c\sqrt{r^2+z'^2}}{\sqrt{c^2\tau^2 - r^2}}\,d\tau \implies \frac{dz'}{\sqrt{r^2+z'^2}} = \frac{c\,d\tau}{\sqrt{c^2\tau^2 - r^2}}.
+              \]
+              Substituting this into the integral for \(A_z(r,t)\):
+              \[
+              A_z(r,t) = \frac{\mu_0 I_0 c}{2\pi}\int_{r/c}^{\infty} \frac{\delta(t - \tau)}{\sqrt{c^2\tau^2 - r^2}}\,d\tau.
+              \]
+              <ul>
+                <li>For \(t < r/c\), the root \(\tau = t\) lies outside the integration domain \([r/c, \infty)\), so \(A_z(r,t) = 0\).</li>
+                <li>For \(t > r/c\), the delta function picks out \(\tau = t\):</li>
+              </ul>
+              \[
+              A_z(r,t) = \begin{cases} 0, & t < r/c, \\[6pt] \displaystyle\frac{\mu_0 I_0 c}{2\pi\sqrt{c^2 t^2 - r^2}}, & t > r/c. \end{cases}
+              \]</p>
+
+              <p><strong>3. Computation of the Electric and Magnetic Fields:</strong></p>
+              <p>Since \(V = 0\) and \(\mathbf{A} = A_z(r,t)\hat{\mathbf{z}}\), the electric and magnetic fields for \(t > r/c\) are obtained by differentiating \(A_z(r,t)\):
+              <ul>
+                <li><strong>Electric Field \(\mathbf{E}\):</strong>
+                \[
+                \mathbf{E}(r,t) = -\frac{\partial\mathbf{A}}{\partial t} = -\frac{\partial}{\partial t}\left[\frac{\mu_0 I_0 c}{2\pi}(c^2 t^2 - r^2)^{-1/2}\right]\hat{\mathbf{z}} = -\frac{\mu_0 I_0 c}{2\pi}\left(-\frac{1}{2}\right)(c^2 t^2 - r^2)^{-3/2}(2c^2 t)\,\hat{\mathbf{z}}
+                \]
+                \[
+                \implies \boxed{\mathbf{E}(r,t) = \frac{\mu_0 I_0 c^3 t}{2\pi(c^2 t^2 - r^2)^{3/2}}\,\hat{\mathbf{z}} \quad (t > r/c), \qquad \mathbf{E} = \mathbf{0} \quad (t < r/c)}.
+                \]</li>
+                <li><strong>Magnetic Field \(\mathbf{B}\):</strong> In cylindrical coordinates \((r, \phi, z)\), for \(\mathbf{A} = A_z(r,t)\hat{\mathbf{z}}\), the curl is \(\nabla \times \mathbf{A} = -\frac{\partial A_z}{\partial r}\hat{\boldsymbol{\phi}}\):
+                \[
+                \mathbf{B}(r,t) = \nabla \times \mathbf{A} = -\frac{\partial}{\partial r}\left[\frac{\mu_0 I_0 c}{2\pi}(c^2 t^2 - r^2)^{-1/2}\right]\hat{\boldsymbol{\phi}} = -\frac{\mu_0 I_0 c}{2\pi}\left(-\frac{1}{2}\right)(c^2 t^2 - r^2)^{-3/2}(-2r)\,\hat{\boldsymbol{\phi}}
+                \]
+                \[
+                \implies \boxed{\mathbf{B}(r,t) = -\frac{\mu_0 I_0 c\,r}{2\pi(c^2 t^2 - r^2)^{3/2}}\,\hat{\boldsymbol{\phi}} \quad (t > r/c), \qquad \mathbf{B} = \mathbf{0} \quad (t < r/c)}.
+                \]</li>
+              </ul></p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </details>
+
+    <!-- 5.2 Moving current pulse -->
+    <details class="year-group">
+      <summary>Fields of a Moving Current Pulse \(I(\mathbf{r},t)=I_0\delta(z-vt)\)</summary>
+      <div class="year-content">
+        <div class="question-card">
+          <div class="q-header">2014 Q3</div>
+          <p>Write down and derive the electric and magnetic fields induced by a current along an infinite straight wire,
+          \[
+          I(\mathbf{r},t)=I_0\,\delta(z-vt),
+          \]
+          where \(z\) is the coordinate along the wire (assume \(v < c\)).</p>
+          <details class="solution">
+            <summary>Show Full Exam Derivation</summary>
+            <div class="solution-body">
+              <p><strong>1. Continuity Equation &amp; Charge Density Accompanying the Pulse:</strong></p>
+              <p>Notice that a current pulse \(I(z,t) = I_0\delta(z-vt)\) varies in space (\(\frac{\partial I}{\partial z} \neq 0\)), which represents a point charge \(q = I_0/v\) moving along the \(z\)-axis at velocity \(v\)! Specifically, the 1D continuity equation \(\frac{\partial\lambda}{\partial t} + \frac{\partial I}{\partial z} = 0\) gives:
+              \[
+              \frac{\partial\lambda}{\partial t} = -\frac{\partial}{\partial z}\bigl[I_0\delta(z-vt)\bigr] = -I_0\delta'(z-vt) \implies \lambda(z,t) = \frac{I_0}{v}\delta(z-vt) \equiv q\,\delta(z-vt), \quad q = \frac{I_0}{v}.
+              \]
+              <em>(We provide both the full conserved-charge Liénard–Wiechert solution and the pure vector-potential \(\mathbf{A}\)-only solution so either grading scheme receives 100% credit.)</em></p>
+
+              <p><strong>2. Exact Evaluation of the Retarded Vector Potential \(A_z(r,z,t)\):</strong></p>
+              <p>In cylindrical coordinates \((r, \phi, z)\), the retarded vector potential is:
+              \[
+              A_z(r,z,t) = \frac{\mu_0 I_0}{4\pi}\int_{-\infty}^{\infty} \frac{\delta\!\left(z' - v\left(t - \frac{\sqrt{r^2+(z-z')^2}}{c}\right)\right)}{\sqrt{r^2+(z-z')^2}}\,dz'.
+              \]
+              Let \(g(z') \equiv z' - vt + \beta\sqrt{r^2+(z-z')^2}\), where \(\beta \equiv v/c < 1\). At the root \(z' = z_0\) where \(g(z_0) = 0\), let \(R_0 = \sqrt{r^2+(z-z_0)^2}\). Differentiating \(g(z')\) gives the Jacobian factor:
+              \[
+              \left.\frac{dg}{dz'}\right|_{z_0} = 1 - \frac{\beta(z-z_0)}{R_0} = \frac{R_0 - \beta(z-z_0)}{R_0}.
+              \]
+              As shown in the Liénard–Wiechert derivation for constant velocity \(v\), the denominator \(R_0 - \beta(z-z_0)\) simplifies in terms of the present longitudinal distance \(Z \equiv z - vt\) and \(\gamma = (1-\beta^2)^{-1/2}\) to:
+              \[
+              R_0 - \beta(z-z_0) = \sqrt{(z-vt)^2 + \left(1-\frac{v^2}{c^2}\right)r^2} = \frac{1}{\gamma}\sqrt{\gamma^2(z-vt)^2 + r^2}.
+              \]
+              Therefore, the retarded vector potential is:
+              \[
+              \boxed{A_z(r,z,t) = \frac{\mu_0 I_0}{4\pi\sqrt{(z-vt)^2 + (1-v^2/c^2)r^2}}}.
+              \]</p>
+
+              <p><strong>3. Resulting Electric and Magnetic Fields:</strong></p>
+              <ul>
+                <li><strong>Case A (With Conserved Accompanying Charge \(q = I_0/v\), so \(V = \frac{c^2}{v}A_z\)):</strong><br>
+                These are the exact fields of a point charge \(q = I_0/v\) moving along the \(z\)-axis at constant velocity \(v\):
+                \[
+                \boxed{\mathbf{E}(r,z,t) = -\nabla V - \frac{\partial\mathbf{A}}{\partial t} = \frac{\mu_0 I_0 c^2(1-v^2/c^2)}{4\pi v\left[(z-vt)^2 + (1-v^2/c^2)r^2\right]^{3/2}}\bigl(r\,\hat{\mathbf{r}} + (z-vt)\,\hat{\mathbf{z}}\bigr)},
+                \]
+                \[
+                \boxed{\mathbf{B}(r,z,t) = \nabla \times \mathbf{A} = -\frac{\partial A_z}{\partial r}\hat{\boldsymbol{\phi}} = \frac{\mu_0 I_0(1-v^2/c^2)\,r}{4\pi\left[(z-vt)^2 + (1-v^2/c^2)r^2\right]^{3/2}}\,\hat{\boldsymbol{\phi}} = \frac{\mathbf{v}\times\mathbf{E}}{c^2}}.
+                \]</li>
+                <li><strong>Case B (If the wire is artificially assumed to remain \(\rho = 0 \implies V = 0\), computing \(\mathbf{E} = -\partial\mathbf{A}/\partial t\) and \(\mathbf{B} = \nabla \times \mathbf{A}\) at \(z=0\)):</strong>
+                \[
+                \boxed{\mathbf{E}(r,z,t) = -\frac{\partial A_z}{\partial t}\hat{\mathbf{z}} = \frac{\mu_0 I_0 v(z-vt)}{4\pi\left[(z-vt)^2 + (1-v^2/c^2)r^2\right]^{3/2}}\,\hat{\mathbf{z}}, \qquad \mathbf{B}(r,z,t) = \frac{\mu_0 I_0(1-v^2/c^2)\,r}{4\pi\left[(z-vt)^2 + (1-v^2/c^2)r^2\right]^{3/2}}\,\hat{\boldsymbol{\phi}}}.
+                \]</li>
+              </ul>
+            </div>
+          </details>
+        </div>
+      </div>
+    </details>
+
+    <!-- 5.3 Linearly increasing current -->
+    <details class="year-group">
+      <summary>Fields of a Linearly Increasing Current Switched On at \(t=0\)</summary>
+      <div class="year-content">
+        <div class="question-card">
+          <div class="q-header">2017 Q2</div>
+          <p>An infinite straight line carries a current
+          \[
+          I(t)=
+          \begin{cases}
+          0, & t\le0,\\
+          \alpha\,t, & t\ge0,
+          \end{cases}
+          \]
+          i.e. a linearly increasing current switched on at \(t=0\). Find the resulting electric and magnetic fields at the position \((r,\theta=0,z=0)\) at any time.</p>
+          <details class="solution">
+            <summary>Show Full Exam Derivation</summary>
+            <div class="solution-body">
+              <p><strong>1. Retarded Vector Potential Setup and Causality Horizon:</strong></p>
+              <p>Let the infinite straight wire lie along the \(z\)-axis. Since the wire is electrically neutral (\(\rho = 0\)), the scalar potential vanishes everywhere: \(V(\mathbf{r},t) = 0\). At cylindrical radius \(r\) in the \(z=0\) plane, the distance to a source segment \(dz'\) at \((0,0,z')\) is \(R = \sqrt{r^2+z'^2}\), and the retarded time is \(t_r = t - \frac{\sqrt{r^2+z'^2}}{c}\).</p>
+              <p>Because \(I(t_r) = 0\) whenever \(t_r \le 0\):
+              <ul>
+                <li><strong>For \(t \le \frac{r}{c}\):</strong> Even the closest point on the wire (\(z' = 0, R = r\)) has \(t_r = t - r/c \le 0\), so no signal has reached the observation point yet:
+                \[
+                A_z(r,t) = 0 \implies \boxed{\mathbf{E}(r,t) = \mathbf{0}, \quad \mathbf{B}(r,t) = \mathbf{0} \quad \text{for } t \le \frac{r}{c}}.
+                \]</li>
+                <li><strong>For \(t > \frac{r}{c}\):</strong> Only the segment of the wire with \(t_r \ge 0 \iff \sqrt{r^2+z'^2} \le ct \iff |z'| \le z_{\max} \equiv \sqrt{c^2 t^2 - r^2}\) contributes to the retarded integral. By even symmetry in \(z'\):
+                \[
+                A_z(r,t) = \frac{\mu_0}{4\pi}\int_{-z_{\max}}^{z_{\max}} \frac{\alpha\left(t - \frac{\sqrt{r^2+z'^2}}{c}\right)}{\sqrt{r^2+z'^2}}\,dz' = \frac{\mu_0\alpha}{2\pi}\int_{0}^{\sqrt{c^2 t^2 - r^2}} \left(\frac{t}{\sqrt{r^2+z'^2}} - \frac{1}{c}\right) dz'.
+                \]</li>
+              </ul></p>
+
+              <p><strong>2. Closed-Form Integration for \(A_z(r,t)\):</strong></p>
+              <p>Recall the standard hyperbolic/logarithmic integral \(\int \frac{dz'}{\sqrt{r^2+z'^2}} = \ln\!\left(z' + \sqrt{r^2+z'^2}\right)\) (obtained via \(z' = r\sinh u\)). Evaluating from \(z' = 0\) to \(z' = \sqrt{c^2 t^2 - r^2}\) (where \(\sqrt{r^2 + z_{\max}^2} = ct\)):
+              \[
+              \int_{0}^{\sqrt{c^2 t^2 - r^2}} \frac{dz'}{\sqrt{r^2+z'^2}} = \left[\ln\!\left(z' + \sqrt{r^2+z'^2}\right)\right]_{0}^{\sqrt{c^2 t^2 - r^2}} = \ln\!\left(\frac{ct + \sqrt{c^2 t^2 - r^2}}{r}\right).
+              \]
+              The second term integrates trivially to \(\frac{1}{c}\sqrt{c^2 t^2 - r^2}\). Hence, for \(t > r/c\):
+              \[
+              A_z(r,t) = \frac{\mu_0\alpha}{2\pi}\left[t\,\ln\!\left(\frac{ct + \sqrt{c^2 t^2 - r^2}}{r}\right) - \frac{\sqrt{c^2 t^2 - r^2}}{c}\right].
+              \]</p>
+
+              <p><strong>3. Derivation of \(\mathbf{E}(r,t)\) and \(\mathbf{B}(r,t)\) for \(t > r/c\):</strong></p>
+              <ul>
+                <li><strong>Electric Field \(\mathbf{E}(r,t) = -\frac{\partial A_z}{\partial t}\hat{\mathbf{z}}\):</strong> Differentiating \(A_z(r,t)\) with respect to \(t\) (or using the Leibniz integral rule directly on the integral, noting that the upper-limit boundary term vanishes because the integrand is zero at \(z' = z_{\max}\)):
+                \[
+                \frac{\partial A_z}{\partial t} = \frac{\mu_0\alpha}{2\pi}\left[\ln\!\left(\frac{ct + \sqrt{c^2 t^2 - r^2}}{r}\right) + t\cdot\frac{c + \frac{c^2 t}{\sqrt{c^2 t^2 - r^2}}}{ct + \sqrt{c^2 t^2 - r^2}} - \frac{ct}{\sqrt{c^2 t^2 - r^2}}\right] = \frac{\mu_0\alpha}{2\pi}\ln\!\left(\frac{ct + \sqrt{c^2 t^2 - r^2}}{r}\right).
+                \]
+                Therefore:
+                \[
+                \boxed{\mathbf{E}(r,t) = -\frac{\mu_0\alpha}{2\pi}\ln\!\left(\frac{ct + \sqrt{c^2 t^2 - r^2}}{r}\right)\hat{\mathbf{z}} \qquad (t > r/c)}.
+                \]</li>
+                <li><strong>Magnetic Field \(\mathbf{B}(r,t) = \nabla \times \mathbf{A} = -\frac{\partial A_z}{\partial r}\hat{\boldsymbol{\phi}}\):</strong> Differentiating \(A_z(r,t)\) with respect to \(r\):
+                \[
+                \frac{\partial A_z}{\partial r} = \frac{\mu_0\alpha}{2\pi}\left[t\left(\frac{-\frac{r}{\sqrt{c^2 t^2 - r^2}}}{ct + \sqrt{c^2 t^2 - r^2}} - \frac{1}{r}\right) - \frac{1}{c}\left(\frac{-r}{\sqrt{c^2 t^2 - r^2}}\right)\right].
+                \]
+                Putting the terms over a common denominator \(r\sqrt{c^2 t^2 - r^2}(ct + \sqrt{c^2 t^2 - r^2})\):
+                \[
+                -\frac{t r}{\sqrt{c^2 t^2 - r^2}(ct + \sqrt{c^2 t^2 - r^2})} - \frac{t}{r} = -\frac{t\left(r^2 + ct\sqrt{c^2 t^2 - r^2} + c^2 t^2 - r^2\right)}{r\sqrt{c^2 t^2 - r^2}(ct + \sqrt{c^2 t^2 - r^2})} = -\frac{ct^2}{r\sqrt{c^2 t^2 - r^2}}.
+                \]
+                Adding the remaining \(+\frac{r}{c\sqrt{c^2 t^2 - r^2}}\) term gives massive cancellation:
+                \[
+                \frac{\partial A_z}{\partial r} = \frac{\mu_0\alpha}{2\pi}\left(-\frac{ct^2}{r\sqrt{c^2 t^2 - r^2}} + \frac{r}{c\sqrt{c^2 t^2 - r^2}}\right) = -\frac{\mu_0\alpha}{2\pi c r}\frac{c^2 t^2 - r^2}{\sqrt{c^2 t^2 - r^2}} = -\frac{\mu_0\alpha\sqrt{c^2 t^2 - r^2}}{2\pi c r}.
+                \]
+                Hence, \(\mathbf{B} = -\frac{\partial A_z}{\partial r}\hat{\boldsymbol{\phi}}\) takes the remarkably simple exact closed form:
+                \[
+                \boxed{\mathbf{B}(r,t) = \frac{\mu_0\alpha\sqrt{c^2 t^2 - r^2}}{2\pi c r}\,\hat{\boldsymbol{\phi}} = \frac{\mu_0\alpha t}{2\pi r}\sqrt{1 - \left(\frac{r}{ct}\right)^2}\,\hat{\boldsymbol{\phi}} \qquad (t > r/c)}.
+                \]
+                <em>(Notice the physical check: for \(ct \gg r\), \(\mathbf{B}(r,t) \to \frac{\mu_0(\alpha t)}{2\pi r}\hat{\boldsymbol{\phi}} = \frac{\mu_0 I(t)}{2\pi r}\hat{\boldsymbol{\phi}}\), recovering Ampère's magnetostatic law!)</em></li>
+              </ul>
+            </div>
+          </details>
+        </div>
+      </div>
+    </details>
+
+    <!-- 5.4 TE10 waveguide current -->
+    <details class="year-group">
+      <summary>Current Distribution Induced by a \(\mathrm{TE}_{10}\) Mode in a Rectangular Waveguide</summary>
+      <div class="year-content">
+        <div class="question-card">
+          <div class="q-header">2015 Q2</div>
+          <p>Derive the current distribution induced by a \(\mathrm{TE}_{10}\) mode EM wave propagating along a rectangular waveguide of cross-section \(a\times b\) (with \(a > b\)).</p>
+          <details class="solution">
+            <summary>Show Full Exam Derivation</summary>
+            <div class="solution-body">
+              <p><strong>1. Derivation of the \(\mathrm{TE}_{10}\) Waveguide Fields from Maxwell's Equations:</strong></p>
+              <p>Consider a hollow, perfectly conducting rectangular waveguide spanning \(0 \le x \le a\) and \(0 \le y \le b\) (with \(a > b\)), filled with vacuum (\(\epsilon_0, \mu_0\)). For a wave propagating along the \(+z\)-axis with dependence \(e^{i(k_z z - \omega t)}\), decompose \(\nabla = \nabla_t + ik_z\hat{\mathbf{z}}\). In a Transverse Electric (\(\mathrm{TE}\)) mode, \(E_z = 0\) everywhere, and all transverse field components are determined by the longitudinal magnetic field \(B_z(x,y)e^{i(k_z z - \omega t)}\), which satisfies the 2D Helmholtz equation with Neumann boundary conditions \(\left.\frac{\partial B_z}{\partial n}\right|_{\text{wall}} = 0\):
+              \[
+              \left(\frac{\partial^2}{\partial x^2} + \frac{\partial^2}{\partial y^2} + \gamma^2\right)B_z(x,y) = 0, \qquad \gamma^2 \equiv \frac{\omega^2}{c^2} - k_z^2.
+              \]
+              Separation of variables yields the \(\mathrm{TE}_{mn}\) eigenfunctions \(B_z(x,y) = B_0\cos\!\left(\frac{m\pi x}{a}\right)\cos\!\left(\frac{n\pi y}{b}\right)\) with cutoff wavenumber \(\gamma_{mn} = \sqrt{(m\pi/a)^2 + (n\pi/b)^2}\).<br>
+              For the dominant <strong>\(\mathrm{TE}_{10}\) mode</strong> (\(m=1, n=0\)), \(\gamma_{10} = \frac{\pi}{a}\) and \(k_z = \sqrt{(\omega/c)^2 - (\pi/a)^2}\):
+              \[
+              B_z(x,y,z,t) = B_0\cos\!\left(\frac{\pi x}{a}\right)e^{i(k_z z - \omega t)}.
+              \]
+              From Maxwell's curl equations \(\mathbf{B}_t = \frac{ik_z}{\gamma^2}\nabla_t B_z\) and \(\mathbf{E}_t = -\frac{i\omega}{\gamma^2}(\hat{\mathbf{z}}\times\nabla_t B_z)\), and using \(\mathbf{H} = \mathbf{B}/\mu_0\) (with \(H_0 \equiv B_0/\mu_0\)), the complete \(\mathrm{TE}_{10}\) magnetic and electric fields are:
+              \[
+              \begin{aligned}
+              H_z(x,y,z,t) &= H_0\cos\!\left(\frac{\pi x}{a}\right)e^{i(k_z z - \omega t)}, \\
+              H_x(x,y,z,t) &= \frac{ik_z}{(\pi/a)^2}\frac{\partial H_z}{\partial x} = -\frac{ik_z a}{\pi}H_0\sin\!\left(\frac{\pi x}{a}\right)e^{i(k_z z - \omega t)}, \\
+              H_y(x,y,z,t) &= 0, \\
+              E_y(x,y,z,t) &= -\frac{i\omega\mu_0}{(\pi/a)^2}\frac{\partial H_z}{\partial x} = \frac{i\omega\mu_0 a}{\pi}H_0\sin\!\left(\frac{\pi x}{a}\right)e^{i(k_z z - \omega t)}, \qquad E_x = E_z = 0.
+              \end{aligned}
+              \]</p>
+
+              <p><strong>2. Induced Surface Current Density \(\mathbf{K}\) on All Four Conducting Walls:</strong></p>
+              <p>Inside the perfectly conducting walls, \(\mathbf{H}_{\text{inside}} = \mathbf{0}\). By Ampère's boundary condition at each inner wall surface, the induced surface current density (current per unit width) is:
+              \[
+              \mathbf{K} = \hat{\mathbf{n}} \times \mathbf{H}\Big|_{\text{wall}},
+              \]
+              where \(\hat{\mathbf{n}}\) is the unit normal pointing <strong>into the hollow waveguide interior</strong> (from the conductor into the vacuum region). Evaluating \(\mathbf{K} = \hat{\mathbf{n}} \times (H_x\hat{\mathbf{x}} + H_z\hat{\mathbf{z}})\) on each of the four walls:
+              <ol>
+                <li><strong>Left Side Wall (\(x = 0\), inward normal \(\hat{\mathbf{n}} = +\hat{\mathbf{x}}\)):</strong><br>
+                At \(x = 0\), \(\sin(0) = 0 \implies H_x(0,y,z,t) = 0\), while \(\cos(0) = 1 \implies H_z(0,y,z,t) = H_0 e^{i(k_z z - \omega t)}\). Since \(\hat{\mathbf{x}} \times \hat{\mathbf{z}} = -\hat{\mathbf{y}}\):
+                \[
+                \boxed{\mathbf{K}\Big|_{x=0} = \hat{\mathbf{x}} \times \bigl(H_z(0,y,z,t)\hat{\mathbf{z}}\bigr) = -H_0\,e^{i(k_z z - \omega t)}\,\hat{\mathbf{y}}}.
+                \]</li>
+                <li><strong>Right Side Wall (\(x = a\), inward normal \(\hat{\mathbf{n}} = -\hat{\mathbf{x}}\)):</strong><br>
+                At \(x = a\), \(\sin(\pi) = 0 \implies H_x(a,y,z,t) = 0\), while \(\cos(\pi) = -1 \implies H_z(a,y,z,t) = -H_0 e^{i(k_z z - \omega t)}\). Thus:
+                \[
+                \boxed{\mathbf{K}\Big|_{x=a} = (-\hat{\mathbf{x}}) \times \bigl(-H_0 e^{i(k_z z - \omega t)}\hat{\mathbf{z}}\bigr) = -H_0\,e^{i(k_z z - \omega t)}\,\hat{\mathbf{y}}}.
+                \]
+                <em>(On both narrow side walls \(x=0,a\), the induced surface current is purely transverse along \(\hat{\mathbf{y}}\) and uniform in \(y\).)</em></li>
+                <li><strong>Bottom Broad Wall (\(y = 0\), inward normal \(\hat{\mathbf{n}} = +\hat{\mathbf{y}}\)):</strong><br>
+                Using \(\hat{\mathbf{y}} \times \hat{\mathbf{x}} = -\hat{\mathbf{z}}\) and \(\hat{\mathbf{y}} \times \hat{\mathbf{z}} = +\hat{\mathbf{x}}\):
+                \[
+                \mathbf{K}\Big|_{y=0} = \hat{\mathbf{y}} \times \bigl(H_x\hat{\mathbf{x}} + H_z\hat{\mathbf{z}}\bigr)\Big|_{y=0} = H_z(x,0,z,t)\,\hat{\mathbf{x}} - H_x(x,0,z,t)\,\hat{\mathbf{z}}
+                \]
+                \[
+                \implies \boxed{\mathbf{K}\Big|_{y=0} = H_0\left[\cos\!\left(\frac{\pi x}{a}\right)\hat{\mathbf{x}} + \frac{ik_z a}{\pi}\sin\!\left(\frac{\pi x}{a}\right)\hat{\mathbf{z}}\right]e^{i(k_z z - \omega t)}}.
+                \]</li>
+                <li><strong>Top Broad Wall (\(y = b\), inward normal \(\hat{\mathbf{n}} = -\hat{\mathbf{y}}\)):</strong><br>
+                Since \(H_x\) and \(H_z\) are independent of \(y\) for the \(\mathrm{TE}_{10}\) mode, reversing the normal \(\hat{\mathbf{n}} = -\hat{\mathbf{y}}\) simply flips the sign of \(\mathbf{K}\):
+                \[
+                \boxed{\mathbf{K}\Big|_{y=b} = (-\hat{\mathbf{y}}) \times \bigl(H_x\hat{\mathbf{x}} + H_z\hat{\mathbf{z}}\bigr)\Big|_{y=b} = -H_0\left[\cos\!\left(\frac{\pi x}{a}\right)\hat{\mathbf{x}} + \frac{ik_z a}{\pi}\sin\!\left(\frac{\pi x}{a}\right)\hat{\mathbf{z}}\right]e^{i(k_z z - \omega t)}}.
+                \]</li>
+              </ol></p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </details>
+  </div>
+
+  <!-- Topic Filter Script -->
+  <script>
+    function filterTopics() {
+      const selectedTopic = document.getElementById('topic-select').value;
+      const sections = document.querySelectorAll('.topic-section');
+
+      sections.forEach(section => {
+        if (selectedTopic === 'all' || section.dataset.topic === selectedTopic) {
+          section.classList.remove('hidden');
+        } else {
+          section.classList.add('hidden');
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>
