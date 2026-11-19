@@ -1785,15 +1785,29 @@
               \[
               A_z(r,z,t) = \frac{\mu_0 I_0}{4\pi}\int_{-\infty}^{\infty} \frac{\delta\!\left(z' - v\left(t - \frac{\sqrt{r^2+(z-z')^2}}{c}\right)\right)}{\sqrt{r^2+(z-z')^2}}\,dz'.
               \]
-              Let \(g(z') \equiv z' - vt + \beta\sqrt{r^2+(z-z')^2}\), where \(\beta \equiv v/c < 1\). At the root \(z' = z_0\) where \(g(z_0) = 0\), let \(R_0 = \sqrt{r^2+(z-z_0)^2}\). Differentiating \(g(z')\) gives the Jacobian factor:
+              The argument of the Dirac delta function is \(f(z') = z' - vt + \frac{v}{c}\sqrt{r^2+(z-z')^2}\). To evaluate the integral, we require the derivative of the argument with respect to \(z'\):
               \[
-              \left.\frac{dg}{dz'}\right|_{z_0} = 1 - \frac{\beta(z-z_0)}{R_0} = \frac{R_0 - \beta(z-z_0)}{R_0}.
+              \frac{df}{dz'} = 1 - \frac{v}{c}\frac{z-z'}{\sqrt{r^2+(z-z')^2}} = \frac{\sqrt{r^2+(z-z')^2} - \frac{v}{c}(z-z')}{\sqrt{r^2+(z-z')^2}}.
               \]
-              As shown in the Liénard–Wiechert derivation for constant velocity \(v\), the denominator \(R_0 - \beta(z-z_0)\) simplifies in terms of the present longitudinal distance \(Z \equiv z - vt\) and \(\gamma = (1-\beta^2)^{-1/2}\) to:
+              Applying the composition property of the Dirac delta function \(\int \delta(f(z')) h(z') \, dz' = \sum \frac{h(z')}{\left|df/dz'\right|}\), the term \(\sqrt{r^2+(z-z')^2}\) in the denominator of the integrand cancels precisely with the denominator of the derivative, yielding:
               \[
-              R_0 - \beta(z-z_0) = \sqrt{(z-vt)^2 + \left(1-\frac{v^2}{c^2}\right)r^2} = \frac{1}{\gamma}\sqrt{\gamma^2(z-vt)^2 + r^2}.
+              A_z(r,z,t) = \frac{\mu_0 I_0}{4\pi} \frac{1}{\left|\sqrt{r^2+(z-z')^2} - \frac{v}{c}(z-z')\right|},
               \]
-              Therefore, the retarded vector potential is:
+              evaluated at the root of \(f(z') = 0\). At this root, we have \(z' - vt = -\frac{v}{c}\sqrt{r^2+(z-z')^2}\). By adding and subtracting \(z\), this implies \((z - z') - (z - vt) = \frac{v}{c}\sqrt{r^2+(z-z')^2}\). Squaring both sides produces a quadratic relation for \((z-z')\):
+              \[
+              (z-z')^2 - 2(z-z')(z-vt) + (z-vt)^2 = \frac{v^2}{c^2}\left(r^2 + (z-z')^2\right) \implies -\left(1 - \frac{v^2}{c^2}\right)(z-z')^2 + 2(z-z')(z-vt) = (z-vt)^2 - \frac{v^2}{c^2}r^2.
+              \]
+              We can now explicitly evaluate the squared denominator of the vector potential by expanding it and substituting the quadratic relation:
+              \[
+              \begin{aligned}
+              \left(\sqrt{r^2+(z-z')^2} - \frac{v}{c}(z-z')\right)^2 &= r^2 + (z-z')^2 - 2(z-z')\left[\frac{v}{c}\sqrt{r^2+(z-z')^2}\right] + \frac{v^2}{c^2}(z-z')^2 \\
+              &= r^2 + (z-z')^2 - 2(z-z')\left[(z-z') - (z-vt)\right] + \frac{v^2}{c^2}(z-z')^2 \\
+              &= r^2 - \left(1 - \frac{v^2}{c^2}\right)(z-z')^2 + 2(z-z')(z-vt) \\
+              &= r^2 + (z-vt)^2 - \frac{v^2}{c^2}r^2 \\
+              &= (z-vt)^2 + \left(1-\frac{v^2}{c^2}\right)r^2.
+              \end{aligned}
+              \]
+              Taking the positive square root, the retarded vector potential is identically:
               \[
               \boxed{A_z(r,z,t) = \frac{\mu_0 I_0}{4\pi\sqrt{(z-vt)^2 + (1-v^2/c^2)r^2}}}.
               \]</p>
