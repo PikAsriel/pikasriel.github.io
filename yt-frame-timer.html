@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="referrer" content="strict-origin-when-cross-origin" />
-  <meta name="version" content="2.2.0" />
+  <meta name="version" content="2.3.0" />
   <title>YouTube Frame &amp; Speedrun Interval Timer</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
@@ -15,7 +15,7 @@
         extend: {
           fontFamily: {
             sans: ['"Source Sans 3"', 'Lato', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'sans-serif'],
-            serif: ['Merriweather', 'Georgia', ' Cambria', 'serif']
+            serif: ['Merriweather', 'Georgia', 'Cambria', 'serif']
           }
         }
       }
@@ -24,15 +24,15 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap');
     body {
-      font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif;
       background-color: #f4f1ea;
       color: #1f1e1b;
     }
     h1, h2, h3 {
-      font-family: 'Merriweather', Georgia, serif;
+      font-family: 'Merriweather', Georgia, 'PingFang SC', 'Microsoft YaHei', serif;
     }
     code, kbd {
-      font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       font-weight: 600;
     }
     ::-webkit-scrollbar { width: 7px; height: 7px; }
@@ -67,25 +67,32 @@
         </div>
         <div>
           <div class="flex items-center gap-2.5">
-            <h1 id="youtube-interval-timer" class="text-lg sm:text-xl font-bold text-[#1f1e1b]">YouTube Interval Timer</h1>
-            <span class="text-xs px-2 py-0.5 rounded bg-[#ebe7dd] text-[#4a473f] border border-[#cfc9bb] font-semibold">v2.2 Retime Desk</span>
+            <h1 id="youtube-interval-timer" data-i18n="headerTitle" class="text-lg sm:text-xl font-bold text-[#1f1e1b]">YouTube Interval Timer</h1>
+            <span data-i18n="headerBadge" class="text-xs px-2 py-0.5 rounded bg-[#ebe7dd] text-[#4a473f] border border-[#cfc9bb] font-semibold">v2.3 Retime Desk</span>
           </div>
-          <p class="text-xs text-[#5c584f]">Frame-accurate speedrun retiming, debug JSON parser, load remover &amp; verification workbench</p>
+          <p data-i18n="headerSubtitle" class="text-xs text-[#5c584f]">Frame-accurate speedrun retiming, debug JSON parser, load remover &amp; verification workbench</p>
         </div>
       </div>
 
       <div class="flex items-center gap-2 flex-wrap">
+        <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#faf8f3] border border-[#c8c2b4]">
+          <i data-lucide="languages" class="w-3.5 h-3.5 text-[#1d4f91]"></i>
+          <select id="langSelect" onchange="setLanguage(this.value)" aria-label="Language" class="bg-transparent text-xs font-semibold text-[#1f1e1b] focus:outline-none cursor-pointer">
+            <option value="en">English</option>
+            <option value="zh">简体中文</option>
+          </select>
+        </div>
         <button id="loadSampleBtn" onclick="loadSampleDebugPair()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-semibold bg-[#edeae2] hover:bg-[#e0dcd1] text-[#2c2a26] border border-[#c8c2b4] transition">
           <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#1d4f91]"></i>
-          <span>Load Demo Run</span>
+          <span data-i18n="btnDemo">Load Demo Run</span>
         </button>
         <button id="toggleGuideBtn" onclick="toggleGuideModal()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-semibold bg-[#edeae2] hover:bg-[#e0dcd1] text-[#2c2a26] border border-[#c8c2b4] transition">
           <i data-lucide="help-circle" class="w-3.5 h-3.5 text-[#1e6b43]"></i>
-          <span>How to Retime</span>
+          <span data-i18n="btnGuide">How to Retime</span>
         </button>
         <a href="https://github.com/slashinfty/yt-frame-timer" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-semibold bg-white hover:bg-[#edeae2] text-[#2c2a26] border border-[#c8c2b4] transition">
           <i data-lucide="github" class="w-3.5 h-3.5"></i>
-          <span class="hidden sm:inline">Original Repo</span>
+          <span data-i18n="btnRepo" class="hidden sm:inline">Original Repo</span>
         </a>
       </div>
     </div>
@@ -95,7 +102,7 @@
     <section class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
       <div class="bg-white border border-[#d6d1c4] rounded-lg p-3.5 sm:p-4 shadow-sm flex flex-col justify-between">
         <div class="flex items-center justify-between text-xs font-semibold text-[#5c584f] mb-1">
-          <span>Formatted Time</span>
+          <span data-i18n="kpiTimeLabel">Formatted Time</span>
           <i data-lucide="clock" class="w-4 h-4 text-[#b33122]"></i>
         </div>
         <div id="kpiFormattedTime" class="text-lg sm:text-2xl font-bold text-[#1f1e1b] truncate">0s 000ms</div>
@@ -103,7 +110,7 @@
       </div>
       <div class="bg-white border border-[#d6d1c4] rounded-lg p-3.5 sm:p-4 shadow-sm flex flex-col justify-between">
         <div class="flex items-center justify-between text-xs font-semibold text-[#5c584f] mb-1">
-          <span>Elapsed Frames</span>
+          <span data-i18n="kpiFramesLabel">Elapsed Frames</span>
           <i data-lucide="film" class="w-4 h-4 text-[#1d4f91]"></i>
         </div>
         <div id="kpiTotalFrames" class="text-lg sm:text-2xl font-bold text-[#1d4f91]">0 frames</div>
@@ -111,7 +118,7 @@
       </div>
       <div class="bg-white border border-[#d6d1c4] rounded-lg p-3.5 sm:p-4 shadow-sm flex flex-col justify-between">
         <div class="flex items-center justify-between text-xs font-semibold text-[#5c584f] mb-1">
-          <span>SMPTE Timecode</span>
+          <span data-i18n="kpiSmpteLabel">SMPTE Timecode</span>
           <i data-lucide="clapperboard" class="w-4 h-4 text-[#1e6b43]"></i>
         </div>
         <div id="kpiSmpte" class="text-lg sm:text-2xl font-bold text-[#1e6b43]">00:00:00:00</div>
@@ -119,7 +126,7 @@
       </div>
       <div class="bg-white border border-[#d6d1c4] rounded-lg p-3.5 sm:p-4 shadow-sm flex flex-col justify-between">
         <div class="flex items-center justify-between text-xs font-semibold text-[#5c584f] mb-1">
-          <span>Net Multi-Split / LRT</span>
+          <span data-i18n="kpiNetLabel">Net Multi-Split / LRT</span>
           <i data-lucide="layers" class="w-4 h-4 text-[#8c5319]"></i>
         </div>
         <div id="kpiNetSplitTime" class="text-lg sm:text-2xl font-bold text-[#8c5319]">0s 000ms</div>
@@ -134,9 +141,9 @@
             <div>
               <h2 id="video-framerate" class="text-base font-bold text-[#1f1e1b] flex items-center gap-2">
                 <i data-lucide="sliders" class="w-4 h-4 text-[#1d4f91]"></i>
-                <span>1. Video Framerate &amp; Rounding Rules</span>
+                <span data-i18n="sec1Title">1. Video Framerate &amp; Rounding Rules</span>
               </h2>
-              <p class="text-xs text-[#5c584f] mt-1">
+              <p data-i18n-html="sec1Desc" class="text-xs text-[#5c584f] mt-1">
                 Right-click the YouTube video → <span class="text-[#1f1e1b] font-semibold">“Stats for nerds”</span> → find the number after <code class="text-[#b33122] bg-[#f4f1ea] border border-[#d6d1c4] px-1.5 py-0.5 rounded">@</code> on “Current / Optimal Res”.
               </p>
             </div>
@@ -148,13 +155,13 @@
           <div class="space-y-3">
             <div class="flex flex-wrap items-center gap-3">
               <div class="flex items-center gap-2">
-                <label for="framerate" class="text-xs font-bold text-[#3d3a33] uppercase tracking-wide">Framerate (FPS):</label>
+                <label for="framerate" data-i18n="fpsLabel" class="text-xs font-bold text-[#3d3a33] uppercase tracking-wide">Framerate (FPS):</label>
                 <input type="text" id="framerate" size="5" value="60" onchange="validateFPS(event)" oninput="handleFpsInput(event)"
                   class="w-24 px-3 py-1.5 rounded bg-[#faf8f3] border border-[#c8c2b4] text-[#1f1e1b] font-semibold text-sm focus:outline-none focus:border-[#1d4f91]" />
               </div>
 
               <div class="flex items-center gap-1.5 flex-wrap">
-                <span class="text-xs text-[#5c584f] mr-1 font-medium">Presets:</span>
+                <span data-i18n="presetsLabel" class="text-xs text-[#5c584f] mr-1 font-medium">Presets:</span>
                 <button type="button" onclick="setFpsPreset(23.976)" class="fps-pill px-2.5 py-1 rounded text-xs font-semibold bg-[#f4f1ea] hover:bg-[#e5e0d5] text-[#3d3a33] border border-[#c8c2b4] transition">23.976</button>
                 <button type="button" onclick="setFpsPreset(24)" class="fps-pill px-2.5 py-1 rounded text-xs font-semibold bg-[#f4f1ea] hover:bg-[#e5e0d5] text-[#3d3a33] border border-[#c8c2b4] transition">24</button>
                 <button type="button" onclick="setFpsPreset(25)" class="fps-pill px-2.5 py-1 rounded text-xs font-semibold bg-[#f4f1ea] hover:bg-[#e5e0d5] text-[#3d3a33] border border-[#c8c2b4] transition">25</button>
@@ -169,20 +176,20 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
               <div class="flex items-center justify-between bg-[#faf8f3] border border-[#d6d1c4] rounded px-3 py-2">
-                <label for="precisionSelect" class="text-xs font-medium text-[#4a473f]">Output Precision:</label>
+                <label for="precisionSelect" data-i18n="precisionLabel" class="text-xs font-medium text-[#4a473f]">Output Precision:</label>
                 <select id="precisionSelect" onchange="compute()" class="bg-white text-xs font-semibold text-[#1f1e1b] border border-[#c8c2b4] rounded px-2 py-1 focus:outline-none focus:border-[#1d4f91]">
-                  <option value="3" selected>Milliseconds (3 dec · 678ms)</option>
-                  <option value="2">Centiseconds (2 dec · .68s)</option>
-                  <option value="1">Deciseconds (1 dec · .7s)</option>
-                  <option value="0">Whole Seconds (0 dec)</option>
+                  <option value="3" selected data-i18n="prec3">Milliseconds (3 dec · 678ms)</option>
+                  <option value="2" data-i18n="prec2">Centiseconds (2 dec · .68s)</option>
+                  <option value="1" data-i18n="prec1">Deciseconds (1 dec · .7s)</option>
+                  <option value="0" data-i18n="prec0">Whole Seconds (0 dec)</option>
                 </select>
               </div>
               <div class="flex items-center justify-between bg-[#faf8f3] border border-[#d6d1c4] rounded px-3 py-2">
-                <label for="roundingSelect" class="text-xs font-medium text-[#4a473f]">Frame Alignment:</label>
+                <label for="roundingSelect" data-i18n="roundingLabel" class="text-xs font-medium text-[#4a473f]">Frame Alignment:</label>
                 <select id="roundingSelect" onchange="realignAllEndpoints()" class="bg-white text-xs font-semibold text-[#1f1e1b] border border-[#c8c2b4] rounded px-2 py-1 focus:outline-none focus:border-[#1d4f91]">
-                  <option value="floor" selected>Floor to Frame (SPRT / Default)</option>
-                  <option value="round">Nearest Frame (Math.round)</option>
-                  <option value="exact">Raw Unrounded Timestamp</option>
+                  <option value="floor" selected data-i18n="roundFloor">Floor to Frame (SPRT / Default)</option>
+                  <option value="round" data-i18n="roundNearest">Nearest Frame (Math.round)</option>
+                  <option value="exact" data-i18n="roundExact">Raw Unrounded Timestamp</option>
                 </select>
               </div>
             </div>
@@ -193,20 +200,20 @@
               <div>
                 <h3 id="video-endpoints" class="text-base font-bold text-[#1f1e1b] flex items-center gap-2">
                   <i data-lucide="scissors" class="w-4 h-4 text-[#b33122]"></i>
-                  <span>2. Video Endpoints (Start &amp; Stop Frames)</span>
+                  <span data-i18n="sec2Title">2. Video Endpoints (Start &amp; Stop Frames)</span>
                 </h3>
-                <p class="text-xs text-[#5c584f] mt-1">
+                <p data-i18n-html="sec2Desc" class="text-xs text-[#5c584f] mt-1">
                   Step with <code class="text-[#1f1e1b] bg-[#f4f1ea] border border-[#d6d1c4] px-1.5 py-0.5 rounded">,</code> and <code class="text-[#1f1e1b] bg-[#f4f1ea] border border-[#d6d1c4] px-1.5 py-0.5 rounded">.</code> on YouTube, right-click → <span class="text-[#1f1e1b] font-semibold">“Copy debug info”</span>, or enter <code class="text-[#1f1e1b]">MM:SS.mmm</code>, seconds, or <code class="text-[#1f1e1b]">1250f</code>.
                 </p>
               </div>
               <div class="flex items-center gap-1.5">
-                <button type="button" onclick="swapEndpoints()" title="Swap Starting and Ending frames" class="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold bg-[#edeae2] hover:bg-[#e0dcd1] text-[#2c2a26] border border-[#c8c2b4] transition">
+                <button type="button" onclick="swapEndpoints()" data-i18n-title="swapTitle" title="Swap Starting and Ending frames" class="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold bg-[#edeae2] hover:bg-[#e0dcd1] text-[#2c2a26] border border-[#c8c2b4] transition">
                   <i data-lucide="arrow-up-down" class="w-3.5 h-3.5 text-[#1d4f91]"></i>
-                  <span>Swap</span>
+                  <span data-i18n="btnSwap">Swap</span>
                 </button>
-                <button type="button" onclick="clearEndpoints()" title="Clear both endpoints" class="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold bg-[#edeae2] hover:bg-[#e0dcd1] text-[#2c2a26] border border-[#c8c2b4] transition">
+                <button type="button" onclick="clearEndpoints()" data-i18n-title="resetTitle" title="Clear both endpoints" class="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold bg-[#edeae2] hover:bg-[#e0dcd1] text-[#2c2a26] border border-[#c8c2b4] transition">
                   <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-[#5c584f]"></i>
-                  <span>Reset</span>
+                  <span data-i18n="btnReset">Reset</span>
                 </button>
               </div>
             </div>
@@ -215,7 +222,7 @@
               <div class="flex flex-wrap items-center justify-between gap-2">
                 <label for="startobj" class="text-xs font-bold uppercase tracking-wide text-[#1e6b43] flex items-center gap-1.5">
                   <span class="w-2 h-2 rounded-full bg-[#1e6b43]"></span>
-                  <span>Starting Frame / Debug Info:</span>
+                  <span data-i18n="startFrameLabel">Starting Frame / Debug Info:</span>
                 </label>
                 <div class="flex items-center gap-2 text-xs font-semibold text-[#4a473f]">
                   <span id="startFrameNumberBadge" class="px-2 py-0.5 rounded bg-[#e8f4ed] border border-[#b7dfc6] text-[#1e6b43]">Frame #0</span>
@@ -224,17 +231,17 @@
               </div>
 
               <div class="flex gap-2">
-                <input type="text" id="startobj" style="width:100%" placeholder="Paste YouTube 'Copy debug info' JSON, seconds (e.g. 4.25), MM:SS.mmm, or frame (e.g. 255f)"
+                <input type="text" id="startobj" style="width:100%" data-i18n-placeholder="startPlaceholder" placeholder="Paste YouTube 'Copy debug info' JSON, seconds (e.g. 4.25), MM:SS.mmm, or frame (e.g. 255f)"
                   onchange="parseForTime(event)" oninput="parseForTime(event)"
                   class="flex-1 px-3 py-2 rounded bg-white border border-[#c8c2b4] text-sm font-medium text-[#1f1e1b] placeholder-[#8c867a] focus:outline-none focus:border-[#1e6b43]" />
-                <button type="button" onclick="pasteFromClipboard('startobj')" title="Paste from clipboard" class="px-3 py-2 rounded bg-[#edeae2] hover:bg-[#e0dcd1] text-[#2c2a26] border border-[#c8c2b4] text-xs font-semibold flex items-center gap-1 transition">
+                <button type="button" onclick="pasteFromClipboard('startobj')" data-i18n-title="pasteTitle" title="Paste from clipboard" class="px-3 py-2 rounded bg-[#edeae2] hover:bg-[#e0dcd1] text-[#2c2a26] border border-[#c8c2b4] text-xs font-semibold flex items-center gap-1 transition">
                   <i data-lucide="clipboard-paste" class="w-3.5 h-3.5"></i>
-                  <span class="hidden sm:inline">Paste</span>
+                  <span data-i18n="btnPaste" class="hidden sm:inline">Paste</span>
                 </button>
               </div>
 
               <div class="flex flex-wrap items-center justify-between gap-2 pt-0.5">
-                <span class="text-xs text-[#5c584f] font-medium">Frame Nudge:</span>
+                <span data-i18n="frameNudgeLabel" class="text-xs text-[#5c584f] font-medium">Frame Nudge:</span>
                 <div class="flex items-center gap-1 flex-wrap">
                   <button type="button" onclick="nudgeEndpoint('startobj', -10)" class="px-2 py-0.5 rounded text-xs font-semibold bg-white hover:bg-[#edeae2] text-[#3d3a33] border border-[#c8c2b4] transition">-10f</button>
                   <button type="button" onclick="nudgeEndpoint('startobj', -5)" class="px-2 py-0.5 rounded text-xs font-semibold bg-white hover:bg-[#edeae2] text-[#3d3a33] border border-[#c8c2b4] transition">-5f</button>
@@ -250,7 +257,7 @@
               <div class="flex flex-wrap items-center justify-between gap-2">
                 <label for="endobj" class="text-xs font-bold uppercase tracking-wide text-[#b33122] flex items-center gap-1.5">
                   <span class="w-2 h-2 rounded-full bg-[#b33122]"></span>
-                  <span>Ending Frame / Debug Info:</span>
+                  <span data-i18n="endFrameLabel">Ending Frame / Debug Info:</span>
                 </label>
                 <div class="flex items-center gap-2 text-xs font-semibold text-[#4a473f]">
                   <span id="endFrameNumberBadge" class="px-2 py-0.5 rounded bg-[#fbeae8] border border-[#e6bfb9] text-[#b33122]">Frame #0</span>
@@ -259,17 +266,17 @@
               </div>
 
               <div class="flex gap-2">
-                <input type="text" id="endobj" style="width:100%" placeholder="Paste YouTube 'Copy debug info' JSON, seconds (e.g. 158.916), MM:SS.mmm, or frame (e.g. 9535f)"
+                <input type="text" id="endobj" style="width:100%" data-i18n-placeholder="endPlaceholder" placeholder="Paste YouTube 'Copy debug info' JSON, seconds (e.g. 158.916), MM:SS.mmm, or frame (e.g. 9535f)"
                   onchange="parseForTime(event)" oninput="parseForTime(event)"
                   class="flex-1 px-3 py-2 rounded bg-white border border-[#c8c2b4] text-sm font-medium text-[#1f1e1b] placeholder-[#8c867a] focus:outline-none focus:border-[#b33122]" />
-                <button type="button" onclick="pasteFromClipboard('endobj')" title="Paste from clipboard" class="px-3 py-2 rounded bg-[#edeae2] hover:bg-[#e0dcd1] text-[#2c2a26] border border-[#c8c2b4] text-xs font-semibold flex items-center gap-1 transition">
+                <button type="button" onclick="pasteFromClipboard('endobj')" data-i18n-title="pasteTitle" title="Paste from clipboard" class="px-3 py-2 rounded bg-[#edeae2] hover:bg-[#e0dcd1] text-[#2c2a26] border border-[#c8c2b4] text-xs font-semibold flex items-center gap-1 transition">
                   <i data-lucide="clipboard-paste" class="w-3.5 h-3.5"></i>
-                  <span class="hidden sm:inline">Paste</span>
+                  <span data-i18n="btnPaste" class="hidden sm:inline">Paste</span>
                 </button>
               </div>
 
               <div class="flex flex-wrap items-center justify-between gap-2 pt-0.5">
-                <span class="text-xs text-[#5c584f] font-medium">Frame Nudge:</span>
+                <span data-i18n="frameNudgeLabel" class="text-xs text-[#5c584f] font-medium">Frame Nudge:</span>
                 <div class="flex items-center gap-1 flex-wrap">
                   <button type="button" onclick="nudgeEndpoint('endobj', -10)" class="px-2 py-0.5 rounded text-xs font-semibold bg-white hover:bg-[#edeae2] text-[#3d3a33] border border-[#c8c2b4] transition">-10f</button>
                   <button type="button" onclick="nudgeEndpoint('endobj', -5)" class="px-2 py-0.5 rounded text-xs font-semibold bg-white hover:bg-[#edeae2] text-[#3d3a33] border border-[#c8c2b4] transition">-5f</button>
@@ -286,15 +293,15 @@
             <div class="flex flex-wrap items-center justify-between gap-2">
               <h3 id="video-time" class="text-base font-bold text-[#1f1e1b] flex items-center gap-2">
                 <i data-lucide="check-circle-2" class="w-4 h-4 text-[#1e6b43]"></i>
-                <span>3. Computed Video Time &amp; Verification Note</span>
+                <span data-i18n="sec3Title">3. Computed Video Time &amp; Verification Note</span>
               </h3>
               <div class="flex items-center gap-2">
-                <label for="modTemplateSelect" class="text-xs font-medium text-[#4a473f]">Note Template:</label>
+                <label for="modTemplateSelect" data-i18n="noteTemplateLabel" class="text-xs font-medium text-[#4a473f]">Note Template:</label>
                 <select id="modTemplateSelect" onchange="updateModMessageFromState()" class="bg-[#faf8f3] text-xs font-semibold text-[#1f1e1b] border border-[#c8c2b4] rounded px-2.5 py-1 focus:outline-none focus:border-[#1d4f91]">
-                  <option value="standard" selected>Standard Speedrun.com Note</option>
-                  <option value="detailed">Detailed Frame &amp; Timestamp Audit</option>
-                  <option value="lrt">Load-Removed (RTA + Loads → LRT)</option>
-                  <option value="markdown">Markdown Verification Table</option>
+                  <option value="standard" selected data-i18n="tplStandard">Standard Speedrun.com Note</option>
+                  <option value="detailed" data-i18n="tplDetailed">Detailed Frame &amp; Timestamp Audit</option>
+                  <option value="lrt" data-i18n="tplLrt">Load-Removed (RTA + Loads → LRT)</option>
+                  <option value="markdown" data-i18n="tplMarkdown">Markdown Verification Table</option>
                 </select>
               </div>
             </div>
@@ -302,24 +309,24 @@
             <div class="flex flex-wrap items-center gap-2.5">
               <button id="computeButton" onclick="compute(true)" class="inline-flex items-center gap-2 px-4 py-2.5 rounded text-sm font-bold bg-[#1d4f91] hover:bg-[#163c6e] text-white border border-[#143561] transition cursor-pointer">
                 <i data-lucide="calculator" class="w-4 h-4"></i>
-                <span>Compute time</span>
+                <span data-i18n="btnCompute">Compute time</span>
               </button>
 
               <div class="relative flex-1 min-w-[200px]">
                 <input type="text" id="time" readonly size="20" value="0s 000ms"
                   class="w-full px-3.5 py-2 rounded bg-[#faf8f3] border border-[#c8c2b4] text-base font-bold text-[#1e6b43] focus:outline-none" />
-                <button type="button" onclick="copyTimeValue()" title="Copy computed time" class="absolute right-2 top-1/2 -translate-y-1/2 px-2.5 py-1 rounded bg-white hover:bg-[#edeae2] text-xs font-semibold text-[#2c2a26] border border-[#c8c2b4] transition">
+                <button type="button" onclick="copyTimeValue()" data-i18n="btnCopyTime" data-i18n-title="copyTimeTitle" title="Copy computed time" class="absolute right-2 top-1/2 -translate-y-1/2 px-2.5 py-1 rounded bg-white hover:bg-[#edeae2] text-xs font-semibold text-[#2c2a26] border border-[#c8c2b4] transition">
                   Copy Time
                 </button>
               </div>
 
-              <button type="button" onclick="addCurrentToSplits('segment')" title="Add current start/end interval as a segment" class="inline-flex items-center gap-1.5 px-3 py-2.5 rounded text-xs font-semibold bg-[#e8f4ed] hover:bg-[#d5ebd9] text-[#1e6b43] border border-[#b7dfc6] transition">
+              <button type="button" onclick="addCurrentToSplits('segment')" data-i18n-title="addSplitTitle" title="Add current start/end interval as a segment" class="inline-flex items-center gap-1.5 px-3 py-2.5 rounded text-xs font-semibold bg-[#e8f4ed] hover:bg-[#d5ebd9] text-[#1e6b43] border border-[#b7dfc6] transition">
                 <i data-lucide="plus-circle" class="w-4 h-4"></i>
-                <span>+ Split</span>
+                <span data-i18n="btnAddSplit">+ Split</span>
               </button>
-              <button type="button" onclick="addCurrentToSplits('load')" title="Subtract current interval as a loading screen / pause" class="inline-flex items-center gap-1.5 px-3 py-2.5 rounded text-xs font-semibold bg-[#fdf3e7] hover:bg-[#fae5cc] text-[#8c5319] border border-[#ebd0ad] transition">
+              <button type="button" onclick="addCurrentToSplits('load')" data-i18n-title="addLoadTitle" title="Subtract current interval as a loading screen / pause" class="inline-flex items-center gap-1.5 px-3 py-2.5 rounded text-xs font-semibold bg-[#fdf3e7] hover:bg-[#fae5cc] text-[#8c5319] border border-[#ebd0ad] transition">
                 <i data-lucide="minus-circle" class="w-4 h-4"></i>
-                <span>- Load</span>
+                <span data-i18n="btnAddLoad">- Load</span>
               </button>
             </div>
 
@@ -331,12 +338,12 @@
                 <button id="modMessageButton" onclick="copyModMessage()" disabled
                   class="inline-flex items-center gap-2 px-4 py-2 rounded text-xs font-bold bg-[#1e6b43] hover:bg-[#165233] disabled:opacity-50 text-white border border-[#14472c] transition cursor-pointer">
                   <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-                  <span>Copy Mod Message to Clipboard</span>
+                  <span data-i18n="btnCopyMod">Copy Mod Message to Clipboard</span>
                 </button>
 
                 <button type="button" onclick="saveCurrentToHistory()" class="inline-flex items-center gap-1.5 px-3 py-2 rounded text-xs font-semibold bg-[#edeae2] hover:bg-[#e0dcd1] text-[#2c2a26] border border-[#c8c2b4] transition">
                   <i data-lucide="bookmark-plus" class="w-3.5 h-3.5 text-[#1d4f91]"></i>
-                  <span>Save to Session History</span>
+                  <span data-i18n="btnSaveHistory">Save to Session History</span>
                 </button>
               </div>
             </div>
@@ -348,33 +355,33 @@
             <div>
               <h2 class="text-base font-bold text-[#1f1e1b] flex items-center gap-2">
                 <i data-lucide="list-filter" class="w-4 h-4 text-[#1d4f91]"></i>
-                <span>Multi-Segment Timer &amp; Load Remover (RTA / LRT)</span>
+                <span data-i18n="splitsTitle">Multi-Segment Timer &amp; Load Remover (RTA / LRT)</span>
               </h2>
-              <p class="text-xs text-[#5c584f] mt-0.5">
+              <p data-i18n="splitsDesc" class="text-xs text-[#5c584f] mt-0.5">
                 Combine multiple level segments or subtract loading screens/menus from a single full-run interval.
               </p>
             </div>
             <div class="flex items-center gap-2">
               <button type="button" onclick="addManualSplitRow('segment')" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded text-xs font-semibold bg-[#e8f4ed] hover:bg-[#d5ebd9] text-[#1e6b43] border border-[#b7dfc6] transition">
                 <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-                <span>Add Segment</span>
+                <span data-i18n="btnAddSegRow">Add Segment</span>
               </button>
               <button type="button" onclick="addManualSplitRow('load')" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded text-xs font-semibold bg-[#fdf3e7] hover:bg-[#fae5cc] text-[#8c5319] border border-[#ebd0ad] transition">
                 <i data-lucide="minus" class="w-3.5 h-3.5"></i>
-                <span>Add Load Cut</span>
+                <span data-i18n="btnAddLoadRow">Add Load Cut</span>
               </button>
               <button type="button" onclick="clearAllSplits()" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded text-xs font-semibold bg-[#edeae2] hover:bg-[#e0dcd1] text-[#4a473f] border border-[#c8c2b4] transition">
                 <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                <span>Clear</span>
+                <span data-i18n="btnClear">Clear</span>
               </button>
             </div>
           </div>
 
           <div class="space-y-1.5">
             <div class="flex items-center justify-between text-xs font-medium">
-              <span class="text-[#1e6b43]">Gross Segment Time: <strong id="splitsGrossReadout">0s 000ms</strong></span>
-              <span class="text-[#8c5319]">Loads Removed: <strong id="splitsLoadReadout">-0s 000ms</strong></span>
-              <span class="text-[#1d4f91]">Final Net Time (LRT): <strong id="splitsNetReadout">0s 000ms</strong></span>
+              <span class="text-[#1e6b43]"><span data-i18n="grossLabel">Gross Segment Time:</span> <strong id="splitsGrossReadout">0s 000ms</strong></span>
+              <span class="text-[#8c5319]"><span data-i18n="loadsLabel">Loads Removed:</span> <strong id="splitsLoadReadout">-0s 000ms</strong></span>
+              <span class="text-[#1d4f91]"><span data-i18n="netLabel">Final Net Time (LRT):</span> <strong id="splitsNetReadout">0s 000ms</strong></span>
             </div>
             <div class="w-full h-2.5 bg-[#ebe7dd] rounded overflow-hidden flex border border-[#cfc9bb]">
               <div id="splitNetBar" class="bg-[#1e6b43] h-full transition-all duration-300" style="width: 100%"></div>
@@ -386,13 +393,13 @@
             <table class="w-full text-left border-collapse">
               <thead>
                 <tr class="border-b-2 border-[#d6d1c4] text-xs uppercase tracking-wide text-[#5c584f]">
-                  <th class="py-2 px-2">Label</th>
-                  <th class="py-2 px-2">Type</th>
-                  <th class="py-2 px-2">Start (s)</th>
-                  <th class="py-2 px-2">End (s)</th>
-                  <th class="py-2 px-2 text-right">Frames</th>
-                  <th class="py-2 px-2 text-right">Duration</th>
-                  <th class="py-2 px-2 text-center">Action</th>
+                  <th data-i18n="thLabel" class="py-2 px-2">Label</th>
+                  <th data-i18n="thType" class="py-2 px-2">Type</th>
+                  <th data-i18n="thStart" class="py-2 px-2">Start (s)</th>
+                  <th data-i18n="thEnd" class="py-2 px-2">End (s)</th>
+                  <th data-i18n="thFrames" class="py-2 px-2 text-right">Frames</th>
+                  <th data-i18n="thDuration" class="py-2 px-2 text-right">Duration</th>
+                  <th data-i18n="thAction" class="py-2 px-2 text-center">Action</th>
                 </tr>
               </thead>
               <tbody id="splitsTableBody" class="divide-y divide-[#e5e0d5] text-xs"></tbody>
@@ -407,17 +414,17 @@
             <div>
               <h2 class="text-base font-bold text-[#1f1e1b] flex items-center gap-2">
                 <i data-lucide="tv" class="w-4 h-4 text-[#b33122]"></i>
-                <span>Frame-Stepping Sandbox</span>
+                <span data-i18n="sandboxTitle">Frame-Stepping Sandbox</span>
               </h2>
-              <p class="text-xs text-[#5c584f] mt-0.5">
+              <p data-i18n="sandboxDesc" class="text-xs text-[#5c584f] mt-0.5">
                 Practice frame-accurate capture on the 60fps simulator, or load a real YouTube video / local file.
               </p>
             </div>
             <div class="inline-flex rounded bg-[#ebe7dd] p-0.5 border border-[#cfc9bb]">
-              <button type="button" id="modeSimBtn" onclick="switchWorkbenchMode('sim')" class="px-2.5 py-1 rounded text-xs font-semibold bg-[#1d4f91] text-white transition">
+              <button type="button" id="modeSimBtn" onclick="switchWorkbenchMode('sim')" data-i18n="modeSim" class="px-2.5 py-1 rounded text-xs font-semibold bg-[#1d4f91] text-white transition">
                 60fps Sim
               </button>
-              <button type="button" id="modeYtBtn" onclick="switchWorkbenchMode('yt')" class="px-2.5 py-1 rounded text-xs font-semibold text-[#4a473f] hover:text-[#1f1e1b] transition">
+              <button type="button" id="modeYtBtn" onclick="switchWorkbenchMode('yt')" data-i18n="modeYt" class="px-2.5 py-1 rounded text-xs font-semibold text-[#4a473f] hover:text-[#1f1e1b] transition">
                 Video Loader
               </button>
             </div>
@@ -433,7 +440,7 @@
               </div>
               <button type="button" onclick="copySimDebugJson()" class="absolute top-2.5 right-2.5 px-2.5 py-1 rounded bg-white/95 hover:bg-[#edeae2] border border-[#c8c2b4] text-xs font-semibold text-[#1d4f91] flex items-center gap-1 shadow-sm transition">
                 <i data-lucide="code" class="w-3 h-3"></i>
-                <span>Copy YT Debug JSON</span>
+                <span data-i18n="btnCopySimJson">Copy YT Debug JSON</span>
               </button>
             </div>
 
@@ -457,10 +464,10 @@
               </div>
 
               <div class="flex items-center gap-1.5">
-                <button type="button" onclick="captureSimToEndpoint('startobj')" class="px-2.5 py-1.5 rounded bg-[#e8f4ed] hover:bg-[#d5ebd9] text-[#1e6b43] border border-[#b7dfc6] text-xs font-bold transition">
+                <button type="button" onclick="captureSimToEndpoint('startobj')" data-i18n="btnSetStartBracket" class="px-2.5 py-1.5 rounded bg-[#e8f4ed] hover:bg-[#d5ebd9] text-[#1e6b43] border border-[#b7dfc6] text-xs font-bold transition">
                   Set Start [
                 </button>
-                <button type="button" onclick="captureSimToEndpoint('endobj')" class="px-2.5 py-1.5 rounded bg-[#fbeae8] hover:bg-[#f5d5d0] text-[#b33122] border border-[#e6bfb9] text-xs font-bold transition">
+                <button type="button" onclick="captureSimToEndpoint('endobj')" data-i18n="btnSetEndBracket" class="px-2.5 py-1.5 rounded bg-[#fbeae8] hover:bg-[#f5d5d0] text-[#b33122] border border-[#e6bfb9] text-xs font-bold transition">
                   Set End ]
                 </button>
               </div>
@@ -473,20 +480,20 @@
             <!-- Source tabs -->
             <div class="flex border-b border-[#e5e0d5]">
               <button id="ytTabYoutube" onclick="switchYtSource('youtube')" class="yt-tab active">
-                <i data-lucide="youtube" class="w-3.5 h-3.5 inline -mt-0.5 mr-1"></i>YouTube URL
+                <i data-lucide="youtube" class="w-3.5 h-3.5 inline -mt-0.5 mr-1"></i><span data-i18n="tabYoutube">YouTube URL</span>
               </button>
               <button id="ytTabLocal" onclick="switchYtSource('local')" class="yt-tab">
-                <i data-lucide="folder-open" class="w-3.5 h-3.5 inline -mt-0.5 mr-1"></i>Local File
+                <i data-lucide="folder-open" class="w-3.5 h-3.5 inline -mt-0.5 mr-1"></i><span data-i18n="tabLocal">Local File</span>
               </button>
             </div>
 
             <!-- YOUTUBE SOURCE -->
             <div id="ytSourceYoutube" class="space-y-3">
               <div class="flex flex-wrap gap-2">
-                <input type="text" id="ytUrlInput" value="dQw4w9WgXcQ" placeholder="Paste YouTube URL or 11-char Video ID"
+                <input type="text" id="ytUrlInput" value="dQw4w9WgXcQ" data-i18n-placeholder="ytUrlPlaceholder" placeholder="Paste YouTube URL or 11-char Video ID"
                   onkeydown="if(event.key==='Enter'){event.preventDefault();loadYoutubeVideo();}"
                   class="flex-1 min-w-[180px] px-3 py-2 rounded bg-[#faf8f3] border border-[#c8c2b4] text-sm font-medium text-[#1f1e1b] focus:outline-none focus:border-[#1d4f91]" />
-                <button type="button" onclick="loadYoutubeVideo()" class="px-4 py-2 rounded bg-[#b33122] hover:bg-[#8f2518] text-white text-xs font-bold transition">
+                <button type="button" onclick="loadYoutubeVideo()" data-i18n="btnLoadVideo" class="px-4 py-2 rounded bg-[#b33122] hover:bg-[#8f2518] text-white text-xs font-bold transition">
                   Load Video
                 </button>
               </div>
@@ -505,7 +512,7 @@
                 <div class="flex flex-wrap gap-2">
                   <button type="button" onclick="openYoutubeAtPlayhead()" class="inline-flex items-center gap-1.5 px-3 py-2 rounded bg-[#b33122] hover:bg-[#8f2518] text-white text-xs font-bold transition">
                     <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-                    <span>Watch on YouTube @ <span id="ytPlayheadFrameInline">#0</span> ↗</span>
+                    <span><span data-i18n="btnWatchYt">Watch on YouTube @</span> <span id="ytPlayheadFrameInline">#0</span> ↗</span>
                   </button>
                   <button type="button" onclick="toggleYtEmbed()" class="inline-flex items-center gap-1.5 px-3 py-2 rounded bg-[#edeae2] hover:bg-[#e0dcd1] text-[#2c2a26] border border-[#c8c2b4] text-xs font-semibold transition">
                     <i data-lucide="play-circle" class="w-3.5 h-3.5"></i>
@@ -519,7 +526,7 @@
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       allowfullscreen></iframe>
                   </div>
-                  <p class="text-[11px] text-[#6e6a5f] leading-snug">
+                  <p data-i18n-html="embedFallbackNote" class="text-[11px] text-[#6e6a5f] leading-snug">
                     <i data-lucide="info" class="w-3 h-3 inline -mt-0.5 text-[#1d4f91]"></i>
                     If the embed shows an error, use the <strong>Watch on YouTube</strong> button above — embeds fail on <code class="text-[#b33122]">file://</code> and sandboxed pages.
                   </p>
@@ -533,20 +540,20 @@
                       <button type="button" onclick="stepYtInspectorFrame(-1)" class="px-2 py-1 rounded bg-white hover:bg-[#edeae2] border border-[#c8c2b4] text-xs font-semibold">-1f</button>
                       <button type="button" onclick="stepYtInspectorFrame(1)" class="px-2 py-1 rounded bg-white hover:bg-[#edeae2] border border-[#c8c2b4] text-xs font-semibold">+1f</button>
                       <button type="button" onclick="stepYtInspectorFrame(10)" class="px-2 py-1 rounded bg-white hover:bg-[#edeae2] border border-[#c8c2b4] text-xs font-semibold">+10f</button>
-                      <button type="button" onclick="captureYtInspectorToEndpoint('startobj')" class="px-2 py-1 rounded bg-[#e8f4ed] hover:bg-[#d5ebd9] text-[#1e6b43] border border-[#b7dfc6] text-xs font-bold">Set Start</button>
-                      <button type="button" onclick="captureYtInspectorToEndpoint('endobj')" class="px-2 py-1 rounded bg-[#fbeae8] hover:bg-[#f5d5d0] text-[#b33122] border border-[#e6bfb9] text-xs font-bold">Set End</button>
+                      <button type="button" onclick="captureYtInspectorToEndpoint('startobj')" data-i18n="btnSetStart" class="px-2 py-1 rounded bg-[#e8f4ed] hover:bg-[#d5ebd9] text-[#1e6b43] border border-[#b7dfc6] text-xs font-bold">Set Start</button>
+                      <button type="button" onclick="captureYtInspectorToEndpoint('endobj')" data-i18n="btnSetEnd" class="px-2 py-1 rounded bg-[#fbeae8] hover:bg-[#f5d5d0] text-[#b33122] border border-[#e6bfb9] text-xs font-bold">Set End</button>
                     </div>
                   </div>
                   <input type="range" id="ytInspectorScrubber" min="0" max="12000" value="0" oninput="scrubYtInspectorFrame(this.value)"
                     class="w-full accent-[#b33122] h-1.5 bg-[#dfd9cc] rounded cursor-pointer" />
                   <div class="flex justify-between text-[11px] text-[#6e6a5f]">
-                    <span>0s (Frame #0)</span>
+                    <span data-i18n="ytScrubberStart">0s (Frame #0)</span>
                     <span id="ytScrubberMaxLabel">End</span>
                   </div>
                 </div>
               </div>
 
-              <div id="ytEmptyState" class="text-center p-6 text-xs text-[#6e6a5f] border border-dashed border-[#c8c2b4] rounded-lg bg-[#faf8f3]">
+              <div id="ytEmptyState" data-i18n-html="ytEmptyState" class="text-center p-6 text-xs text-[#6e6a5f] border border-dashed border-[#c8c2b4] rounded-lg bg-[#faf8f3]">
                 Paste a YouTube URL above and click <strong>Load Video</strong>.
               </div>
             </div>
@@ -555,8 +562,8 @@
             <div id="ytSourceLocal" class="hidden space-y-3">
               <label for="localVideoFileInput" class="block w-full p-5 border-2 border-dashed border-[#c8c2b4] rounded-lg bg-[#faf8f3] hover:bg-[#edeae2] text-center cursor-pointer transition">
                 <i data-lucide="upload" class="w-6 h-6 mx-auto text-[#1d4f91] mb-1"></i>
-                <div class="text-sm font-semibold text-[#1f1e1b]">Choose a local video file</div>
-                <div class="text-xs text-[#6e6a5f] mt-0.5">.mp4, .webm, .mov — steps frame-by-frame using your FPS setting</div>
+                <div data-i18n="localDropTitle" class="text-sm font-semibold text-[#1f1e1b]">Choose a local video file</div>
+                <div data-i18n="localDropDesc" class="text-xs text-[#6e6a5f] mt-0.5">.mp4, .webm, .mov — steps frame-by-frame using your FPS setting</div>
               </label>
               <input type="file" id="localVideoFileInput" accept="video/*" onchange="loadLocalVideoFile(event)" class="hidden" />
 
@@ -571,8 +578,8 @@
                     <button type="button" onclick="stepHtml5VideoFrame(-1)" class="px-2 py-1 rounded bg-white hover:bg-[#edeae2] border border-[#c8c2b4] font-semibold">-1f</button>
                     <button type="button" onclick="stepHtml5VideoFrame(1)" class="px-2 py-1 rounded bg-white hover:bg-[#edeae2] border border-[#c8c2b4] font-semibold">+1f</button>
                     <button type="button" onclick="stepHtml5VideoFrame(10)" class="px-2 py-1 rounded bg-white hover:bg-[#edeae2] border border-[#c8c2b4] font-semibold">+10f</button>
-                    <button type="button" onclick="captureHtml5VideoToEndpoint('startobj')" class="px-2 py-1 rounded bg-[#e8f4ed] text-[#1e6b43] border border-[#b7dfc6] font-bold">Set Start</button>
-                    <button type="button" onclick="captureHtml5VideoToEndpoint('endobj')" class="px-2 py-1 rounded bg-[#fbeae8] text-[#b33122] border border-[#e6bfb9] font-bold">Set End</button>
+                    <button type="button" onclick="captureHtml5VideoToEndpoint('startobj')" data-i18n="btnSetStart" class="px-2 py-1 rounded bg-[#e8f4ed] text-[#1e6b43] border border-[#b7dfc6] font-bold">Set Start</button>
+                    <button type="button" onclick="captureHtml5VideoToEndpoint('endobj')" data-i18n="btnSetEnd" class="px-2 py-1 rounded bg-[#fbeae8] text-[#b33122] border border-[#e6bfb9] font-bold">Set End</button>
                   </div>
                 </div>
               </div>
@@ -585,15 +592,15 @@
           <div class="flex items-center justify-between border-b border-[#e5e0d5] pb-3">
             <h2 class="text-base font-bold text-[#1f1e1b] flex items-center gap-2">
               <i data-lucide="arrow-left-right" class="w-4 h-4 text-[#8c5319]"></i>
-              <span>PB / WR Delta &amp; Frame Converter</span>
+              <span data-i18n="deltaTitle">PB / WR Delta &amp; Frame Converter</span>
             </h2>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div class="bg-[#faf8f3] border border-[#d6d1c4] rounded-lg p-3 space-y-1.5">
-              <label for="compareTargetInput" class="text-xs font-medium text-[#5c584f] block">Compare Against Target / WR Time:</label>
+              <label for="compareTargetInput" data-i18n="compareLabel" class="text-xs font-medium text-[#5c584f] block">Compare Against Target / WR Time:</label>
               <input type="text" id="compareTargetInput" value="2m 35s 000ms" oninput="updateComparisonDelta()"
-                placeholder="e.g. 2m 35s 000ms or 155.000"
+                data-i18n-placeholder="comparePlaceholder" placeholder="e.g. 2m 35s 000ms or 155.000"
                 class="w-full px-2.5 py-1.5 rounded bg-white border border-[#c8c2b4] text-xs font-semibold text-[#1f1e1b] focus:outline-none focus:border-[#1d4f91]" />
               <div id="comparisonDeltaOutput" class="text-xs font-bold text-[#1e6b43] pt-0.5">
                 Delta: +0.000s (0 frames)
@@ -601,7 +608,7 @@
             </div>
 
             <div class="bg-[#faf8f3] border border-[#d6d1c4] rounded-lg p-3 space-y-1.5">
-              <label for="quickFrameConvertInput" class="text-xs font-medium text-[#5c584f] block">Quick Frame Count → Time @ Current FPS:</label>
+              <label for="quickFrameConvertInput" data-i18n="quickFrameLabel" class="text-xs font-medium text-[#5c584f] block">Quick Frame Count → Time @ Current FPS:</label>
               <input type="number" id="quickFrameConvertInput" value="9280" min="0" step="1" oninput="updateQuickFrameConverter()"
                 class="w-full px-2.5 py-1.5 rounded bg-white border border-[#c8c2b4] text-xs font-semibold text-[#1f1e1b] focus:outline-none focus:border-[#1d4f91]" />
               <div id="quickFrameConvertOutput" class="text-xs font-bold text-[#1d4f91] pt-0.5">
@@ -616,16 +623,16 @@
             <div>
               <h2 class="text-base font-bold text-[#1f1e1b] flex items-center gap-2">
                 <i data-lucide="history" class="w-4 h-4 text-[#1e6b43]"></i>
-                <span>Retime Session Log</span>
+                <span data-i18n="historyTitle">Retime Session Log</span>
               </h2>
-              <p class="text-xs text-[#5c584f]">Saved calculations from this verification session</p>
+              <p data-i18n="historyDesc" class="text-xs text-[#5c584f]">Saved calculations from this verification session</p>
             </div>
             <div class="flex items-center gap-1.5">
               <button type="button" onclick="exportHistoryCSV()" class="px-2.5 py-1 rounded bg-[#edeae2] hover:bg-[#e0dcd1] text-xs font-semibold text-[#2c2a26] border border-[#c8c2b4] flex items-center gap-1 transition">
                 <i data-lucide="download" class="w-3.5 h-3.5 text-[#1e6b43]"></i>
                 <span>CSV</span>
               </button>
-              <button type="button" onclick="clearHistoryLog()" class="px-2.5 py-1 rounded bg-[#edeae2] hover:bg-[#e0dcd1] text-xs font-semibold text-[#5c584f] border border-[#c8c2b4] transition">
+              <button type="button" onclick="clearHistoryLog()" data-i18n="btnClear" class="px-2.5 py-1 rounded bg-[#edeae2] hover:bg-[#e0dcd1] text-xs font-semibold text-[#5c584f] border border-[#c8c2b4] transition">
                 Clear
               </button>
             </div>
@@ -642,7 +649,7 @@
       <div class="flex items-center justify-between border-b border-[#e5e0d5] pb-3">
         <h3 id="about" class="text-lg font-bold text-[#1f1e1b] flex items-center gap-2">
           <i data-lucide="book-open" class="w-5 h-5 text-[#b33122]"></i>
-          <span>About &amp; Speedrun Retiming Guide</span>
+          <span data-i18n="guideTitle">About &amp; Speedrun Retiming Guide</span>
         </h3>
         <button type="button" onclick="toggleGuideModal()" class="p-1.5 rounded bg-[#edeae2] hover:bg-[#e0dcd1] text-[#4a473f] hover:text-[#1f1e1b]">
           <i data-lucide="x" class="w-4 h-4"></i>
@@ -650,46 +657,46 @@
       </div>
 
       <div class="space-y-3 text-xs sm:text-sm text-[#3d3a33] leading-relaxed">
-        <p>
+        <p data-i18n-html="guideIntro">
           Takes start and stop points of a YouTube video, down to the exact frame, and gives the time between them in the format <code class="text-[#b33122] bg-[#f4f1ea] border border-[#d6d1c4] px-1.5 py-0.5 rounded">1h 23m 45s 678ms</code>. Based on the original <a href="https://github.com/slashinfty/yt-frame-timer" target="_blank" rel="noopener" class="text-[#1d4f91] underline font-semibold">yt-frame-timer</a>.
         </p>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
           <div class="bg-[#faf8f3] border border-[#d6d1c4] rounded-lg p-3.5 space-y-1.5">
-            <div class="font-bold text-[#1f1e1b]">Step 1: Get Video Framerate</div>
-            <p class="text-xs text-[#5c584f]">Right-click the YouTube player and select <strong>“Stats for nerds”</strong>. Look at the 3rd line (<em>Current / Optimal Res</em>) and enter the two digits after the <code>@</code> symbol (e.g. <code>1920x1080@60</code> → <code>60</code> FPS).</p>
+            <div data-i18n="guideStep1Title" class="font-bold text-[#1f1e1b]">Step 1: Get Video Framerate</div>
+            <p data-i18n-html="guideStep1Desc" class="text-xs text-[#5c584f]">Right-click the YouTube player and select <strong>“Stats for nerds”</strong>. Look at the 3rd line (<em>Current / Optimal Res</em>) and enter the two digits after the <code>@</code> symbol (e.g. <code>1920x1080@60</code> → <code>60</code> FPS).</p>
           </div>
           <div class="bg-[#faf8f3] border border-[#d6d1c4] rounded-lg p-3.5 space-y-1.5">
-            <div class="font-bold text-[#1f1e1b]">Step 2: Copy Frame Debug Info</div>
-            <p class="text-xs text-[#5c584f]">Pause the video and use the <code>,</code> and <code>.</code> keys to step to the exact start frame. Right-click the video → <strong>“Copy debug info”</strong> and paste it into <em>Starting frame</em>. Repeat for <em>Ending frame</em>.</p>
+            <div data-i18n="guideStep2Title" class="font-bold text-[#1f1e1b]">Step 2: Copy Frame Debug Info</div>
+            <p data-i18n-html="guideStep2Desc" class="text-xs text-[#5c584f]">Pause the video and use the <code>,</code> and <code>.</code> keys to step to the exact start frame. Right-click the video → <strong>“Copy debug info”</strong> and paste it into <em>Starting frame</em>. Repeat for <em>Ending frame</em>.</p>
           </div>
         </div>
 
         <div class="bg-[#faf8f3] border border-[#d6d1c4] rounded-lg p-3.5 space-y-2">
-          <div class="font-bold text-[#1f1e1b]">About the YouTube Video Loader</div>
-          <p class="text-xs text-[#5c584f]">
+          <div data-i18n="guideLoaderTitle" class="font-bold text-[#1f1e1b]">About the YouTube Video Loader</div>
+          <p data-i18n-html="guideLoaderP1" class="text-xs text-[#5c584f]">
             The <strong>Video Loader</strong> tab lets you preview a video's title, duration and thumbnails, and step a scrubber through the timeline. Use <strong>Watch on YouTube @ Frame</strong> to jump to the exact time in a real YouTube tab, or try the embedded player in place. Embeds will fail on <code>file://</code> and sandboxed pages — that's expected; the pop-out button always works.
           </p>
-          <p class="text-xs text-[#5c584f]">
+          <p data-i18n-html="guideLoaderP2" class="text-xs text-[#5c584f]">
             For frame-accurate stepping, load a <strong>local video file</strong> (mp4/webm) in the <em>Local File</em> tab, or use the <strong>60fps simulator</strong> to practice.
           </p>
         </div>
 
         <div class="bg-[#faf8f3] border border-[#d6d1c4] rounded-lg p-3.5 space-y-2">
-          <div class="font-bold text-[#1f1e1b]">Keyboard Shortcuts (When not typing in an input)</div>
+          <div data-i18n="guideKeysTitle" class="font-bold text-[#1f1e1b]">Keyboard Shortcuts (When not typing in an input)</div>
           <div class="grid grid-cols-2 gap-2 text-xs">
-            <div><kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1d4f91]">,</kbd> / <kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1d4f91]">.</kbd> Step -1f / +1f</div>
-            <div><kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1e6b43]">[</kbd> / <kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#b33122]">]</kbd> Capture to Start / End</div>
-            <div><kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1f1e1b]">Space</kbd> Play / Pause simulator</div>
-            <div><kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1f1e1b]">Enter</kbd> Re-compute interval time</div>
+            <div data-i18n-html="guideKey1"><kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1d4f91]">,</kbd> / <kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1d4f91]">.</kbd> Step -1f / +1f</div>
+            <div data-i18n-html="guideKey2"><kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1e6b43]">[</kbd> / <kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#b33122]">]</kbd> Capture to Start / End</div>
+            <div data-i18n-html="guideKey3"><kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1f1e1b]">Space</kbd> Play / Pause simulator</div>
+            <div data-i18n-html="guideKey4"><kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1f1e1b]">Enter</kbd> Re-compute interval time</div>
           </div>
-          <p class="text-[11px] text-[#6e6a5f] pt-1">
+          <p data-i18n-html="guideKeysNote" class="text-[11px] text-[#6e6a5f] pt-1">
             In Video Loader mode, <kbd>,</kbd>/<kbd>.</kbd> and <kbd>[</kbd>/<kbd>]</kbd> control the YouTube scrubber instead of the simulator.
           </p>
         </div>
       </div>
 
       <div class="flex justify-end pt-2">
-        <button type="button" onclick="toggleGuideModal()" class="px-4 py-2 rounded bg-[#1d4f91] hover:bg-[#163c6e] text-white text-xs font-bold">
+        <button type="button" onclick="toggleGuideModal()" data-i18n="btnGotIt" class="px-4 py-2 rounded bg-[#1d4f91] hover:bg-[#163c6e] text-white text-xs font-bold">
           Got it
         </button>
       </div>
@@ -698,9 +705,431 @@
 
   <script>
     // =========================================================================
+    // Internationalization (English / Simplified Chinese)
+    // =========================================================================
+    const I18N = {
+      en: {
+        pageTitle: 'YouTube Frame & Speedrun Interval Timer',
+        headerTitle: 'YouTube Interval Timer',
+        headerBadge: 'v2.3 Retime Desk',
+        headerSubtitle: 'Frame-accurate speedrun retiming, debug JSON parser, load remover & verification workbench',
+        btnDemo: 'Load Demo Run',
+        btnGuide: 'How to Retime',
+        btnRepo: 'Original Repo',
+        kpiTimeLabel: 'Formatted Time',
+        kpiFramesLabel: 'Elapsed Frames',
+        kpiSmpteLabel: 'SMPTE Timecode',
+        kpiNetLabel: 'Net Multi-Split / LRT',
+        sec1Title: '1. Video Framerate & Rounding Rules',
+        sec1Desc: 'Right-click the YouTube video → <span class="text-[#1f1e1b] font-semibold">“Stats for nerds”</span> → find the number after <code class="text-[#b33122] bg-[#f4f1ea] border border-[#d6d1c4] px-1.5 py-0.5 rounded">@</code> on “Current / Optimal Res”.',
+        fpsLabel: 'Framerate (FPS):',
+        presetsLabel: 'Presets:',
+        precisionLabel: 'Output Precision:',
+        prec3: 'Milliseconds (3 dec · 678ms)',
+        prec2: 'Centiseconds (2 dec · .68s)',
+        prec1: 'Deciseconds (1 dec · .7s)',
+        prec0: 'Whole Seconds (0 dec)',
+        roundingLabel: 'Frame Alignment:',
+        roundFloor: 'Floor to Frame (SPRT / Default)',
+        roundNearest: 'Nearest Frame (Math.round)',
+        roundExact: 'Raw Unrounded Timestamp',
+        sec2Title: '2. Video Endpoints (Start & Stop Frames)',
+        sec2Desc: 'Step with <code class="text-[#1f1e1b] bg-[#f4f1ea] border border-[#d6d1c4] px-1.5 py-0.5 rounded">,</code> and <code class="text-[#1f1e1b] bg-[#f4f1ea] border border-[#d6d1c4] px-1.5 py-0.5 rounded">.</code> on YouTube, right-click → <span class="text-[#1f1e1b] font-semibold">“Copy debug info”</span>, or enter <code class="text-[#1f1e1b]">MM:SS.mmm</code>, seconds, or <code class="text-[#1f1e1b]">1250f</code>.',
+        btnSwap: 'Swap',
+        btnReset: 'Reset',
+        swapTitle: 'Swap Starting and Ending frames',
+        resetTitle: 'Clear both endpoints',
+        startFrameLabel: 'Starting Frame / Debug Info:',
+        endFrameLabel: 'Ending Frame / Debug Info:',
+        startPlaceholder: "Paste YouTube 'Copy debug info' JSON, seconds (e.g. 4.25), MM:SS.mmm, or frame (e.g. 255f)",
+        endPlaceholder: "Paste YouTube 'Copy debug info' JSON, seconds (e.g. 158.916), MM:SS.mmm, or frame (e.g. 9535f)",
+        pasteTitle: 'Paste from clipboard',
+        btnPaste: 'Paste',
+        frameNudgeLabel: 'Frame Nudge:',
+        sec3Title: '3. Computed Video Time & Verification Note',
+        noteTemplateLabel: 'Note Template:',
+        tplStandard: 'Standard Speedrun.com Note',
+        tplDetailed: 'Detailed Frame & Timestamp Audit',
+        tplLrt: 'Load-Removed (RTA + Loads → LRT)',
+        tplMarkdown: 'Markdown Verification Table',
+        btnCompute: 'Compute time',
+        btnCopyTime: 'Copy Time',
+        copyTimeTitle: 'Copy computed time',
+        btnAddSplit: '+ Split',
+        btnAddLoad: '- Load',
+        addSplitTitle: 'Add current start/end interval as a segment',
+        addLoadTitle: 'Subtract current interval as a loading screen / pause',
+        btnCopyMod: 'Copy Mod Message to Clipboard',
+        btnSaveHistory: 'Save to Session History',
+        splitsTitle: 'Multi-Segment Timer & Load Remover (RTA / LRT)',
+        splitsDesc: 'Combine multiple level segments or subtract loading screens/menus from a single full-run interval.',
+        btnAddSegRow: 'Add Segment',
+        btnAddLoadRow: 'Add Load Cut',
+        btnClear: 'Clear',
+        grossLabel: 'Gross Segment Time:',
+        loadsLabel: 'Loads Removed:',
+        netLabel: 'Final Net Time (LRT):',
+        thLabel: 'Label',
+        thType: 'Type',
+        thStart: 'Start (s)',
+        thEnd: 'End (s)',
+        thFrames: 'Frames',
+        thDuration: 'Duration',
+        thAction: 'Action',
+        sandboxTitle: 'Frame-Stepping Sandbox',
+        sandboxDesc: 'Practice frame-accurate capture on the 60fps simulator, or load a real YouTube video / local file.',
+        modeSim: '60fps Sim',
+        modeYt: 'Video Loader',
+        btnCopySimJson: 'Copy YT Debug JSON',
+        btnSetStartBracket: 'Set Start [',
+        btnSetEndBracket: 'Set End ]',
+        tabYoutube: 'YouTube URL',
+        tabLocal: 'Local File',
+        ytUrlPlaceholder: 'Paste YouTube URL or 11-char Video ID',
+        btnLoadVideo: 'Load Video',
+        btnWatchYt: 'Watch on YouTube @',
+        embedTry: 'Try embedded player',
+        embedHide: 'Hide embedded player',
+        embedFallbackNote: '<i data-lucide="info" class="w-3 h-3 inline -mt-0.5 text-[#1d4f91]"></i> If the embed shows an error, use the <strong>Watch on YouTube</strong> button above — embeds fail on <code class="text-[#b33122]">file://</code> and sandboxed pages.',
+        btnSetStart: 'Set Start',
+        btnSetEnd: 'Set End',
+        ytScrubberStart: '0s (Frame #0)',
+        ytEmptyState: 'Paste a YouTube URL above and click <strong>Load Video</strong>.',
+        localDropTitle: 'Choose a local video file',
+        localDropDesc: '.mp4, .webm, .mov — steps frame-by-frame using your FPS setting',
+        deltaTitle: 'PB / WR Delta & Frame Converter',
+        compareLabel: 'Compare Against Target / WR Time:',
+        comparePlaceholder: 'e.g. 2m 35s 000ms or 155.000',
+        quickFrameLabel: 'Quick Frame Count → Time @ Current FPS:',
+        historyTitle: 'Retime Session Log',
+        historyDesc: 'Saved calculations from this verification session',
+        guideTitle: 'About & Speedrun Retiming Guide',
+        guideIntro: 'Takes start and stop points of a YouTube video, down to the exact frame, and gives the time between them in the format <code class="text-[#b33122] bg-[#f4f1ea] border border-[#d6d1c4] px-1.5 py-0.5 rounded">1h 23m 45s 678ms</code>. Based on the original <a href="https://github.com/slashinfty/yt-frame-timer" target="_blank" rel="noopener" class="text-[#1d4f91] underline font-semibold">yt-frame-timer</a>.',
+        guideStep1Title: 'Step 1: Get Video Framerate',
+        guideStep1Desc: 'Right-click the YouTube player and select <strong>“Stats for nerds”</strong>. Look at the 3rd line (<em>Current / Optimal Res</em>) and enter the two digits after the <code>@</code> symbol (e.g. <code>1920x1080@60</code> → <code>60</code> FPS).',
+        guideStep2Title: 'Step 2: Copy Frame Debug Info',
+        guideStep2Desc: 'Pause the video and use the <code>,</code> and <code>.</code> keys to step to the exact start frame. Right-click the video → <strong>“Copy debug info”</strong> and paste it into <em>Starting frame</em>. Repeat for <em>Ending frame</em>.',
+        guideLoaderTitle: 'About the YouTube Video Loader',
+        guideLoaderP1: 'The <strong>Video Loader</strong> tab lets you preview a video\'s title, duration and thumbnails, and step a scrubber through the timeline. Use <strong>Watch on YouTube @ Frame</strong> to jump to the exact time in a real YouTube tab, or try the embedded player in place. Embeds will fail on <code>file://</code> and sandboxed pages — that\'s expected; the pop-out button always works.',
+        guideLoaderP2: 'For frame-accurate stepping, load a <strong>local video file</strong> (mp4/webm) in the <em>Local File</em> tab, or use the <strong>60fps simulator</strong> to practice.',
+        guideKeysTitle: 'Keyboard Shortcuts (When not typing in an input)',
+        guideKey1: '<kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1d4f91]">,</kbd> / <kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1d4f91]">.</kbd> Step -1f / +1f',
+        guideKey2: '<kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1e6b43]">[</kbd> / <kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#b33122]">]</kbd> Capture to Start / End',
+        guideKey3: '<kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1f1e1b]">Space</kbd> Play / Pause simulator',
+        guideKey4: '<kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1f1e1b]">Enter</kbd> Re-compute interval time',
+        guideKeysNote: 'In Video Loader mode, <kbd>,</kbd>/<kbd>.</kbd> and <kbd>[</kbd>/<kbd>]</kbd> control the YouTube scrubber instead of the simulator.',
+        btnGotIt: 'Got it',
+        // Dynamic strings
+        framePrefix: 'Frame #',
+        framesUnit: 'frames',
+        exactPrefix: 'Exact',
+        msPerFrame: 'ms / frame',
+        segmentsSummary: '{seg} segments · {load} loads removed',
+        detectedVid: 'Detected Video ID: {vid}',
+        play: 'Play',
+        pause: 'Pause',
+        playheadLabel: 'Playhead: {sec}s (Frame #{frame})',
+        durLabel: 'Duration: {dur} ({sec}s)',
+        durUnknown: 'Duration: unknown — scrubber uses 10-min estimate',
+        scrubberMax: '{sec}s (Frame #{frame})',
+        scrubberMaxEst: '~{sec}s estimate (Frame #{frame})',
+        loadingText: 'Loading…',
+        ytTitleFallback: 'YouTube Video {vid}',
+        byAuthor: 'by {author}',
+        vidLabel: 'Video ID: {vid}',
+        vidOffline: 'Video ID: {vid} · metadata offline',
+        splitsEmpty: 'No segments or load cuts added yet. Click <strong>"+ Split"</strong> or <strong>"- Load"</strong> above to add intervals.',
+        segBadge: 'Segment (+)',
+        loadBadge: 'Load (-)',
+        historyEmpty: 'No saved retimes yet. Click "Save to Session History" to log results.',
+        btnLoad: 'Load',
+        deltaInvalid: 'Enter a valid target time',
+        deltaTie: 'Exact Tie: ±0.000s (0 frames)',
+        deltaFaster: '{sec}s ({frames} frames · FASTER)',
+        deltaSlower: '+{sec}s (+{frames} frames · SLOWER)',
+        simStageActive: 'IN-GAME RUN ACTIVE (USE , AND . TO STEP FRAMES)',
+        simStagePre: 'PRE-RUN TITLE SCREEN (START AT FRAME #255)',
+        simStageStart: '★ FIRST INPUT / RUN START FRAME (#255) ★',
+        simStageEnd: '★ FINAL HIT / RUN STOP FRAME (#9535) ★',
+        simStagePost: 'POST-RUN VICTORY SCREEN',
+        simHud: 'Frame #{frame} · {sec}s',
+        toastInvalidFps: 'Invalid framerate; defaulted to 60 FPS',
+        toastSetFps: 'Framerate set to {fps} FPS',
+        toastInvalidEndpoints: 'Please enter valid Starting and Ending frames or timestamps.',
+        toastComputed: 'Computed: {time} ({frames} frames)',
+        toastModCopied: 'Moderator message copied to clipboard!',
+        toastTimeCopied: 'Copied time: {time}',
+        toastCopyFail: 'Could not copy automatically; please select and copy.',
+        toastSwapped: 'Swapped Starting and Ending frames',
+        toastReset: 'Reset endpoints to 0',
+        toastPasted: 'Pasted and parsed from clipboard!',
+        toastPasteHint: 'Press Ctrl+V / Cmd+V inside the highlighted field to paste',
+        toastAddedSplit: 'Added {label} to Multi-Segment Timer',
+        toastClearedSplits: 'Cleared all split intervals',
+        toastSavedHistory: 'Saved calculation to Session Log',
+        toastClearedHistory: 'Cleared session history log',
+        toastNoHistoryCsv: 'No session history to export',
+        toastExportedCsv: 'Exported session history to CSV',
+        toastCapturedSim: 'Captured Frame #{frame} ({sec}s) to {target}',
+        toastCopiedSimJson: 'Copied simulated YouTube debug JSON (cmt: {sec}s)',
+        toastInvalidYt: 'Please enter a valid YouTube URL or 11-character Video ID',
+        toastLoadedYt: 'Loaded video {vid}',
+        toastSetYtEndpoint: 'Set {target} to Frame #{frame} ({sec}s)',
+        toastLoadedLocal: 'Loaded "{name}" for native frame stepping',
+        toastCapturedHtml5: 'Captured HTML5 timestamp ({sec}s) to {target}',
+        startWord: 'Start',
+        endWord: 'End'
+      },
+      zh: {
+        pageTitle: 'YouTube 帧数与速通区间计时器',
+        headerTitle: 'YouTube 区间计时器',
+        headerBadge: 'v2.3 重计时工作台',
+        headerSubtitle: '精确到帧的速通重计时、调试 JSON 解析器、读条扣除器与审核工作台',
+        btnDemo: '加载示例',
+        btnGuide: '计时指南',
+        btnRepo: '原项目仓库',
+        kpiTimeLabel: '格式化时间',
+        kpiFramesLabel: '经过帧数',
+        kpiSmpteLabel: 'SMPTE 时间码',
+        kpiNetLabel: '净分段 / 去除读条时间 (LRT)',
+        sec1Title: '1. 视频帧率与取整规则',
+        sec1Desc: '右键点击 YouTube 视频 → <span class="text-[#1f1e1b] font-semibold">“详细统计信息 (Stats for nerds)”</span> → 查看 “Current / Optimal Res” 中 <code class="text-[#b33122] bg-[#f4f1ea] border border-[#d6d1c4] px-1.5 py-0.5 rounded">@</code> 后的数字。',
+        fpsLabel: '帧率 (FPS)：',
+        presetsLabel: '常用预设：',
+        precisionLabel: '输出精度：',
+        prec3: '毫秒 (3位小数 · 678ms)',
+        prec2: '厘秒 (2位小数 · .68s)',
+        prec1: '十分之一秒 (1位小数 · .7s)',
+        prec0: '整秒 (0位小数)',
+        roundingLabel: '帧对齐方式：',
+        roundFloor: '向下取整到帧 (SPRT / 默认)',
+        roundNearest: '最近帧 (四舍五入)',
+        roundExact: '原始未对齐时间戳',
+        sec2Title: '2. 视频起止点（起始帧与结束帧）',
+        sec2Desc: '在 YouTube 上按 <code class="text-[#1f1e1b] bg-[#f4f1ea] border border-[#d6d1c4] px-1.5 py-0.5 rounded">,</code> 和 <code class="text-[#1f1e1b] bg-[#f4f1ea] border border-[#d6d1c4] px-1.5 py-0.5 rounded">.</code> 逐帧步进，右键 → <span class="text-[#1f1e1b] font-semibold">“复制调试信息 (Copy debug info)”</span>，或直接输入 <code class="text-[#1f1e1b]">MM:SS.mmm</code>、秒数或 <code class="text-[#1f1e1b]">1250f</code>。',
+        btnSwap: '交换',
+        btnReset: '重置',
+        swapTitle: '交换起始帧与结束帧',
+        resetTitle: '重置起止点',
+        startFrameLabel: '起始帧 / 调试信息：',
+        endFrameLabel: '结束帧 / 调试信息：',
+        startPlaceholder: '粘贴 YouTube 调试 JSON、秒数 (如 4.25)、MM:SS.mmm 或帧数 (如 255f)',
+        endPlaceholder: '粘贴 YouTube 调试 JSON、秒数 (如 158.916)、MM:SS.mmm 或帧数 (如 9535f)',
+        pasteTitle: '从剪贴板粘贴',
+        btnPaste: '粘贴',
+        frameNudgeLabel: '帧数微调：',
+        sec3Title: '3. 计算结果与审核备注',
+        noteTemplateLabel: '备注模板：',
+        tplStandard: '标准 Speedrun.com 备注',
+        tplDetailed: '详细帧数与时间戳审计',
+        tplLrt: '去除读条 (RTA + 读条 → LRT)',
+        tplMarkdown: 'Markdown 审核表格',
+        btnCompute: '计算时间',
+        btnCopyTime: '复制时间',
+        copyTimeTitle: '复制计算结果',
+        btnAddSplit: '+ 分段',
+        btnAddLoad: '- 读条',
+        addSplitTitle: '将当前起止区间添加为分段',
+        addLoadTitle: '将当前区间作为读条/暂停时间扣除',
+        btnCopyMod: '复制审核备注到剪贴板',
+        btnSaveHistory: '保存到会话记录',
+        splitsTitle: '多段计时与读条去除器 (RTA / LRT)',
+        splitsDesc: '合并多个关卡分段，或从完整录像中扣除读条界面/菜单时间。',
+        btnAddSegRow: '添加分段',
+        btnAddLoadRow: '添加读条扣除',
+        btnClear: '清空',
+        grossLabel: '总分段时长：',
+        loadsLabel: '已扣除读条：',
+        netLabel: '最终净时长 (LRT)：',
+        thLabel: '标签',
+        thType: '类型',
+        thStart: '开始 (秒)',
+        thEnd: '结束 (秒)',
+        thFrames: '帧数',
+        thDuration: '时长',
+        thAction: '操作',
+        sandboxTitle: '逐帧步进沙盒',
+        sandboxDesc: '在 60fps 模拟器中练习精确抓帧，或加载真实 YouTube 视频 / 本地视频文件。',
+        modeSim: '60fps 模拟器',
+        modeYt: '视频加载器',
+        btnCopySimJson: '复制 YT 调试 JSON',
+        btnSetStartBracket: '设为起点 [',
+        btnSetEndBracket: '设为终点 ]',
+        tabYoutube: 'YouTube 链接',
+        tabLocal: '本地视频',
+        ytUrlPlaceholder: '粘贴 YouTube 链接或 11 位视频 ID',
+        btnLoadVideo: '加载视频',
+        btnWatchYt: '在 YouTube 观看 @',
+        embedTry: '尝试内嵌播放器',
+        embedHide: '隐藏内嵌播放器',
+        embedFallbackNote: '<i data-lucide="info" class="w-3 h-3 inline -mt-0.5 text-[#1d4f91]"></i> 如果内嵌播放器提示错误，请使用上方的<strong>在 YouTube 观看</strong>按钮 — 在 <code class="text-[#b33122]">file://</code> 或沙盒页面中内嵌播放器通常会受限。',
+        btnSetStart: '设为起点',
+        btnSetEnd: '设为终点',
+        ytScrubberStart: '0秒 (第 #0 帧)',
+        ytEmptyState: '在上方粘贴 YouTube 链接并点击<strong>加载视频</strong>。',
+        localDropTitle: '选择本地视频文件',
+        localDropDesc: '支持 .mp4, .webm, .mov — 将按当前 FPS 设置逐帧步进',
+        deltaTitle: 'PB / WR 差值与帧数换算器',
+        compareLabel: '对比目标 / 世界纪录时间：',
+        comparePlaceholder: '例如 2m 35s 000ms 或 155.000',
+        quickFrameLabel: '快速帧数 → 时间换算（按当前 FPS）：',
+        historyTitle: '重计时会话记录',
+        historyDesc: '本次审核会话中保存的计算记录',
+        guideTitle: '关于与速通重计时指南',
+        guideIntro: '获取 YouTube 视频的起始与结束时间点（精确到帧），并以 <code class="text-[#b33122] bg-[#f4f1ea] border border-[#d6d1c4] px-1.5 py-0.5 rounded">1h 23m 45s 678ms</code> 格式输出耗时。基于原版 <a href="https://github.com/slashinfty/yt-frame-timer" target="_blank" rel="noopener" class="text-[#1d4f91] underline font-semibold">yt-frame-timer</a>。',
+        guideStep1Title: '步骤 1：获取视频帧率',
+        guideStep1Desc: '右键点击 YouTube 播放器并选择<strong>“详细统计信息”</strong>。查看第 3 行（<em>Current / Optimal Res</em>），输入 <code>@</code> 符号后的数字（例如 <code>1920x1080@60</code> → <code>60</code> FPS）。',
+        guideStep2Title: '步骤 2：复制帧调试信息',
+        guideStep2Desc: '暂停视频并使用 <code>,</code> 和 <code>.</code> 键逐帧定位到起始帧。右键视频 → <strong>“复制调试信息”</strong> 并粘贴到<em>起始帧</em>输入框，再对<em>结束帧</em>重复此操作。',
+        guideLoaderTitle: '关于 YouTube 视频加载器',
+        guideLoaderP1: '<strong>视频加载器</strong>可预览视频标题、时长与缩略图，并通过时间轴滑块微调帧数。使用<strong>在 YouTube 观看 @ 帧</strong>可在新标签页跳转到对应时间点，也可直接展开内嵌播放器并用 <code>-1f</code>/<code>+1f</code>/<code>-10f</code>/<code>+10f</code> 同步跳转播放位置。',
+        guideLoaderP2: '如需离线精确逐帧步进，可在<em>本地视频</em>选项卡加载本地文件（mp4/webm），或使用 <strong>60fps 模拟器</strong>练习。',
+        guideKeysTitle: '键盘快捷键（未在输入框内输入时生效）',
+        guideKey1: '<kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1d4f91]">,</kbd> / <kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1d4f91]">.</kbd> 后退 / 前进 1 帧',
+        guideKey2: '<kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1e6b43]">[</kbd> / <kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#b33122]">]</kbd> 捕获为起点 / 终点',
+        guideKey3: '<kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1f1e1b]">Space</kbd> 播放 / 暂停模拟器',
+        guideKey4: '<kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1f1e1b]">Enter</kbd> 重新计算区间时间',
+        guideKeysNote: '在“视频加载器”模式下，<kbd>,</kbd>/<kbd>.</kbd> 和 <kbd>[</kbd>/<kbd>]</kbd> 将控制 YouTube 时间轴滑块及内嵌播放器。',
+        btnGotIt: '知道了',
+        // Dynamic strings
+        framePrefix: '第 #',
+        framesUnit: '帧',
+        exactPrefix: '精确',
+        msPerFrame: '毫秒 / 帧',
+        segmentsSummary: '{seg} 个分段 · 已扣除 {load} 个读条',
+        detectedVid: '已识别视频 ID: {vid}',
+        play: '播放',
+        pause: '暂停',
+        playheadLabel: '当前位置：{sec}s (第 #{frame} 帧)',
+        durLabel: '时长：{dur} ({sec}s)',
+        durUnknown: '时长未知 — 时间轴默认按 10 分钟估算',
+        scrubberMax: '{sec}s (第 #{frame} 帧)',
+        scrubberMaxEst: '约 {sec}s (第 #{frame} 帧)',
+        loadingText: '加载中…',
+        ytTitleFallback: 'YouTube 视频 {vid}',
+        byAuthor: '作者：{author}',
+        vidLabel: '视频 ID: {vid}',
+        vidOffline: '视频 ID: {vid} · 元数据离线',
+        splitsEmpty: '尚未添加分段或读条扣除。点击上方的 <strong>“+ 分段”</strong> 或 <strong>“- 读条”</strong> 来添加区间。',
+        segBadge: '分段 (+)',
+        loadBadge: '读条 (-)',
+        historyEmpty: '暂无保存的重计时记录。点击“保存到会话记录”可保存当前结果。',
+        btnLoad: '加载',
+        deltaInvalid: '请输入有效的目标时间',
+        deltaTie: '完全打平：±0.000s (0 帧)',
+        deltaFaster: '{sec}s ({frames} 帧 · 更快)',
+        deltaSlower: '+{sec}s (+{frames} 帧 · 更慢)',
+        simStageActive: '速通进行中（按 , 和 . 逐帧步进）',
+        simStagePre: '开局前标题画面（第 #255 帧开始）',
+        simStageStart: '★ 首次操作 / 计时开始帧 (#255) ★',
+        simStageEnd: '★ 最终一击 / 计时结束帧 (#9535) ★',
+        simStagePost: '通关胜利画面',
+        simHud: '第 #{frame} 帧 · {sec}s',
+        toastInvalidFps: '帧率无效，已恢复为默认 60 FPS',
+        toastSetFps: '已将帧率设为 {fps} FPS',
+        toastInvalidEndpoints: '请输入有效的起始和结束帧或时间戳。',
+        toastComputed: '计算完成：{time} ({frames} 帧)',
+        toastModCopied: '已复制审核备注到剪贴板！',
+        toastTimeCopied: '已复制时间：{time}',
+        toastCopyFail: '无法自动复制，请手动选择并复制。',
+        toastSwapped: '已交换起始帧与结束帧',
+        toastReset: '已将起止点重置为 0',
+        toastPasted: '已从剪贴板粘贴并解析！',
+        toastPasteHint: '请在高亮输入框内按 Ctrl+V / Cmd+V 粘贴',
+        toastAddedSplit: '已将 {label} 添加到多段计时器',
+        toastClearedSplits: '已清空所有分段区间',
+        toastSavedHistory: '已保存到会话记录',
+        toastClearedHistory: '已清空会话记录',
+        toastNoHistoryCsv: '没有可导出的会话记录',
+        toastExportedCsv: '已导出会话记录为 CSV',
+        toastCapturedSim: '已将第 #{frame} 帧 ({sec}s) 设为{target}',
+        toastCopiedSimJson: '已复制模拟 YouTube 调试 JSON (cmt: {sec}s)',
+        toastInvalidYt: '请输入有效的 YouTube 链接或 11 位视频 ID',
+        toastLoadedYt: '已加载视频 {vid}',
+        toastSetYtEndpoint: '已将{target}设为第 #{frame} 帧 ({sec}s)',
+        toastLoadedLocal: '已加载本地视频 “{name}”',
+        toastCapturedHtml5: '已将本地视频时间 ({sec}s) 设为{target}',
+        startWord: '起点',
+        endWord: '终点'
+      }
+    };
+
+    function t(key, vars = {}) {
+      const lang = appState.lang === 'zh' ? 'zh' : 'en';
+      let str = (I18N[lang] && I18N[lang][key] !== undefined) ? I18N[lang][key] : (I18N.en[key] || key);
+      Object.keys(vars).forEach(k => {
+        str = str.replace(new RegExp(`\\{${k}\\}`, 'g'), vars[k]);
+      });
+      return str;
+    }
+
+    function applyTranslations() {
+      document.documentElement.lang = appState.lang === 'zh' ? 'zh-CN' : 'en';
+      document.title = t('pageTitle');
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        el.textContent = t(key);
+      });
+      document.querySelectorAll('[data-i18n-html]').forEach(el => {
+        const key = el.getAttribute('data-i18n-html');
+        el.innerHTML = t(key);
+      });
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        el.setAttribute('placeholder', t(key));
+      });
+      document.querySelectorAll('[data-i18n-title]').forEach(el => {
+        const key = el.getAttribute('data-i18n-title');
+        el.setAttribute('title', t(key));
+      });
+
+      const embedBtnText = document.getElementById('ytEmbedBtnText');
+      if (embedBtnText) embedBtnText.textContent = appState.ytEmbedVisible ? t('embedHide') : t('embedTry');
+
+      const simPlayBtnText = document.getElementById('simPlayBtnText');
+      if (simPlayBtnText) simPlayBtnText.textContent = appState.sim.playing ? t('pause') : t('play');
+
+      const badge = document.getElementById('detectedVideoBadge');
+      if (badge && !badge.classList.contains('hidden') && appState.detectedVideoId) {
+        badge.textContent = t('detectedVid', { vid: appState.detectedVideoId });
+      }
+
+      const durEl = document.getElementById('ytVideoDuration');
+      if (durEl) {
+        if (appState.ytVideoDuration) {
+          durEl.textContent = t('durLabel', { dur: formatDurationShort(appState.ytVideoDuration), sec: Math.floor(appState.ytVideoDuration) });
+        } else if (!document.getElementById('ytVideoPanel')?.classList.contains('hidden')) {
+          durEl.textContent = t('durUnknown');
+        }
+      }
+
+      if (window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.lucide.createIcons();
+      }
+    }
+
+    function setLanguage(lang) {
+      appState.lang = lang === 'zh' ? 'zh' : 'en';
+      const sel = document.getElementById('langSelect');
+      if (sel) sel.value = appState.lang;
+      savePersistentState();
+      applyTranslations();
+      compute(false);
+      renderSplitsTable();
+      renderHistoryList();
+      updateQuickFrameConverter();
+      updateYtScrubberRange();
+      updateYtPlayheadDisplay();
+      updateHtml5Readout();
+      renderSimulatorCanvas();
+    }
+
+    // =========================================================================
     // Application State
     // =========================================================================
     const appState = {
+      lang: 'en',
       fps: 60,
       startSeconds: 4.25,
       endSeconds: 158.916667,
@@ -741,6 +1170,7 @@
         const raw = localStorage.getItem(STORAGE_KEY);
         if (raw) {
           const parsed = JSON.parse(raw);
+          if (parsed.lang === 'zh' || parsed.lang === 'en') appState.lang = parsed.lang;
           if (Array.isArray(parsed.history)) appState.history = parsed.history;
           if (Array.isArray(parsed.splits) && parsed.splits.length > 0) appState.splits = parsed.splits;
         }
@@ -756,6 +1186,7 @@
     function savePersistentState() {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify({
+          lang: appState.lang,
           history: appState.history.slice(0, 30),
           splits: appState.splits
         }));
@@ -820,7 +1251,7 @@
             appState.detectedVideoId = String(vid);
             const badge = document.getElementById('detectedVideoBadge');
             if (badge) {
-              badge.textContent = `Detected Video ID: ${vid}`;
+              badge.textContent = t('detectedVid', { vid });
               badge.classList.remove('hidden');
             }
             const ytInput = document.getElementById('ytUrlInput');
@@ -888,7 +1319,7 @@
       if (isNaN(val) || val <= 0) {
         val = 60;
         el.value = '60';
-        showToast('Invalid framerate; defaulted to 60 FPS', 'warn');
+        showToast(t('toastInvalidFps'), 'warn');
       } else {
         appState.fps = val;
       }
@@ -920,7 +1351,7 @@
       updateQuickFrameConverter();
       updateYtScrubberRange();
       updateYtPlayheadDisplay();
-      showToast(`Framerate set to ${fpsVal} FPS`, 'info');
+      showToast(t('toastSetFps', { fps: fpsVal }), 'info');
     }
 
     function highlightActiveFpsPill(activeFps) {
@@ -1033,9 +1464,9 @@
       const eFrameBadge = document.getElementById('endFrameNumberBadge');
       const eTimeBadge = document.getElementById('endFormattedBadge');
 
-      if (sFrameBadge) sFrameBadge.textContent = `Frame #${sFrame}`;
+      if (sFrameBadge) sFrameBadge.textContent = `${t('framePrefix')}${sFrame}${appState.lang === 'zh' ? ' 帧' : ''}`;
       if (sTimeBadge) sTimeBadge.textContent = formatColonTimestamp(appState.startSeconds);
-      if (eFrameBadge) eFrameBadge.textContent = `Frame #${eFrame}`;
+      if (eFrameBadge) eFrameBadge.textContent = `${t('framePrefix')}${eFrame}${appState.lang === 'zh' ? ' 帧' : ''}`;
       if (eTimeBadge) eTimeBadge.textContent = formatColonTimestamp(appState.endSeconds);
     }
 
@@ -1050,7 +1481,7 @@
       const eParsed = endEl ? parseFlexibleTimeInput(endEl.value, fps) : appState.endSeconds;
 
       if (sParsed === null || eParsed === null) {
-        if (showFeedback) showToast('Please enter valid Starting and Ending frames or timestamps.', 'warn');
+        if (showFeedback) showToast(t('toastInvalidEndpoints'), 'warn');
         return;
       }
 
@@ -1079,17 +1510,17 @@
       const kpiStepMs = document.getElementById('kpiFrameStepMs');
 
       if (kpiTime) kpiTime.textContent = formatted;
-      if (kpiSub) kpiSub.textContent = `${colonFormatted} (Exact: ${diffSeconds.toFixed(3)}s)`;
-      if (kpiFrames) kpiFrames.textContent = `${totalFrames.toLocaleString()} frames`;
-      if (kpiRange) kpiRange.textContent = `Frame #${startFrame} → #${endFrame}`;
+      if (kpiSub) kpiSub.textContent = `${colonFormatted} (${t('exactPrefix')}: ${diffSeconds.toFixed(3)}s)`;
+      if (kpiFrames) kpiFrames.textContent = `${totalFrames.toLocaleString()} ${t('framesUnit')}`;
+      if (kpiRange) kpiRange.textContent = `${t('framePrefix')}${startFrame} → #${endFrame}`;
       if (kpiSmpte) kpiSmpte.textContent = smpte;
-      if (kpiStepMs) kpiStepMs.textContent = `${(1000 / fps).toFixed(4)} ms / frame @ ${fps} fps`;
+      if (kpiStepMs) kpiStepMs.textContent = `${(1000 / fps).toFixed(4)} ${t('msPerFrame')} @ ${fps} fps`;
 
       updateEndpointBadges();
       updateModMessageFromState();
       updateComparisonDelta();
 
-      if (showFeedback) showToast(`Computed: ${formatted} (${totalFrames} frames)`, 'success');
+      if (showFeedback) showToast(t('toastComputed', { time: formatted, frames: totalFrames }), 'success');
     }
 
     function updateModMessageFromState() {
@@ -1103,30 +1534,52 @@
 
       const sStr = appState.startSeconds.toFixed(3);
       const eStr = appState.endSeconds.toFixed(3);
+      const isZh = appState.lang === 'zh';
 
       let text = '';
       if (tpl === 'standard') {
-        text = `Mod Note: Retimed to ${c.formatted} (${c.totalFrames} frames at ${fps} fps, from ${sStr}s to ${eStr}s).`;
+        text = isZh
+          ? `审核备注：重计时结果为 ${c.formatted}（${fps} fps 下共 ${c.totalFrames} 帧，从 ${sStr}s 到 ${eStr}s）。`
+          : `Mod Note: Retimed to ${c.formatted} (${c.totalFrames} frames at ${fps} fps, from ${sStr}s to ${eStr}s).`;
       } else if (tpl === 'detailed') {
-        text = [
-          `Mod Note: Video retimed to ${c.formatted} (${c.colonFormatted}).`,
-          `• Start: ${sStr}s (Frame #${c.startFrame}) | End: ${eStr}s (Frame #${c.endFrame})`,
-          `• Elapsed: ${c.totalFrames} frames @ ${fps} FPS (${(1000 / fps).toFixed(2)} ms/frame) | SMPTE: ${c.smpte}`
-        ].join('\n');
+        text = isZh
+          ? [
+              `审核备注：视频重计时为 ${c.formatted} (${c.colonFormatted})。`,
+              `• 起点：${sStr}s (第 #${c.startFrame} 帧) | 终点：${eStr}s (第 #${c.endFrame} 帧)`,
+              `• 耗时：${c.totalFrames} 帧 @ ${fps} FPS (${(1000 / fps).toFixed(2)} ms/帧) | SMPTE: ${c.smpte}`
+            ].join('\n')
+          : [
+              `Mod Note: Video retimed to ${c.formatted} (${c.colonFormatted}).`,
+              `• Start: ${sStr}s (Frame #${c.startFrame}) | End: ${eStr}s (Frame #${c.endFrame})`,
+              `• Elapsed: ${c.totalFrames} frames @ ${fps} FPS (${(1000 / fps).toFixed(2)} ms/frame) | SMPTE: ${c.smpte}`
+            ].join('\n');
       } else if (tpl === 'lrt') {
         const totals = calculateSplitTotals();
-        text = [
-          `Mod Note: Retimed to ${totals.netFormatted} LRT (Gross RTA: ${totals.grossFormatted}, Loads Removed: ${totals.loadFormatted}).`,
-          `• Total Net Frames: ${totals.netFrames} frames @ ${fps} FPS across ${appState.splits.length} logged intervals.`
-        ].join('\n');
+        text = isZh
+          ? [
+              `审核备注：重计时为 ${totals.netFormatted} LRT（总 RTA：${totals.grossFormatted}，扣除读条：${totals.loadFormatted}）。`,
+              `• 净帧数：${totals.netFrames} 帧 @ ${fps} FPS（共记录 ${appState.splits.length} 个区间）。`
+            ].join('\n')
+          : [
+              `Mod Note: Retimed to ${totals.netFormatted} LRT (Gross RTA: ${totals.grossFormatted}, Loads Removed: ${totals.loadFormatted}).`,
+              `• Total Net Frames: ${totals.netFrames} frames @ ${fps} FPS across ${appState.splits.length} logged intervals.`
+            ].join('\n');
       } else if (tpl === 'markdown') {
-        text = [
-          `| Metric | Value |`,
-          `| :--- | :--- |`,
-          `| **Final Time** | \`${c.formatted}\` (\`${c.colonFormatted}\`) |`,
-          `| **Frames @ ${fps} FPS** | ${c.totalFrames} frames (#${c.startFrame} → #${c.endFrame}) |`,
-          `| **Endpoints** | ${sStr}s to ${eStr}s (SMPTE \`${c.smpte}\`) |`
-        ].join('\n');
+        text = isZh
+          ? [
+              `| 项目 | 数值 |`,
+              `| :--- | :--- |`,
+              `| **最终时间** | \`${c.formatted}\` (\`${c.colonFormatted}\`) |`,
+              `| **帧数 @ ${fps} FPS** | ${c.totalFrames} 帧 (#${c.startFrame} → #${c.endFrame}) |`,
+              `| **起止时间点** | ${sStr}s 至 ${eStr}s (SMPTE \`${c.smpte}\`) |`
+            ].join('\n')
+          : [
+              `| Metric | Value |`,
+              `| :--- | :--- |`,
+              `| **Final Time** | \`${c.formatted}\` (\`${c.colonFormatted}\`) |`,
+              `| **Frames @ ${fps} FPS** | ${c.totalFrames} frames (#${c.startFrame} → #${c.endFrame}) |`,
+              `| **Endpoints** | ${sStr}s to ${eStr}s (SMPTE \`${c.smpte}\`) |`
+            ].join('\n');
       }
 
       modMessage.value = text;
@@ -1137,13 +1590,13 @@
     function copyModMessage() {
       const modMessage = document.getElementById('modMessage');
       if (!modMessage || !modMessage.value) return;
-      copyTextToClipboard(modMessage.value, 'Moderator message copied to clipboard!');
+      copyTextToClipboard(modMessage.value, t('toastModCopied'));
     }
 
     function copyTimeValue() {
       const timeInput = document.getElementById('time');
       if (!timeInput || !timeInput.value) return;
-      copyTextToClipboard(timeInput.value, `Copied time: ${timeInput.value}`);
+      copyTextToClipboard(timeInput.value, t('toastTimeCopied', { time: timeInput.value }));
     }
 
     function copyTextToClipboard(text, successMsg) {
@@ -1168,7 +1621,7 @@
         document.execCommand('copy');
         showToast(successMsg, 'success');
       } catch (e) {
-        showToast('Could not copy automatically; please select and copy.', 'warn');
+        showToast(t('toastCopyFail'), 'warn');
       }
       document.body.removeChild(temp);
     }
@@ -1199,7 +1652,7 @@
       startEl.value = endEl.value;
       endEl.value = tmp;
       realignAllEndpoints();
-      showToast('Swapped Starting and Ending frames', 'info');
+      showToast(t('toastSwapped'), 'info');
     }
 
     function clearEndpoints() {
@@ -1210,7 +1663,7 @@
       appState.startSeconds = 0;
       appState.endSeconds = 0;
       compute(false);
-      showToast('Reset endpoints to 0', 'info');
+      showToast(t('toastReset'), 'info');
     }
 
     async function pasteFromClipboard(inputId) {
@@ -1222,13 +1675,13 @@
           if (clipText) {
             el.value = clipText;
             parseForTime({ target: el, type: 'change' });
-            showToast('Pasted and parsed from clipboard!', 'success');
+            showToast(t('toastPasted'), 'success');
             return;
           }
         }
       } catch (e) {}
       el.focus();
-      showToast('Press Ctrl+V / Cmd+V inside the highlighted field to paste', 'info');
+      showToast(t('toastPasteHint'), 'info');
     }
 
     function loadSampleDebugPair() {
@@ -1286,7 +1739,7 @@
       const precision = precisionEl ? parseInt(precisionEl.value, 10) : 3;
 
       if (appState.splits.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" class="py-6 text-center text-[#6e6a5f] text-xs">No segments or load cuts added yet. Click <strong>"+ Split"</strong> or <strong>"- Load"</strong> above to add intervals.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" class="py-6 text-center text-[#6e6a5f] text-xs">${t('splitsEmpty')}</td></tr>`;
       } else {
         tbody.innerHTML = appState.splits.map((sp) => {
           const sFrame = Math.round((parseFloat(sp.start) || 0) * fps);
@@ -1299,7 +1752,7 @@
           return `
             <tr class="hover:bg-[#faf8f3] transition">
               <td class="py-2 px-2"><input type="text" value="${escapeHtml(sp.label)}" onchange="updateSplitField('${sp.id}', 'label', this.value)" class="w-full max-w-[160px] bg-white border border-[#c8c2b4] rounded px-2 py-1 text-xs font-medium text-[#1f1e1b] focus:outline-none focus:border-[#1d4f91]" /></td>
-              <td class="py-2 px-2"><button type="button" onclick="toggleSplitType('${sp.id}')" class="px-2 py-0.5 rounded border text-xs font-semibold ${badgeClass}">${isLoad ? 'Load (-)' : 'Segment (+)'}</button></td>
+              <td class="py-2 px-2"><button type="button" onclick="toggleSplitType('${sp.id}')" class="px-2 py-0.5 rounded border text-xs font-semibold ${badgeClass}">${isLoad ? t('loadBadge') : t('segBadge')}</button></td>
               <td class="py-2 px-2"><input type="number" step="0.001" value="${Number(sp.start).toFixed(3)}" onchange="updateSplitField('${sp.id}', 'start', this.value)" class="w-20 bg-white border border-[#c8c2b4] rounded px-2 py-1 text-xs font-medium text-[#1f1e1b] focus:outline-none focus:border-[#1d4f91]" /></td>
               <td class="py-2 px-2"><input type="number" step="0.001" value="${Number(sp.end).toFixed(3)}" onchange="updateSplitField('${sp.id}', 'end', this.value)" class="w-20 bg-white border border-[#c8c2b4] rounded px-2 py-1 text-xs font-medium text-[#1f1e1b] focus:outline-none focus:border-[#1d4f91]" /></td>
               <td class="py-2 px-2 text-right font-semibold ${isLoad ? 'text-[#8c5319]' : 'text-[#1e6b43]'}">${isLoad ? '-' : '+'}${diffFrames}f</td>
@@ -1321,7 +1774,7 @@
       if (loadEl) loadEl.textContent = `-${totals.loadFormatted}`;
       if (netEl) netEl.textContent = totals.netFormatted;
       if (kpiNet) kpiNet.textContent = totals.netFormatted;
-      if (kpiSplitSum) kpiSplitSum.textContent = `${totals.segCount} segments · ${totals.loadCount} loads removed`;
+      if (kpiSplitSum) kpiSplitSum.textContent = t('segmentsSummary', { seg: totals.segCount, load: totals.loadCount });
 
       const netBar = document.getElementById('splitNetBar');
       const loadBar = document.getElementById('splitLoadBar');
@@ -1339,21 +1792,25 @@
 
     function addCurrentToSplits(type) {
       const count = appState.splits.length + 1;
-      const label = type === 'load' ? `Loading Screen #${count}` : `Segment #${count}`;
+      const isZh = appState.lang === 'zh';
+      const label = type === 'load'
+        ? (isZh ? `读条 #${count}` : `Loading Screen #${count}`)
+        : (isZh ? `分段 #${count}` : `Segment #${count}`);
       appState.splits.push({
         id: 'sp-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
         label, type, start: appState.startSeconds, end: appState.endSeconds
       });
       renderSplitsTable();
-      showToast(`Added ${label} to Multi-Segment Timer`, 'success');
+      showToast(t('toastAddedSplit', { label }), 'success');
     }
 
     function addManualSplitRow(type) {
       const count = appState.splits.length + 1;
+      const isZh = appState.lang === 'zh';
       const lastEnd = appState.splits.length > 0 ? appState.splits[appState.splits.length - 1].end : 0;
       appState.splits.push({
         id: 'sp-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
-        label: type === 'load' ? `Load Cut #${count}` : `Stage #${count}`,
+        label: type === 'load' ? (isZh ? `读条扣除 #${count}` : `Load Cut #${count}`) : (isZh ? `关卡 #${count}` : `Stage #${count}`),
         type, start: lastEnd,
         end: Number((lastEnd + (type === 'load' ? 3.5 : 30.0)).toFixed(3))
       });
@@ -1386,7 +1843,7 @@
     function clearAllSplits() {
       appState.splits = [];
       renderSplitsTable();
-      showToast('Cleared all split intervals', 'info');
+      showToast(t('toastClearedSplits'), 'info');
     }
 
     // =========================================================================
@@ -1400,7 +1857,7 @@
       const fps = getValidFps();
       const targetSec = parseFlexibleTimeInput(inputEl.value, fps);
       if (targetSec === null) {
-        outEl.textContent = 'Enter a valid target time';
+        outEl.textContent = t('deltaInvalid');
         outEl.className = 'text-xs font-semibold text-[#6e6a5f] pt-0.5';
         return;
       }
@@ -1408,16 +1865,15 @@
       const currentSec = appState.lastComputed.diffSeconds;
       const deltaSec = currentSec - targetSec;
       const deltaFrames = Math.round(deltaSec * fps);
-      const sign = deltaSec <= 0 ? '' : '+';
 
       if (Math.abs(deltaFrames) === 0) {
-        outEl.textContent = 'Exact Tie: ±0.000s (0 frames)';
+        outEl.textContent = t('deltaTie');
         outEl.className = 'text-xs font-bold text-[#1d4f91] pt-0.5';
       } else if (deltaSec < 0) {
-        outEl.textContent = `${deltaSec.toFixed(3)}s (${deltaFrames} frames · FASTER)`;
+        outEl.textContent = t('deltaFaster', { sec: deltaSec.toFixed(3), frames: deltaFrames });
         outEl.className = 'text-xs font-bold text-[#1e6b43] pt-0.5';
       } else {
-        outEl.textContent = `${sign}${deltaSec.toFixed(3)}s (+${deltaFrames} frames · SLOWER)`;
+        outEl.textContent = t('deltaSlower', { sec: deltaSec.toFixed(3), frames: deltaFrames });
         outEl.className = 'text-xs font-bold text-[#b33122] pt-0.5';
       }
     }
@@ -1439,9 +1895,10 @@
       const c = appState.lastComputed;
       if (!c) return;
       const fps = getValidFps();
+      const isZh = appState.lang === 'zh';
       const entry = {
         id: 'hist-' + Date.now(),
-        label: `Run #${appState.history.length + 1} (${fps}fps)`,
+        label: isZh ? `记录 #${appState.history.length + 1} (${fps}fps)` : `Run #${appState.history.length + 1} (${fps}fps)`,
         fps,
         start: Number(appState.startSeconds.toFixed(4)),
         end: Number(appState.endSeconds.toFixed(4)),
@@ -1452,7 +1909,7 @@
       appState.history.unshift(entry);
       savePersistentState();
       renderHistoryList();
-      showToast('Saved calculation to Session Log', 'success');
+      showToast(t('toastSavedHistory'), 'success');
     }
 
     function renderHistoryList() {
@@ -1460,10 +1917,11 @@
       if (!container) return;
 
       if (appState.history.length === 0) {
-        container.innerHTML = `<div class="text-xs text-[#6e6a5f] text-center py-4">No saved retimes yet. Click "Save to Session History" to log results.</div>`;
+        container.innerHTML = `<div class="text-xs text-[#6e6a5f] text-center py-4">${t('historyEmpty')}</div>`;
         return;
       }
 
+      const fUnit = appState.lang === 'zh' ? '帧' : 'f';
       container.innerHTML = appState.history.map(item => `
         <div class="bg-[#faf8f3] border border-[#d6d1c4] rounded-lg p-2.5 flex items-center justify-between gap-2 hover:border-[#b5ae9e] transition">
           <div class="min-w-0">
@@ -1472,12 +1930,12 @@
               <span class="text-[11px] font-semibold px-1.5 py-0.5 rounded bg-white text-[#5c584f] border border-[#d6d1c4]">${item.fps} FPS</span>
             </div>
             <div class="text-xs text-[#1e6b43] font-bold mt-0.5">
-              ${escapeHtml(item.formatted)} <span class="text-[#5c584f] font-normal">(${item.frames}f · ${item.start}s → ${item.end}s)</span>
+              ${escapeHtml(item.formatted)} <span class="text-[#5c584f] font-normal">(${item.frames}${fUnit} · ${item.start}s → ${item.end}s)</span>
             </div>
           </div>
           <div class="flex items-center gap-1 shrink-0">
-            <button type="button" onclick="loadHistoryEntry('${item.id}')" title="Load into calculator" class="px-2.5 py-1 rounded bg-white hover:bg-[#edeae2] text-xs font-semibold text-[#2c2a26] border border-[#c8c2b4] transition">Load</button>
-            <button type="button" onclick="deleteHistoryEntry('${item.id}')" title="Delete entry" class="px-2 py-1 rounded bg-white hover:bg-[#fbeae8] text-xs font-semibold text-[#6e6a5f] hover:text-[#b33122] border border-[#d6d1c4] transition">✕</button>
+            <button type="button" onclick="loadHistoryEntry('${item.id}')" class="px-2.5 py-1 rounded bg-white hover:bg-[#edeae2] text-xs font-semibold text-[#2c2a26] border border-[#c8c2b4] transition">${t('btnLoad')}</button>
+            <button type="button" onclick="deleteHistoryEntry('${item.id}')" class="px-2 py-1 rounded bg-white hover:bg-[#fbeae8] text-xs font-semibold text-[#6e6a5f] hover:text-[#b33122] border border-[#d6d1c4] transition">✕</button>
           </div>
         </div>
       `).join('');
@@ -1512,12 +1970,12 @@
       appState.history = [];
       savePersistentState();
       renderHistoryList();
-      showToast('Cleared session history log', 'info');
+      showToast(t('toastClearedHistory'), 'info');
     }
 
     function exportHistoryCSV() {
       if (appState.history.length === 0) {
-        showToast('No session history to export', 'warn');
+        showToast(t('toastNoHistoryCsv'), 'warn');
         return;
       }
       const headers = ['Label', 'FPS', 'Start_Seconds', 'End_Seconds', 'Total_Frames', 'Formatted_Time', 'Logged_At'];
@@ -1534,7 +1992,7 @@
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
-      showToast('Exported session history to CSV', 'success');
+      showToast(t('toastExportedCsv'), 'success');
     }
 
     // =========================================================================
@@ -1643,12 +2101,12 @@
 
       ctx.textAlign = 'center';
       ctx.fillStyle = '#5c584f';
-      ctx.font = '600 13px "Source Sans 3", sans-serif';
-      let stageBanner = 'IN-GAME RUN ACTIVE (USE , AND . TO STEP FRAMES)';
-      if (frame < 255) stageBanner = 'PRE-RUN TITLE SCREEN (START AT FRAME #255)';
-      if (frame === 255) stageBanner = '★ FIRST INPUT / RUN START FRAME (#255) ★';
-      if (frame === 9535) stageBanner = '★ FINAL HIT / RUN STOP FRAME (#9535) ★';
-      if (frame > 9535) stageBanner = 'POST-RUN VICTORY SCREEN';
+      ctx.font = '600 13px "Source Sans 3", "PingFang SC", "Microsoft YaHei", sans-serif';
+      let stageBanner = t('simStageActive');
+      if (frame < 255) stageBanner = t('simStagePre');
+      if (frame === 255) stageBanner = t('simStageStart');
+      if (frame === 9535) stageBanner = t('simStageEnd');
+      if (frame > 9535) stageBanner = t('simStagePost');
       ctx.fillText(stageBanner, w / 2, 84);
 
       ctx.fillStyle = '#1f1e1b';
@@ -1656,15 +2114,16 @@
       ctx.fillText(`${timeSec.toFixed(3)}s`, w / 2, 138);
 
       ctx.fillStyle = '#1d4f91';
-      ctx.font = '600 16px "Source Sans 3", sans-serif';
-      ctx.fillText(`Frame #${frame}   |   SMPTE ${formatSmpte(timeSec, fps)}`, w / 2, 172);
+      ctx.font = '600 16px "Source Sans 3", "PingFang SC", "Microsoft YaHei", sans-serif';
+      const frameLabel = appState.lang === 'zh' ? `第 #${frame} 帧` : `Frame #${frame}`;
+      ctx.fillText(`${frameLabel}   |   SMPTE ${formatSmpte(timeSec, fps)}`, w / 2, 172);
 
       ctx.fillStyle = '#6e6a5f';
       ctx.font = '500 12px "Source Sans 3", sans-serif';
       ctx.fillText(`YouTube debug cmt: "${timeSec.toFixed(3)}" @ ${fps} FPS`, w / 2, 204);
 
       const hudText = document.getElementById('simHudText');
-      if (hudText) hudText.textContent = `Frame #${frame} · ${timeSec.toFixed(3)}s`;
+      if (hudText) hudText.textContent = t('simHud', { frame, sec: timeSec.toFixed(3) });
       const scrubber = document.getElementById('simScrubber');
       if (scrubber) scrubber.value = String(frame);
       const maxLabel = document.getElementById('simMaxTimeLabel');
@@ -1687,11 +2146,11 @@
       if (appState.sim.playing) {
         appState.sim.playing = false;
         if (appState.sim.rafId) cancelAnimationFrame(appState.sim.rafId);
-        if (btnText) btnText.textContent = 'Play';
+        if (btnText) btnText.textContent = t('play');
         return;
       }
       appState.sim.playing = true;
-      if (btnText) btnText.textContent = 'Pause';
+      if (btnText) btnText.textContent = t('pause');
       appState.sim.lastTick = performance.now();
 
       function loop(now) {
@@ -1717,7 +2176,11 @@
       if (el) {
         el.value = formatCleanSeconds(sec);
         parseForTime({ target: el, type: 'change' });
-        showToast(`Captured Frame #${appState.sim.currentFrame} (${sec.toFixed(3)}s) to ${targetId === 'startobj' ? 'Start' : 'End'}`, 'success');
+        showToast(t('toastCapturedSim', {
+          frame: appState.sim.currentFrame,
+          sec: sec.toFixed(3),
+          target: targetId === 'startobj' ? t('startWord') : t('endWord')
+        }), 'success');
       }
     }
 
@@ -1725,11 +2188,11 @@
       const fps = getValidFps();
       const sec = appState.sim.currentFrame / fps;
       const debugObj = { ns: 'yt', el: 'detailpage', cpn: 'sim_workbench', docid: appState.detectedVideoId || 'dQw4w9WgXcQ', ver: 2, cmt: sec.toFixed(3), vct: sec.toFixed(3), fps };
-      copyTextToClipboard(JSON.stringify(debugObj), `Copied simulated YouTube debug JSON (cmt: ${sec.toFixed(3)}s)`);
+      copyTextToClipboard(JSON.stringify(debugObj), t('toastCopiedSimJson', { sec: sec.toFixed(3) }));
     }
 
     // =========================================================================
-    // YouTube Video Loader (Simplified)
+    // YouTube Video Loader & Embedded Player Sync
     // =========================================================================
     function extractYoutubeId(urlOrId) {
       const str = String(urlOrId || '').trim();
@@ -1739,12 +2202,32 @@
       return match ? match[1] : null;
     }
 
-    function buildYtEmbedUrl(vid) {
-      const params = new URLSearchParams({ rel: '0', playsinline: '1', modestbranding: '1' });
+    function buildYtEmbedUrl(vid, startSec = 0) {
+      const params = new URLSearchParams({
+        rel: '0',
+        playsinline: '1',
+        modestbranding: '1',
+        enablejsapi: '1'
+      });
+      if (startSec > 0) {
+        params.set('start', String(Math.floor(startSec)));
+      }
       if (window.location.origin && window.location.origin !== 'null' && window.location.protocol.startsWith('http')) {
         params.set('origin', window.location.origin);
       }
       return `https://www.youtube-nocookie.com/embed/${vid}?${params.toString()}`;
+    }
+
+    function seekYtEmbed(sec, pause = true) {
+      if (!appState.ytEmbedVisible) return;
+      const iframe = document.getElementById('ytEmbedIframe');
+      if (!iframe || !iframe.contentWindow) return;
+      try {
+        if (pause) {
+          iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'pauseVideo', args: [] }), '*');
+        }
+        iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'seekTo', args: [sec, true] }), '*');
+      } catch (e) {}
     }
 
     function formatDurationShort(sec) {
@@ -1760,7 +2243,7 @@
       const input = document.getElementById('ytUrlInput');
       const vid = extractYoutubeId(input.value);
       if (!vid) {
-        showToast('Please enter a valid YouTube URL or 11-character Video ID', 'warn');
+        showToast(t('toastInvalidYt'), 'warn');
         return;
       }
 
@@ -1775,7 +2258,7 @@
       if (embedC) embedC.classList.add('hidden');
       if (embedIframe) embedIframe.src = '';
       const embedBtnText = document.getElementById('ytEmbedBtnText');
-      if (embedBtnText) embedBtnText.textContent = 'Try embedded player';
+      if (embedBtnText) embedBtnText.textContent = t('embedTry');
 
       // Show panel
       document.getElementById('ytVideoPanel').classList.remove('hidden');
@@ -1787,8 +2270,8 @@
       const titleEl = document.getElementById('ytVideoTitle');
       const authorEl = document.getElementById('ytVideoAuthor');
       const durEl = document.getElementById('ytVideoDuration');
-      if (titleEl) titleEl.textContent = 'Loading…';
-      if (authorEl) authorEl.textContent = `Video ID: ${vid}`;
+      if (titleEl) titleEl.textContent = t('loadingText');
+      if (authorEl) authorEl.textContent = t('vidLabel', { vid });
       if (durEl) durEl.textContent = '';
 
       // Fetch metadata via noembed (CORS-friendly, includes duration)
@@ -1796,26 +2279,26 @@
         const res = await fetch(`https://noembed.com/embed?url=https://www.youtube.com/watch?v=${encodeURIComponent(vid)}`);
         if (res.ok) {
           const data = await res.json();
-          if (titleEl) titleEl.textContent = data.title || `YouTube Video ${vid}`;
-          if (authorEl) authorEl.textContent = data.author_name ? `by ${data.author_name}` : `Video ID: ${vid}`;
+          if (titleEl) titleEl.textContent = data.title || t('ytTitleFallback', { vid });
+          if (authorEl) authorEl.textContent = data.author_name ? t('byAuthor', { author: data.author_name }) : t('vidLabel', { vid });
           const dur = parseFloat(data.duration);
           if (!isNaN(dur) && dur > 0) {
             appState.ytVideoDuration = dur;
-            if (durEl) durEl.textContent = `Duration: ${formatDurationShort(dur)} (${Math.floor(dur)}s)`;
+            if (durEl) durEl.textContent = t('durLabel', { dur: formatDurationShort(dur), sec: Math.floor(dur) });
           } else {
-            if (durEl) durEl.textContent = 'Duration: unknown — scrubber uses 10-min estimate';
+            if (durEl) durEl.textContent = t('durUnknown');
           }
         } else {
-          if (titleEl) titleEl.textContent = `YouTube Video ${vid}`;
+          if (titleEl) titleEl.textContent = t('ytTitleFallback', { vid });
         }
       } catch (e) {
-        if (titleEl) titleEl.textContent = `YouTube Video ${vid}`;
-        if (authorEl) authorEl.textContent = `Video ID: ${vid} · metadata offline`;
+        if (titleEl) titleEl.textContent = t('ytTitleFallback', { vid });
+        if (authorEl) authorEl.textContent = t('vidOffline', { vid });
       }
 
-      scrubYtToSeconds(0);
+      scrubYtToSeconds(0, false);
       updateYtScrubberRange();
-      showToast(`Loaded video ${vid}`, 'success');
+      showToast(t('toastLoadedYt', { vid }), 'success');
     }
 
     function updateYtScrubberRange() {
@@ -1828,25 +2311,28 @@
 
       const label = document.getElementById('ytScrubberMaxLabel');
       if (label) {
-        if (duration) label.textContent = `${duration.toFixed(1)}s (Frame #${maxFrame})`;
-        else label.textContent = `~${maxSec}s estimate (Frame #${maxFrame})`;
+        if (duration) label.textContent = t('scrubberMax', { sec: duration.toFixed(1), frame: maxFrame });
+        else label.textContent = t('scrubberMaxEst', { sec: maxSec, frame: maxFrame });
       }
     }
 
-    function scrubYtToSeconds(sec) {
+    function scrubYtToSeconds(sec, syncEmbed = true) {
       const maxSec = appState.ytVideoDuration || 600;
       appState.ytPlayheadSeconds = Math.max(0, Math.min(maxSec, sec));
       updateYtPlayheadDisplay();
+      if (syncEmbed) {
+        seekYtEmbed(appState.ytPlayheadSeconds, true);
+      }
     }
 
     function scrubYtInspectorFrame(frameVal) {
       const fps = getValidFps();
-      scrubYtToSeconds(parseInt(frameVal, 10) / fps);
+      scrubYtToSeconds(parseInt(frameVal, 10) / fps, true);
     }
 
     function stepYtInspectorFrame(deltaFrames) {
       const fps = getValidFps();
-      scrubYtToSeconds(appState.ytPlayheadSeconds + deltaFrames / fps);
+      scrubYtToSeconds(appState.ytPlayheadSeconds + deltaFrames / fps, true);
     }
 
     function updateYtPlayheadDisplay() {
@@ -1855,7 +2341,7 @@
       const frame = Math.round(sec * fps);
 
       const readout = document.getElementById('ytInspectorTimeReadout');
-      if (readout) readout.textContent = `Playhead: ${sec.toFixed(3)}s (Frame #${frame})`;
+      if (readout) readout.textContent = t('playheadLabel', { sec: sec.toFixed(3), frame });
       const scrubber = document.getElementById('ytInspectorScrubber');
       if (scrubber) scrubber.value = String(frame);
       const inlineFrame = document.getElementById('ytPlayheadFrameInline');
@@ -1870,7 +2356,11 @@
       if (el) {
         el.value = formatCleanSeconds(alignedSec);
         parseForTime({ target: el, type: 'change' });
-        showToast(`Set ${targetId === 'startobj' ? 'Start' : 'End'} to Frame #${frame} (${alignedSec.toFixed(3)}s)`, 'success');
+        showToast(t('toastSetYtEndpoint', {
+          target: targetId === 'startobj' ? t('startWord') : t('endWord'),
+          frame,
+          sec: alignedSec.toFixed(3)
+        }), 'success');
       }
     }
 
@@ -1889,15 +2379,20 @@
       if (appState.ytEmbedVisible) {
         container.classList.add('hidden');
         iframe.src = '';
-        if (btnText) btnText.textContent = 'Try embedded player';
+        if (btnText) btnText.textContent = t('embedTry');
         appState.ytEmbedVisible = false;
         return;
       }
 
-      iframe.src = buildYtEmbedUrl(vid);
-      container.classList.remove('hidden');
-      if (btnText) btnText.textContent = 'Hide embedded player';
       appState.ytEmbedVisible = true;
+      iframe.onload = () => {
+        if (appState.ytPlayheadSeconds > 0) {
+          seekYtEmbed(appState.ytPlayheadSeconds, true);
+        }
+      };
+      iframe.src = buildYtEmbedUrl(vid, appState.ytPlayheadSeconds);
+      container.classList.remove('hidden');
+      if (btnText) btnText.textContent = t('embedHide');
     }
 
     // =========================================================================
@@ -1913,7 +2408,7 @@
       const fileUrl = URL.createObjectURL(file);
       video.src = fileUrl;
       panel.classList.remove('hidden');
-      showToast(`Loaded "${file.name}" for native frame stepping`, 'success');
+      showToast(t('toastLoadedLocal', { name: file.name }), 'success');
       updateHtml5Readout();
     }
 
@@ -1933,7 +2428,9 @@
       const fps = getValidFps();
       const cur = video.currentTime || 0;
       const f = Math.round(cur * fps);
-      readout.textContent = `${cur.toFixed(3)}s (Frame #${f})`;
+      readout.textContent = appState.lang === 'zh'
+        ? `${cur.toFixed(3)}s (第 #${f} 帧)`
+        : `${cur.toFixed(3)}s (Frame #${f})`;
     }
 
     function captureHtml5VideoToEndpoint(targetId) {
@@ -1943,7 +2440,10 @@
       const sec = alignTimeToFrame(video.currentTime || 0, getValidFps());
       el.value = formatCleanSeconds(sec);
       parseForTime({ target: el, type: 'change' });
-      showToast(`Captured HTML5 timestamp (${sec.toFixed(3)}s) to ${targetId === 'startobj' ? 'Start' : 'End'}`, 'success');
+      showToast(t('toastCapturedHtml5', {
+        sec: sec.toFixed(3),
+        target: targetId === 'startobj' ? t('startWord') : t('endWord')
+      }), 'success');
     }
 
     // =========================================================================
@@ -1986,6 +2486,10 @@
     // =========================================================================
     window.addEventListener('DOMContentLoaded', () => {
       loadSavedState();
+
+      const langSelect = document.getElementById('langSelect');
+      if (langSelect) langSelect.value = appState.lang;
+      applyTranslations();
 
       const startEl = document.getElementById('startobj');
       const endEl = document.getElementById('endobj');
