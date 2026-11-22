@@ -1,19 +1,3 @@
-Here is the refined full HTML code. It now supports YouTube, Bilibili, Twitch
-(VODs & Clips), and Google Drive in the Video Loader, so the scroller, -10f /
--1f / +1f / +10f buttons, Set Start / Set End, and embedded player work across
-all of them:
-
-  - YouTube: Seeks instantly (including fractional seconds) via postMessage
-    (enablejsapi=1).
-  - Bilibili & Twitch VODs: Seeks the embedded player by updating its t= / time=
-    parameter (immediate on -10f/-1f/+1f/+10f clicks, debounced while dragging
-    the scroller).
-  - Google Drive: Enables the scroller, -10f/-1f/+1f/+10f buttons, and Set
-    Start/Set End for timing, with a note that Google Drive's /preview iframe
-    blocks external seek commands.
-  - Simplified Chinese (简体中文): Full UI and dynamic message translation via the
-    header language selector.
-
 <!DOCTYPE html>
 <html lang="en">
 
