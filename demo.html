@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="referrer" content="strict-origin-when-cross-origin" />
-  <meta name="version" content="2.5.0" />
+  <meta name="version" content="2.5.1" />
   <title>YouTube Frame &amp; Speedrun Interval Timer</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
@@ -561,9 +561,14 @@
                   </div>
                   <input type="range" id="ytInspectorScrubber" min="0" max="12000" value="0" oninput="scrubYtInspectorFrame(this.value)"
                     class="w-full accent-[#b33122] h-1.5 bg-[#dfd9cc] rounded cursor-pointer" />
-                  <div class="flex justify-between text-[11px] text-[#6e6a5f]">
+                  <div class="flex flex-wrap items-center justify-between gap-2 text-[11px] text-[#6e6a5f]">
                     <span data-i18n="ytScrubberStart">0s (Frame #0)</span>
-                    <span id="ytScrubberMaxLabel">End</span>
+                    <div class="flex items-center gap-1.5">
+                      <label for="ytManualDurationInput" data-i18n="manualDurLabel" class="font-semibold text-[#4a473f]">Length:</label>
+                      <input type="text" id="ytManualDurationInput" oninput="handleManualVideoDuration(this.value)" data-i18n-placeholder="manualDurPlaceholder" placeholder="e.g. 185 or 03:05"
+                        class="w-24 px-1.5 py-0.5 rounded bg-white border border-[#c8c2b4] text-[11px] font-semibold text-[#1f1e1b] focus:outline-none focus:border-[#1d4f91]" />
+                      <span id="ytScrubberMaxLabel">End</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -822,6 +827,8 @@
         btnSetStart: 'Set Start',
         btnSetEnd: 'Set End',
         ytScrubberStart: '0s (Frame #0)',
+        manualDurLabel: 'Length:',
+        manualDurPlaceholder: 'e.g. 185 or 03:05',
         ytEmptyState: 'Paste a YouTube, Bilibili, Twitch, Google Drive, or Direct MP4 URL above and click <strong>Load Video</strong>.',
         localDropTitle: 'Choose a local video file',
         localDropDesc: '.mp4, .webm, .mov — steps frame-by-frame using your FPS setting',
@@ -858,10 +865,10 @@
         pause: 'Pause',
         playheadLabel: 'Playhead: {sec}s (Frame #{frame})',
         durLabel: 'Duration: {dur} ({sec}s)',
-        durUnknown: 'Duration: unknown — scrubber uses 10-min estimate',
+        durUnknown: 'Duration: unknown — enter Length below or use 10-min default',
         durLive: 'Live Channel — use external player or timer endpoints',
         scrubberMax: '{sec}s (Frame #{frame})',
-        scrubberMaxEst: '~{sec}s estimate (Frame #{frame})',
+        scrubberMaxEst: '~{sec}s (Frame #{frame})',
         loadingText: 'Loading…',
         ytTitleFallback: 'YouTube Video {vid}',
         biliTitle: 'Bilibili Video {vid}',
@@ -1015,6 +1022,8 @@
         btnSetStart: '设为起点',
         btnSetEnd: '设为终点',
         ytScrubberStart: '0秒 (第 #0 帧)',
+        manualDurLabel: '总时长:',
+        manualDurPlaceholder: '如 185 或 03:05',
         ytEmptyState: '在上方粘贴 YouTube、B站、Twitch、Google 云端硬盘或 MP4 直链并点击<strong>加载视频</strong>。',
         localDropTitle: '选择本地视频文件',
         localDropDesc: '支持 .mp4, .webm, .mov — 将按当前 FPS 设置逐帧步进',
@@ -1051,7 +1060,7 @@
         pause: '暂停',
         playheadLabel: '当前位置：{sec}s (第 #{frame} 帧)',
         durLabel: '时长：{dur} ({sec}s)',
-        durUnknown: '时长未知 — 时间轴默认按 10 分钟估算',
+        durUnknown: '时长未知 — 可在下方手动输入总时长（默认按 10 分钟）',
         durLive: '直播频道 — 请使用原网页播放或手动输入起止时间',
         scrubberMax: '{sec}s (第 #{frame} 帧)',
         scrubberMaxEst: '约 {sec}s (第 #{frame} 帧)',
@@ -1196,7 +1205,7 @@
       endSeconds: 158.916667,
       detectedVideoId: 'dQw4w9WgXcQ',
       media: {
-        provider: 'youtube', // 'youtube' | 'bilibili' | 'bilibili-short' | 'twitch-vod' | 'twitch-clip' | 'twitch-live' | 'gdrive' | 'direct-video'
+        provider: 'youtube',
         id: 'dQw4w9WgXcQ',
         page: 1,
         isAv: false,
@@ -2289,9 +2298,9 @@
         };
       }
 
-      // 3. Bilibili (BV / av + optional ?p=N)
-      const biliBvMatch = str.match(/(?:bilibili\.com\/video\/|^)(BV[0-9A-Za-z]{8,12})/i);
-      const biliAvMatch = str.match(/(?:bilibili\.com\/video\/|^)av([0-9]+)/i);
+      // 3. Bilibili (BV / av + optional locale path & ?p=N)
+      const biliBvMatch = str.match(/(?:bilibili\.com\/(?:[^/]+\/)*video\/|^)(BV[0-9A-Za-z]{8,12})/i);
+      const biliAvMatch = str.match(/(?:bilibili\.com\/(?:[^/]+\/)*video\/|^)av([0-9]+)/i);
       const pageMatch = str.match(/[?&]p=([0-9]+)/i);
       const page = pageMatch ? Math.max(1, parseInt(pageMatch[1], 10)) : 1;
       if (biliBvMatch) {
@@ -2517,6 +2526,28 @@
       return `${s}s`;
     }
 
+    function handleManualVideoDuration(rawVal) {
+      const durEl = document.getElementById('ytVideoDuration');
+      const trimmed = String(rawVal || '').trim();
+      if (!trimmed) {
+        appState.ytVideoDuration = null;
+        if (durEl) durEl.textContent = appState.media?.provider === 'twitch-live' ? t('durLive') : t('durUnknown');
+        updateYtScrubberRange();
+        return;
+      }
+      const fps = getValidFps();
+      const parsed = parseFlexibleTimeInput(trimmed, fps);
+      if (parsed !== null && parsed > 0) {
+        appState.ytVideoDuration = parsed;
+        if (durEl) durEl.textContent = t('durLabel', { dur: formatDurationShort(parsed), sec: Math.floor(parsed) });
+        if (appState.ytPlayheadSeconds > parsed) {
+          appState.ytPlayheadSeconds = parsed;
+          updateYtPlayheadDisplay();
+        }
+        updateYtScrubberRange();
+      }
+    }
+
     async function loadYoutubeVideo() {
       const input = document.getElementById('ytUrlInput');
       const parsed = parseMediaUrl(input.value);
@@ -2532,6 +2563,9 @@
       appState.ytVideoDuration = null;
       appState.ytPlayheadSeconds = 0;
       appState.ytEmbedVisible = false;
+
+      const manualDurInput = document.getElementById('ytManualDurationInput');
+      if (manualDurInput) manualDurInput.value = '';
 
       // Reset embed & direct player
       clearTimeout(appState.embedSeekTimer);
@@ -2580,6 +2614,7 @@
             if (!isNaN(dur) && dur > 0) {
               appState.ytVideoDuration = dur;
               if (durEl) durEl.textContent = t('durLabel', { dur: formatDurationShort(dur), sec: Math.floor(dur) });
+              if (manualDurInput) manualDurInput.value = String(Math.floor(dur));
             } else {
               if (durEl) durEl.textContent = t('durUnknown');
             }
@@ -2639,7 +2674,6 @@
       scrubYtToSeconds(0, false);
       updateYtScrubberRange();
 
-      // Auto-open direct HTML5 video player for direct MP4/WebM URLs
       if (parsed.provider === 'direct-video') {
         toggleYtEmbed();
       }
@@ -2775,7 +2809,6 @@
       if (frameWrap) frameWrap.classList.remove('hidden');
       updateMediaProviderUiText();
 
-      // Direct MP4/WebM HTML5 Video
       if (m.provider === 'direct-video') {
         iframe.classList.add('hidden');
         iframe.src = '';
@@ -2787,6 +2820,8 @@
             appState.ytVideoDuration = directVideo.duration;
             const durEl = document.getElementById('ytVideoDuration');
             if (durEl) durEl.textContent = t('durLabel', { dur: formatDurationShort(directVideo.duration), sec: Math.floor(directVideo.duration) });
+            const manualDurInput = document.getElementById('ytManualDurationInput');
+            if (manualDurInput) manualDurInput.value = String(Math.floor(directVideo.duration));
             updateYtScrubberRange();
           }
           if (appState.ytPlayheadSeconds > 0) {
@@ -2807,14 +2842,12 @@
         return;
       }
 
-      // Twitch parent-domain preflight check
       if (m.provider.startsWith('twitch') && !getTwitchParentInfo().valid) {
         iframe.src = '';
         showEmbedBlockedState(t('twitchBlockedReason'));
         return;
       }
 
-      // Standard iframe embed (YouTube / Bilibili / Twitch / Google Drive)
       directVideo.classList.add('hidden');
       iframe.classList.remove('hidden');
       iframe.onerror = () => {
