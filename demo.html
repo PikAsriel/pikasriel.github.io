@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="referrer" content="strict-origin-when-cross-origin" />
-  <meta name="version" content="2.1.0" />
+  <meta name="version" content="2.3.0" />
   <title>YouTube Frame &amp; Speedrun Interval Timer</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
@@ -15,7 +15,7 @@
         extend: {
           fontFamily: {
             sans: ['"Source Sans 3"', 'Lato', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'sans-serif'],
-            serif: ['Merriweather', 'Georgia', ' Cambria', 'serif']
+            serif: ['Merriweather', 'Georgia', 'Cambria', 'serif']
           }
         }
       }
@@ -24,39 +24,41 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap');
     body {
-      font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif;
       background-color: #f4f1ea;
       color: #1f1e1b;
     }
     h1, h2, h3 {
-      font-family: 'Merriweather', Georgia, serif;
+      font-family: 'Merriweather', Georgia, 'PingFang SC', 'Microsoft YaHei', serif;
     }
     code, kbd {
-      font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       font-weight: 600;
     }
-    ::-webkit-scrollbar {
-      width: 7px;
-      height: 7px;
+    ::-webkit-scrollbar { width: 7px; height: 7px; }
+    ::-webkit-scrollbar-track { background: #eae6dc; }
+    ::-webkit-scrollbar-thumb { background: #bfb9ab; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #9e9787; }
+    .yt-tab {
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #5c584f;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: all 0.15s;
     }
-    ::-webkit-scrollbar-track {
-      background: #eae6dc;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #bfb9ab;
-      border-radius: 4px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #9e9787;
+    .yt-tab:hover { color: #1f1e1b; }
+    .yt-tab.active {
+      color: #1d4f91;
+      border-bottom-color: #1d4f91;
     }
   </style>
 </head>
 
 <body class="bg-[#f4f1ea] text-[#1f1e1b] min-h-screen selection:bg-[#1d4f91]/15 selection:text-[#1d4f91]">
-  <!-- Toast Notification Container -->
   <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
-  <!-- Solid Utilitarian Top Header (No glass blur, no dark slate, no gradients) -->
   <header class="bg-white border-b-2 border-[#d6d1c4]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-3">
       <div class="flex items-center gap-3">
@@ -65,65 +67,66 @@
         </div>
         <div>
           <div class="flex items-center gap-2.5">
-            <h1 id="youtube-interval-timer" class="text-lg sm:text-xl font-bold text-[#1f1e1b]">YouTube Interval Timer</h1>
-            <span class="text-xs px-2 py-0.5 rounded bg-[#ebe7dd] text-[#4a473f] border border-[#cfc9bb] font-semibold">v2.1 Retime Desk</span>
+            <h1 id="youtube-interval-timer" data-i18n="headerTitle" class="text-lg sm:text-xl font-bold text-[#1f1e1b]">YouTube Interval Timer</h1>
+            <span data-i18n="headerBadge" class="text-xs px-2 py-0.5 rounded bg-[#ebe7dd] text-[#4a473f] border border-[#cfc9bb] font-semibold">v2.3 Retime Desk</span>
           </div>
-          <p class="text-xs text-[#5c584f]">Frame-accurate speedrun retiming, debug JSON parser, load remover &amp; verification workbench</p>
+          <p data-i18n="headerSubtitle" class="text-xs text-[#5c584f]">Frame-accurate speedrun retiming, debug JSON parser, load remover &amp; verification workbench</p>
         </div>
       </div>
 
       <div class="flex items-center gap-2 flex-wrap">
+        <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#faf8f3] border border-[#c8c2b4]">
+          <i data-lucide="languages" class="w-3.5 h-3.5 text-[#1d4f91]"></i>
+          <select id="langSelect" onchange="setLanguage(this.value)" aria-label="Language" class="bg-transparent text-xs font-semibold text-[#1f1e1b] focus:outline-none cursor-pointer">
+            <option value="en">English</option>
+            <option value="zh">简体中文</option>
+          </select>
+        </div>
         <button id="loadSampleBtn" onclick="loadSampleDebugPair()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-semibold bg-[#edeae2] hover:bg-[#e0dcd1] text-[#2c2a26] border border-[#c8c2b4] transition">
           <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#1d4f91]"></i>
-          <span>Load Demo Run</span>
+          <span data-i18n="btnDemo">Load Demo Run</span>
         </button>
         <button id="toggleGuideBtn" onclick="toggleGuideModal()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-semibold bg-[#edeae2] hover:bg-[#e0dcd1] text-[#2c2a26] border border-[#c8c2b4] transition">
           <i data-lucide="help-circle" class="w-3.5 h-3.5 text-[#1e6b43]"></i>
-          <span>How to Retime</span>
+          <span data-i18n="btnGuide">How to Retime</span>
         </button>
         <a href="https://github.com/slashinfty/yt-frame-timer" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-semibold bg-white hover:bg-[#edeae2] text-[#2c2a26] border border-[#c8c2b4] transition">
           <i data-lucide="github" class="w-3.5 h-3.5"></i>
-          <span class="hidden sm:inline">Original Repo</span>
+          <span data-i18n="btnRepo" class="hidden sm:inline">Original Repo</span>
         </a>
       </div>
     </div>
   </header>
 
-  <!-- Main Content Grid -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
-
-    <!-- Top Summary Readout Strip -->
     <section class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
       <div class="bg-white border border-[#d6d1c4] rounded-lg p-3.5 sm:p-4 shadow-sm flex flex-col justify-between">
         <div class="flex items-center justify-between text-xs font-semibold text-[#5c584f] mb-1">
-          <span>Formatted Time</span>
+          <span data-i18n="kpiTimeLabel">Formatted Time</span>
           <i data-lucide="clock" class="w-4 h-4 text-[#b33122]"></i>
         </div>
         <div id="kpiFormattedTime" class="text-lg sm:text-2xl font-bold text-[#1f1e1b] truncate">0s 000ms</div>
         <div id="kpiSubFormat" class="text-xs text-[#6e6a5f] mt-0.5">00:00.000 (Exact: 0.000s)</div>
       </div>
-
       <div class="bg-white border border-[#d6d1c4] rounded-lg p-3.5 sm:p-4 shadow-sm flex flex-col justify-between">
         <div class="flex items-center justify-between text-xs font-semibold text-[#5c584f] mb-1">
-          <span>Elapsed Frames</span>
+          <span data-i18n="kpiFramesLabel">Elapsed Frames</span>
           <i data-lucide="film" class="w-4 h-4 text-[#1d4f91]"></i>
         </div>
         <div id="kpiTotalFrames" class="text-lg sm:text-2xl font-bold text-[#1d4f91]">0 frames</div>
         <div id="kpiFrameRange" class="text-xs text-[#6e6a5f] mt-0.5">Frame #0 → #0</div>
       </div>
-
       <div class="bg-white border border-[#d6d1c4] rounded-lg p-3.5 sm:p-4 shadow-sm flex flex-col justify-between">
         <div class="flex items-center justify-between text-xs font-semibold text-[#5c584f] mb-1">
-          <span>SMPTE Timecode</span>
+          <span data-i18n="kpiSmpteLabel">SMPTE Timecode</span>
           <i data-lucide="clapperboard" class="w-4 h-4 text-[#1e6b43]"></i>
         </div>
         <div id="kpiSmpte" class="text-lg sm:text-2xl font-bold text-[#1e6b43]">00:00:00:00</div>
         <div id="kpiFrameStepMs" class="text-xs text-[#6e6a5f] mt-0.5">16.6667 ms / frame @ 60 fps</div>
       </div>
-
       <div class="bg-white border border-[#d6d1c4] rounded-lg p-3.5 sm:p-4 shadow-sm flex flex-col justify-between">
         <div class="flex items-center justify-between text-xs font-semibold text-[#5c584f] mb-1">
-          <span>Net Multi-Split / LRT</span>
+          <span data-i18n="kpiNetLabel">Net Multi-Split / LRT</span>
           <i data-lucide="layers" class="w-4 h-4 text-[#8c5319]"></i>
         </div>
         <div id="kpiNetSplitTime" class="text-lg sm:text-2xl font-bold text-[#8c5319]">0s 000ms</div>
@@ -131,21 +134,16 @@
       </div>
     </section>
 
-    <!-- Primary Two-Column Layout -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-      <!-- Left Column (7 cols): Frame Calculator + Multi-Segment Splits -->
       <div class="lg:col-span-7 space-y-6">
-
-        <!-- Card 1: Frame-Accurate Interval Calculator -->
         <section class="bg-white border border-[#d6d1c4] rounded-lg p-5 sm:p-6 shadow-sm space-y-5">
           <div class="flex flex-wrap items-center justify-between gap-2 border-b border-[#e5e0d5] pb-3.5">
             <div>
               <h2 id="video-framerate" class="text-base font-bold text-[#1f1e1b] flex items-center gap-2">
                 <i data-lucide="sliders" class="w-4 h-4 text-[#1d4f91]"></i>
-                <span>1. Video Framerate &amp; Rounding Rules</span>
+                <span data-i18n="sec1Title">1. Video Framerate &amp; Rounding Rules</span>
               </h2>
-              <p class="text-xs text-[#5c584f] mt-1">
+              <p data-i18n-html="sec1Desc" class="text-xs text-[#5c584f] mt-1">
                 Right-click the YouTube video → <span class="text-[#1f1e1b] font-semibold">“Stats for nerds”</span> → find the number after <code class="text-[#b33122] bg-[#f4f1ea] border border-[#d6d1c4] px-1.5 py-0.5 rounded">@</code> on “Current / Optimal Res”.
               </p>
             </div>
@@ -154,18 +152,16 @@
             </span>
           </div>
 
-          <!-- Framerate Input & Presets -->
           <div class="space-y-3">
             <div class="flex flex-wrap items-center gap-3">
               <div class="flex items-center gap-2">
-                <label for="framerate" class="text-xs font-bold text-[#3d3a33] uppercase tracking-wide">Framerate (FPS):</label>
+                <label for="framerate" data-i18n="fpsLabel" class="text-xs font-bold text-[#3d3a33] uppercase tracking-wide">Framerate (FPS):</label>
                 <input type="text" id="framerate" size="5" value="60" onchange="validateFPS(event)" oninput="handleFpsInput(event)"
                   class="w-24 px-3 py-1.5 rounded bg-[#faf8f3] border border-[#c8c2b4] text-[#1f1e1b] font-semibold text-sm focus:outline-none focus:border-[#1d4f91]" />
               </div>
 
-              <!-- Quick Preset Pills -->
               <div class="flex items-center gap-1.5 flex-wrap">
-                <span class="text-xs text-[#5c584f] mr-1 font-medium">Presets:</span>
+                <span data-i18n="presetsLabel" class="text-xs text-[#5c584f] mr-1 font-medium">Presets:</span>
                 <button type="button" onclick="setFpsPreset(23.976)" class="fps-pill px-2.5 py-1 rounded text-xs font-semibold bg-[#f4f1ea] hover:bg-[#e5e0d5] text-[#3d3a33] border border-[#c8c2b4] transition">23.976</button>
                 <button type="button" onclick="setFpsPreset(24)" class="fps-pill px-2.5 py-1 rounded text-xs font-semibold bg-[#f4f1ea] hover:bg-[#e5e0d5] text-[#3d3a33] border border-[#c8c2b4] transition">24</button>
                 <button type="button" onclick="setFpsPreset(25)" class="fps-pill px-2.5 py-1 rounded text-xs font-semibold bg-[#f4f1ea] hover:bg-[#e5e0d5] text-[#3d3a33] border border-[#c8c2b4] transition">25</button>
@@ -178,58 +174,55 @@
               </div>
             </div>
 
-            <!-- Precision & Frame Alignment Options -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
               <div class="flex items-center justify-between bg-[#faf8f3] border border-[#d6d1c4] rounded px-3 py-2">
-                <label for="precisionSelect" class="text-xs font-medium text-[#4a473f]">Output Precision:</label>
+                <label for="precisionSelect" data-i18n="precisionLabel" class="text-xs font-medium text-[#4a473f]">Output Precision:</label>
                 <select id="precisionSelect" onchange="compute()" class="bg-white text-xs font-semibold text-[#1f1e1b] border border-[#c8c2b4] rounded px-2 py-1 focus:outline-none focus:border-[#1d4f91]">
-                  <option value="3" selected>Milliseconds (3 dec · 678ms)</option>
-                  <option value="2">Centiseconds (2 dec · .68s)</option>
-                  <option value="1">Deciseconds (1 dec · .7s)</option>
-                  <option value="0">Whole Seconds (0 dec)</option>
+                  <option value="3" selected data-i18n="prec3">Milliseconds (3 dec · 678ms)</option>
+                  <option value="2" data-i18n="prec2">Centiseconds (2 dec · .68s)</option>
+                  <option value="1" data-i18n="prec1">Deciseconds (1 dec · .7s)</option>
+                  <option value="0" data-i18n="prec0">Whole Seconds (0 dec)</option>
                 </select>
               </div>
               <div class="flex items-center justify-between bg-[#faf8f3] border border-[#d6d1c4] rounded px-3 py-2">
-                <label for="roundingSelect" class="text-xs font-medium text-[#4a473f]">Frame Alignment:</label>
+                <label for="roundingSelect" data-i18n="roundingLabel" class="text-xs font-medium text-[#4a473f]">Frame Alignment:</label>
                 <select id="roundingSelect" onchange="realignAllEndpoints()" class="bg-white text-xs font-semibold text-[#1f1e1b] border border-[#c8c2b4] rounded px-2 py-1 focus:outline-none focus:border-[#1d4f91]">
-                  <option value="floor" selected>Floor to Frame (SPRT / Default)</option>
-                  <option value="round">Nearest Frame (Math.round)</option>
-                  <option value="exact">Raw Unrounded Timestamp</option>
+                  <option value="floor" selected data-i18n="roundFloor">Floor to Frame (SPRT / Default)</option>
+                  <option value="round" data-i18n="roundNearest">Nearest Frame (Math.round)</option>
+                  <option value="exact" data-i18n="roundExact">Raw Unrounded Timestamp</option>
                 </select>
               </div>
             </div>
           </div>
 
-          <!-- Video Endpoints Section -->
           <div class="border-t border-[#e5e0d5] pt-4 space-y-4">
             <div class="flex flex-wrap items-center justify-between gap-2">
               <div>
                 <h3 id="video-endpoints" class="text-base font-bold text-[#1f1e1b] flex items-center gap-2">
                   <i data-lucide="scissors" class="w-4 h-4 text-[#b33122]"></i>
-                  <span>2. Video Endpoints (Start &amp; Stop Frames)</span>
+                  <span data-i18n="sec2Title">2. Video Endpoints (Start &amp; Stop Frames)</span>
                 </h3>
-                <p class="text-xs text-[#5c584f] mt-1">
+                <p data-i18n-html="sec2Desc" class="text-xs text-[#5c584f] mt-1">
                   Step with <code class="text-[#1f1e1b] bg-[#f4f1ea] border border-[#d6d1c4] px-1.5 py-0.5 rounded">,</code> and <code class="text-[#1f1e1b] bg-[#f4f1ea] border border-[#d6d1c4] px-1.5 py-0.5 rounded">.</code> on YouTube, right-click → <span class="text-[#1f1e1b] font-semibold">“Copy debug info”</span>, or enter <code class="text-[#1f1e1b]">MM:SS.mmm</code>, seconds, or <code class="text-[#1f1e1b]">1250f</code>.
                 </p>
               </div>
               <div class="flex items-center gap-1.5">
-                <button type="button" onclick="swapEndpoints()" title="Swap Starting and Ending frames" class="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold bg-[#edeae2] hover:bg-[#e0dcd1] text-[#2c2a26] border border-[#c8c2b4] transition">
+                <button type="button" onclick="swapEndpoints()" data-i18n-title="swapTitle" title="Swap Starting and Ending frames" class="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold bg-[#edeae2] hover:bg-[#e0dcd1] text-[#2c2a26] border border-[#c8c2b4] transition">
                   <i data-lucide="arrow-up-down" class="w-3.5 h-3.5 text-[#1d4f91]"></i>
-                  <span>Swap</span>
+                  <span data-i18n="btnSwap">Swap</span>
                 </button>
-                <button type="button" onclick="clearEndpoints()" title="Clear both endpoints" class="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold bg-[#edeae2] hover:bg-[#e0dcd1] text-[#2c2a26] border border-[#c8c2b4] transition">
+                <button type="button" onclick="clearEndpoints()" data-i18n-title="resetTitle" title="Clear both endpoints" class="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold bg-[#edeae2] hover:bg-[#e0dcd1] text-[#2c2a26] border border-[#c8c2b4] transition">
                   <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-[#5c584f]"></i>
-                  <span>Reset</span>
+                  <span data-i18n="btnReset">Reset</span>
                 </button>
               </div>
             </div>
 
-            <!-- Starting Frame Control Block -->
             <div class="bg-[#faf8f3] border border-[#d6d1c4] rounded-lg p-3.5 space-y-2.5">
               <div class="flex flex-wrap items-center justify-between gap-2">
                 <label for="startobj" class="text-xs font-bold uppercase tracking-wide text-[#1e6b43] flex items-center gap-1.5">
                   <span class="w-2 h-2 rounded-full bg-[#1e6b43]"></span>
-                  <span>Starting Frame / Debug Info:</span>
+                  <span data-i18n="startFrameLabel">Starting Frame / Debug Info:</span>
                 </label>
                 <div class="flex items-center gap-2 text-xs font-semibold text-[#4a473f]">
                   <span id="startFrameNumberBadge" class="px-2 py-0.5 rounded bg-[#e8f4ed] border border-[#b7dfc6] text-[#1e6b43]">Frame #0</span>
@@ -238,18 +231,17 @@
               </div>
 
               <div class="flex gap-2">
-                <input type="text" id="startobj" style="width:100%" placeholder="Paste YouTube 'Copy debug info' JSON, seconds (e.g. 4.25), MM:SS.mmm, or frame (e.g. 255f)"
+                <input type="text" id="startobj" style="width:100%" data-i18n-placeholder="startPlaceholder" placeholder="Paste YouTube 'Copy debug info' JSON, seconds (e.g. 4.25), MM:SS.mmm, or frame (e.g. 255f)"
                   onchange="parseForTime(event)" oninput="parseForTime(event)"
                   class="flex-1 px-3 py-2 rounded bg-white border border-[#c8c2b4] text-sm font-medium text-[#1f1e1b] placeholder-[#8c867a] focus:outline-none focus:border-[#1e6b43]" />
-                <button type="button" onclick="pasteFromClipboard('startobj')" title="Paste from clipboard" class="px-3 py-2 rounded bg-[#edeae2] hover:bg-[#e0dcd1] text-[#2c2a26] border border-[#c8c2b4] text-xs font-semibold flex items-center gap-1 transition">
+                <button type="button" onclick="pasteFromClipboard('startobj')" data-i18n-title="pasteTitle" title="Paste from clipboard" class="px-3 py-2 rounded bg-[#edeae2] hover:bg-[#e0dcd1] text-[#2c2a26] border border-[#c8c2b4] text-xs font-semibold flex items-center gap-1 transition">
                   <i data-lucide="clipboard-paste" class="w-3.5 h-3.5"></i>
-                  <span class="hidden sm:inline">Paste</span>
+                  <span data-i18n="btnPaste" class="hidden sm:inline">Paste</span>
                 </button>
               </div>
 
-              <!-- Frame Nudge Buttons for Start -->
               <div class="flex flex-wrap items-center justify-between gap-2 pt-0.5">
-                <span class="text-xs text-[#5c584f] font-medium">Frame Nudge:</span>
+                <span data-i18n="frameNudgeLabel" class="text-xs text-[#5c584f] font-medium">Frame Nudge:</span>
                 <div class="flex items-center gap-1 flex-wrap">
                   <button type="button" onclick="nudgeEndpoint('startobj', -10)" class="px-2 py-0.5 rounded text-xs font-semibold bg-white hover:bg-[#edeae2] text-[#3d3a33] border border-[#c8c2b4] transition">-10f</button>
                   <button type="button" onclick="nudgeEndpoint('startobj', -5)" class="px-2 py-0.5 rounded text-xs font-semibold bg-white hover:bg-[#edeae2] text-[#3d3a33] border border-[#c8c2b4] transition">-5f</button>
@@ -261,12 +253,11 @@
               </div>
             </div>
 
-            <!-- Ending Frame Control Block -->
             <div class="bg-[#faf8f3] border border-[#d6d1c4] rounded-lg p-3.5 space-y-2.5">
               <div class="flex flex-wrap items-center justify-between gap-2">
                 <label for="endobj" class="text-xs font-bold uppercase tracking-wide text-[#b33122] flex items-center gap-1.5">
                   <span class="w-2 h-2 rounded-full bg-[#b33122]"></span>
-                  <span>Ending Frame / Debug Info:</span>
+                  <span data-i18n="endFrameLabel">Ending Frame / Debug Info:</span>
                 </label>
                 <div class="flex items-center gap-2 text-xs font-semibold text-[#4a473f]">
                   <span id="endFrameNumberBadge" class="px-2 py-0.5 rounded bg-[#fbeae8] border border-[#e6bfb9] text-[#b33122]">Frame #0</span>
@@ -275,18 +266,17 @@
               </div>
 
               <div class="flex gap-2">
-                <input type="text" id="endobj" style="width:100%" placeholder="Paste YouTube 'Copy debug info' JSON, seconds (e.g. 158.916), MM:SS.mmm, or frame (e.g. 9535f)"
+                <input type="text" id="endobj" style="width:100%" data-i18n-placeholder="endPlaceholder" placeholder="Paste YouTube 'Copy debug info' JSON, seconds (e.g. 158.916), MM:SS.mmm, or frame (e.g. 9535f)"
                   onchange="parseForTime(event)" oninput="parseForTime(event)"
                   class="flex-1 px-3 py-2 rounded bg-white border border-[#c8c2b4] text-sm font-medium text-[#1f1e1b] placeholder-[#8c867a] focus:outline-none focus:border-[#b33122]" />
-                <button type="button" onclick="pasteFromClipboard('endobj')" title="Paste from clipboard" class="px-3 py-2 rounded bg-[#edeae2] hover:bg-[#e0dcd1] text-[#2c2a26] border border-[#c8c2b4] text-xs font-semibold flex items-center gap-1 transition">
+                <button type="button" onclick="pasteFromClipboard('endobj')" data-i18n-title="pasteTitle" title="Paste from clipboard" class="px-3 py-2 rounded bg-[#edeae2] hover:bg-[#e0dcd1] text-[#2c2a26] border border-[#c8c2b4] text-xs font-semibold flex items-center gap-1 transition">
                   <i data-lucide="clipboard-paste" class="w-3.5 h-3.5"></i>
-                  <span class="hidden sm:inline">Paste</span>
+                  <span data-i18n="btnPaste" class="hidden sm:inline">Paste</span>
                 </button>
               </div>
 
-              <!-- Frame Nudge Buttons for End -->
               <div class="flex flex-wrap items-center justify-between gap-2 pt-0.5">
-                <span class="text-xs text-[#5c584f] font-medium">Frame Nudge:</span>
+                <span data-i18n="frameNudgeLabel" class="text-xs text-[#5c584f] font-medium">Frame Nudge:</span>
                 <div class="flex items-center gap-1 flex-wrap">
                   <button type="button" onclick="nudgeEndpoint('endobj', -10)" class="px-2 py-0.5 rounded text-xs font-semibold bg-white hover:bg-[#edeae2] text-[#3d3a33] border border-[#c8c2b4] transition">-10f</button>
                   <button type="button" onclick="nudgeEndpoint('endobj', -5)" class="px-2 py-0.5 rounded text-xs font-semibold bg-white hover:bg-[#edeae2] text-[#3d3a33] border border-[#c8c2b4] transition">-5f</button>
@@ -299,50 +289,47 @@
             </div>
           </div>
 
-          <!-- Video Time & Mod Note Section -->
           <div class="border-t border-[#e5e0d5] pt-4 space-y-4">
             <div class="flex flex-wrap items-center justify-between gap-2">
               <h3 id="video-time" class="text-base font-bold text-[#1f1e1b] flex items-center gap-2">
                 <i data-lucide="check-circle-2" class="w-4 h-4 text-[#1e6b43]"></i>
-                <span>3. Computed Video Time &amp; Verification Note</span>
+                <span data-i18n="sec3Title">3. Computed Video Time &amp; Verification Note</span>
               </h3>
               <div class="flex items-center gap-2">
-                <label for="modTemplateSelect" class="text-xs font-medium text-[#4a473f]">Note Template:</label>
+                <label for="modTemplateSelect" data-i18n="noteTemplateLabel" class="text-xs font-medium text-[#4a473f]">Note Template:</label>
                 <select id="modTemplateSelect" onchange="updateModMessageFromState()" class="bg-[#faf8f3] text-xs font-semibold text-[#1f1e1b] border border-[#c8c2b4] rounded px-2.5 py-1 focus:outline-none focus:border-[#1d4f91]">
-                  <option value="standard" selected>Standard Speedrun.com Note</option>
-                  <option value="detailed">Detailed Frame &amp; Timestamp Audit</option>
-                  <option value="lrt">Load-Removed (RTA + Loads → LRT)</option>
-                  <option value="markdown">Markdown Verification Table</option>
+                  <option value="standard" selected data-i18n="tplStandard">Standard Speedrun.com Note</option>
+                  <option value="detailed" data-i18n="tplDetailed">Detailed Frame &amp; Timestamp Audit</option>
+                  <option value="lrt" data-i18n="tplLrt">Load-Removed (RTA + Loads → LRT)</option>
+                  <option value="markdown" data-i18n="tplMarkdown">Markdown Verification Table</option>
                 </select>
               </div>
             </div>
 
-            <!-- Compute Bar & Result Readout -->
             <div class="flex flex-wrap items-center gap-2.5">
               <button id="computeButton" onclick="compute(true)" class="inline-flex items-center gap-2 px-4 py-2.5 rounded text-sm font-bold bg-[#1d4f91] hover:bg-[#163c6e] text-white border border-[#143561] transition cursor-pointer">
                 <i data-lucide="calculator" class="w-4 h-4"></i>
-                <span>Compute time</span>
+                <span data-i18n="btnCompute">Compute time</span>
               </button>
 
               <div class="relative flex-1 min-w-[200px]">
                 <input type="text" id="time" readonly size="20" value="0s 000ms"
                   class="w-full px-3.5 py-2 rounded bg-[#faf8f3] border border-[#c8c2b4] text-base font-bold text-[#1e6b43] focus:outline-none" />
-                <button type="button" onclick="copyTimeValue()" title="Copy computed time" class="absolute right-2 top-1/2 -translate-y-1/2 px-2.5 py-1 rounded bg-white hover:bg-[#edeae2] text-xs font-semibold text-[#2c2a26] border border-[#c8c2b4] transition">
+                <button type="button" onclick="copyTimeValue()" data-i18n="btnCopyTime" data-i18n-title="copyTimeTitle" title="Copy computed time" class="absolute right-2 top-1/2 -translate-y-1/2 px-2.5 py-1 rounded bg-white hover:bg-[#edeae2] text-xs font-semibold text-[#2c2a26] border border-[#c8c2b4] transition">
                   Copy Time
                 </button>
               </div>
 
-              <button type="button" onclick="addCurrentToSplits('segment')" title="Add current start/end interval as a segment" class="inline-flex items-center gap-1.5 px-3 py-2.5 rounded text-xs font-semibold bg-[#e8f4ed] hover:bg-[#d5ebd9] text-[#1e6b43] border border-[#b7dfc6] transition">
+              <button type="button" onclick="addCurrentToSplits('segment')" data-i18n-title="addSplitTitle" title="Add current start/end interval as a segment" class="inline-flex items-center gap-1.5 px-3 py-2.5 rounded text-xs font-semibold bg-[#e8f4ed] hover:bg-[#d5ebd9] text-[#1e6b43] border border-[#b7dfc6] transition">
                 <i data-lucide="plus-circle" class="w-4 h-4"></i>
-                <span>+ Split</span>
+                <span data-i18n="btnAddSplit">+ Split</span>
               </button>
-              <button type="button" onclick="addCurrentToSplits('load')" title="Subtract current interval as a loading screen / pause" class="inline-flex items-center gap-1.5 px-3 py-2.5 rounded text-xs font-semibold bg-[#fdf3e7] hover:bg-[#fae5cc] text-[#8c5319] border border-[#ebd0ad] transition">
+              <button type="button" onclick="addCurrentToSplits('load')" data-i18n-title="addLoadTitle" title="Subtract current interval as a loading screen / pause" class="inline-flex items-center gap-1.5 px-3 py-2.5 rounded text-xs font-semibold bg-[#fdf3e7] hover:bg-[#fae5cc] text-[#8c5319] border border-[#ebd0ad] transition">
                 <i data-lucide="minus-circle" class="w-4 h-4"></i>
-                <span>- Load</span>
+                <span data-i18n="btnAddLoad">- Load</span>
               </button>
             </div>
 
-            <!-- Moderator Message Box -->
             <div class="space-y-2">
               <textarea id="modMessage" cols="40" rows="4" disabled
                 class="w-full p-3 rounded bg-[#faf8f3] border border-[#c8c2b4] text-xs font-medium text-[#1f1e1b] focus:outline-none focus:border-[#1d4f91] disabled:opacity-75"></textarea>
@@ -351,52 +338,50 @@
                 <button id="modMessageButton" onclick="copyModMessage()" disabled
                   class="inline-flex items-center gap-2 px-4 py-2 rounded text-xs font-bold bg-[#1e6b43] hover:bg-[#165233] disabled:opacity-50 text-white border border-[#14472c] transition cursor-pointer">
                   <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-                  <span>Copy Mod Message to Clipboard</span>
+                  <span data-i18n="btnCopyMod">Copy Mod Message to Clipboard</span>
                 </button>
 
                 <button type="button" onclick="saveCurrentToHistory()" class="inline-flex items-center gap-1.5 px-3 py-2 rounded text-xs font-semibold bg-[#edeae2] hover:bg-[#e0dcd1] text-[#2c2a26] border border-[#c8c2b4] transition">
                   <i data-lucide="bookmark-plus" class="w-3.5 h-3.5 text-[#1d4f91]"></i>
-                  <span>Save to Session History</span>
+                  <span data-i18n="btnSaveHistory">Save to Session History</span>
                 </button>
               </div>
             </div>
           </div>
         </section>
 
-        <!-- Card 2: Multi-Segment Splits & Load-Time Remover (RTA vs LRT) -->
         <section class="bg-white border border-[#d6d1c4] rounded-lg p-5 sm:p-6 shadow-sm space-y-4">
           <div class="flex flex-wrap items-center justify-between gap-2 border-b border-[#e5e0d5] pb-3">
             <div>
               <h2 class="text-base font-bold text-[#1f1e1b] flex items-center gap-2">
                 <i data-lucide="list-filter" class="w-4 h-4 text-[#1d4f91]"></i>
-                <span>Multi-Segment Timer &amp; Load Remover (RTA / LRT)</span>
+                <span data-i18n="splitsTitle">Multi-Segment Timer &amp; Load Remover (RTA / LRT)</span>
               </h2>
-              <p class="text-xs text-[#5c584f] mt-0.5">
+              <p data-i18n="splitsDesc" class="text-xs text-[#5c584f] mt-0.5">
                 Combine multiple level segments or subtract loading screens/menus from a single full-run interval.
               </p>
             </div>
             <div class="flex items-center gap-2">
               <button type="button" onclick="addManualSplitRow('segment')" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded text-xs font-semibold bg-[#e8f4ed] hover:bg-[#d5ebd9] text-[#1e6b43] border border-[#b7dfc6] transition">
                 <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-                <span>Add Segment</span>
+                <span data-i18n="btnAddSegRow">Add Segment</span>
               </button>
               <button type="button" onclick="addManualSplitRow('load')" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded text-xs font-semibold bg-[#fdf3e7] hover:bg-[#fae5cc] text-[#8c5319] border border-[#ebd0ad] transition">
                 <i data-lucide="minus" class="w-3.5 h-3.5"></i>
-                <span>Add Load Cut</span>
+                <span data-i18n="btnAddLoadRow">Add Load Cut</span>
               </button>
               <button type="button" onclick="clearAllSplits()" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded text-xs font-semibold bg-[#edeae2] hover:bg-[#e0dcd1] text-[#4a473f] border border-[#c8c2b4] transition">
                 <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                <span>Clear</span>
+                <span data-i18n="btnClear">Clear</span>
               </button>
             </div>
           </div>
 
-          <!-- Visual Proportion Bar -->
           <div class="space-y-1.5">
             <div class="flex items-center justify-between text-xs font-medium">
-              <span class="text-[#1e6b43]">Gross Segment Time: <strong id="splitsGrossReadout">0s 000ms</strong></span>
-              <span class="text-[#8c5319]">Loads Removed: <strong id="splitsLoadReadout">-0s 000ms</strong></span>
-              <span class="text-[#1d4f91]">Final Net Time (LRT): <strong id="splitsNetReadout">0s 000ms</strong></span>
+              <span class="text-[#1e6b43]"><span data-i18n="grossLabel">Gross Segment Time:</span> <strong id="splitsGrossReadout">0s 000ms</strong></span>
+              <span class="text-[#8c5319]"><span data-i18n="loadsLabel">Loads Removed:</span> <strong id="splitsLoadReadout">-0s 000ms</strong></span>
+              <span class="text-[#1d4f91]"><span data-i18n="netLabel">Final Net Time (LRT):</span> <strong id="splitsNetReadout">0s 000ms</strong></span>
             </div>
             <div class="w-full h-2.5 bg-[#ebe7dd] rounded overflow-hidden flex border border-[#cfc9bb]">
               <div id="splitNetBar" class="bg-[#1e6b43] h-full transition-all duration-300" style="width: 100%"></div>
@@ -404,55 +389,48 @@
             </div>
           </div>
 
-          <!-- Splits Table -->
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
               <thead>
                 <tr class="border-b-2 border-[#d6d1c4] text-xs uppercase tracking-wide text-[#5c584f]">
-                  <th class="py-2 px-2">Label</th>
-                  <th class="py-2 px-2">Type</th>
-                  <th class="py-2 px-2">Start (s)</th>
-                  <th class="py-2 px-2">End (s)</th>
-                  <th class="py-2 px-2 text-right">Frames</th>
-                  <th class="py-2 px-2 text-right">Duration</th>
-                  <th class="py-2 px-2 text-center">Action</th>
+                  <th data-i18n="thLabel" class="py-2 px-2">Label</th>
+                  <th data-i18n="thType" class="py-2 px-2">Type</th>
+                  <th data-i18n="thStart" class="py-2 px-2">Start (s)</th>
+                  <th data-i18n="thEnd" class="py-2 px-2">End (s)</th>
+                  <th data-i18n="thFrames" class="py-2 px-2 text-right">Frames</th>
+                  <th data-i18n="thDuration" class="py-2 px-2 text-right">Duration</th>
+                  <th data-i18n="thAction" class="py-2 px-2 text-center">Action</th>
                 </tr>
               </thead>
-              <tbody id="splitsTableBody" class="divide-y divide-[#e5e0d5] text-xs">
-                <!-- Populated by JS -->
-              </tbody>
+              <tbody id="splitsTableBody" class="divide-y divide-[#e5e0d5] text-xs"></tbody>
             </table>
           </div>
         </section>
-
       </div>
 
-      <!-- Right Column (5 cols): Interactive Frame Stepper Preview + Session History & Run Comparison -->
       <div class="lg:col-span-5 space-y-6">
-
-        <!-- Card 3: Interactive Video & Synthetic Frame-Stepper Workbench -->
         <section class="bg-white border border-[#d6d1c4] rounded-lg p-5 shadow-sm space-y-4">
           <div class="flex flex-wrap items-center justify-between gap-2 border-b border-[#e5e0d5] pb-3">
             <div>
               <h2 class="text-base font-bold text-[#1f1e1b] flex items-center gap-2">
                 <i data-lucide="tv" class="w-4 h-4 text-[#b33122]"></i>
-                <span>Frame-Stepping Sandbox &amp; Video Loader</span>
+                <span data-i18n="sandboxTitle">Frame-Stepping Sandbox</span>
               </h2>
-              <p class="text-xs text-[#5c584f] mt-0.5">
-                Practice frame-accurate start/stop capture on the 60fps Run Simulator or load a YouTube, Google Drive, Bilibili, Twitch, or local video.
+              <p data-i18n="sandboxDesc" class="text-xs text-[#5c584f] mt-0.5">
+                Practice frame-accurate capture on the 60fps simulator, or load YouTube / Google Drive / Bilibili / Twitch / local video.
               </p>
             </div>
             <div class="inline-flex rounded bg-[#ebe7dd] p-0.5 border border-[#cfc9bb]">
-              <button type="button" id="modeSimBtn" onclick="switchWorkbenchMode('sim')" class="px-2.5 py-1 rounded text-xs font-semibold bg-[#1d4f91] text-white transition">
-                60fps Simulator
+              <button type="button" id="modeSimBtn" onclick="switchWorkbenchMode('sim')" data-i18n="modeSim" class="px-2.5 py-1 rounded text-xs font-semibold bg-[#1d4f91] text-white transition">
+                60fps Sim
               </button>
-              <button type="button" id="modeYtBtn" onclick="switchWorkbenchMode('yt')" class="px-2.5 py-1 rounded text-xs font-semibold text-[#4a473f] hover:text-[#1f1e1b] transition">
-                Video Embed
+              <button type="button" id="modeYtBtn" onclick="switchWorkbenchMode('yt')" data-i18n="modeYt" class="px-2.5 py-1 rounded text-xs font-semibold text-[#4a473f] hover:text-[#1f1e1b] transition">
+                Video Loader
               </button>
             </div>
           </div>
 
-          <!-- Mode A: Built-in 60 FPS Speedrun Frame Simulator Canvas -->
+          <!-- SIMULATOR MODE -->
           <div id="simWorkbenchContainer" class="space-y-3">
             <div class="relative rounded-lg overflow-hidden border border-[#c8c2b4] bg-[#faf8f3] aspect-video">
               <canvas id="frameSimCanvas" width="640" height="360" class="w-full h-full block"></canvas>
@@ -462,11 +440,10 @@
               </div>
               <button type="button" onclick="copySimDebugJson()" class="absolute top-2.5 right-2.5 px-2.5 py-1 rounded bg-white/95 hover:bg-[#edeae2] border border-[#c8c2b4] text-xs font-semibold text-[#1d4f91] flex items-center gap-1 shadow-sm transition">
                 <i data-lucide="code" class="w-3 h-3"></i>
-                <span>Copy YT Debug JSON</span>
+                <span data-i18n="btnCopySimJson">Copy YT Debug JSON</span>
               </button>
             </div>
 
-            <!-- Scrubber Slider -->
             <div class="flex items-center gap-3">
               <span class="text-xs font-medium text-[#5c584f]">0.0s</span>
               <input type="range" id="simScrubber" min="0" max="12000" value="255" oninput="scrubSimulatorFrame(this.value)"
@@ -474,7 +451,6 @@
               <span id="simMaxTimeLabel" class="text-xs font-medium text-[#5c584f]">200.0s</span>
             </div>
 
-            <!-- Transport & Capture Controls -->
             <div class="flex flex-wrap items-center justify-between gap-2">
               <div class="flex items-center gap-1">
                 <button type="button" id="simPlayBtn" onclick="toggleSimPlayback()" class="px-3 py-1.5 rounded bg-[#1d4f91] hover:bg-[#163c6e] text-white text-xs font-bold flex items-center gap-1 transition">
@@ -488,159 +464,154 @@
               </div>
 
               <div class="flex items-center gap-1.5">
-                <button type="button" onclick="captureSimToEndpoint('startobj')" class="px-2.5 py-1.5 rounded bg-[#e8f4ed] hover:bg-[#d5ebd9] text-[#1e6b43] border border-[#b7dfc6] text-xs font-bold transition">
+                <button type="button" onclick="captureSimToEndpoint('startobj')" data-i18n="btnSetStartBracket" class="px-2.5 py-1.5 rounded bg-[#e8f4ed] hover:bg-[#d5ebd9] text-[#1e6b43] border border-[#b7dfc6] text-xs font-bold transition">
                   Set Start [
                 </button>
-                <button type="button" onclick="captureSimToEndpoint('endobj')" class="px-2.5 py-1.5 rounded bg-[#fbeae8] hover:bg-[#f5d5d0] text-[#b33122] border border-[#e6bfb9] text-xs font-bold transition">
+                <button type="button" onclick="captureSimToEndpoint('endobj')" data-i18n="btnSetEndBracket" class="px-2.5 py-1.5 rounded bg-[#fbeae8] hover:bg-[#f5d5d0] text-[#b33122] border border-[#e6bfb9] text-xs font-bold transition">
                   Set End ]
                 </button>
               </div>
             </div>
           </div>
 
-          <!-- Mode B: Multi-Platform Video Loader (YouTube, Google Drive, Bilibili, Twitch + Local HTML5 Video Player) -->
+          <!-- VIDEO LOADER MODE -->
           <div id="ytWorkbenchContainer" class="hidden space-y-3">
-            <div class="flex flex-wrap gap-2">
-              <input type="text" id="ytUrlInput" value="dQw4w9WgXcQ" placeholder="Paste YouTube, Google Drive, Bilibili, or Twitch URL / ID"
-                class="flex-1 min-w-[180px] px-3 py-1.5 rounded bg-[#faf8f3] border border-[#c8c2b4] text-xs font-medium text-[#1f1e1b] focus:outline-none focus:border-[#1d4f91]" />
-              <button type="button" onclick="loadYoutubeEmbed()" class="px-3 py-1.5 rounded bg-[#b33122] hover:bg-[#8f2518] text-white text-xs font-bold transition">
-                Load Video
+
+            <!-- Source tabs -->
+            <div class="flex border-b border-[#e5e0d5]">
+              <button id="ytTabYoutube" onclick="switchYtSource('youtube')" class="yt-tab active">
+                <i data-lucide="globe" class="w-3.5 h-3.5 inline -mt-0.5 mr-1"></i><span data-i18n="tabYoutube">Video URL</span>
               </button>
-              <label for="localVideoFileInput" class="px-2.5 py-1.5 rounded bg-[#edeae2] hover:bg-[#e0dcd1] text-[#2c2a26] border border-[#c8c2b4] text-xs font-semibold cursor-pointer inline-flex items-center gap-1 transition" title="Load a local .mp4 / .webm video file for direct frame stepping">
-                <i data-lucide="folder-open" class="w-3.5 h-3.5 text-[#1d4f91]"></i>
-                <span>Local File</span>
+              <button id="ytTabLocal" onclick="switchYtSource('local')" class="yt-tab">
+                <i data-lucide="folder-open" class="w-3.5 h-3.5 inline -mt-0.5 mr-1"></i><span data-i18n="tabLocal">Local File</span>
+              </button>
+            </div>
+
+            <!-- ONLINE VIDEO SOURCE (YouTube / Google Drive / Bilibili / Twitch) -->
+            <div id="ytSourceYoutube" class="space-y-3">
+              <div class="flex flex-wrap gap-2">
+                <input type="text" id="ytUrlInput" value="dQw4w9WgXcQ" data-i18n-placeholder="ytUrlPlaceholder" placeholder="Paste YouTube, Google Drive, Bilibili, or Twitch URL / ID"
+                  onkeydown="if(event.key==='Enter'){event.preventDefault();loadYoutubeVideo();}"
+                  class="flex-1 min-w-[180px] px-3 py-2 rounded bg-[#faf8f3] border border-[#c8c2b4] text-sm font-medium text-[#1f1e1b] focus:outline-none focus:border-[#1d4f91]" />
+                <button type="button" onclick="loadYoutubeVideo()" data-i18n="btnLoadVideo" class="px-4 py-2 rounded bg-[#b33122] hover:bg-[#8f2518] text-white text-xs font-bold transition">
+                  Load Video
+                </button>
+              </div>
+
+              <div class="flex flex-wrap items-center gap-1.5 text-[11px] text-[#6e6a5f]">
+                <span data-i18n="supportedPlatformsLabel" class="font-semibold text-[#4a473f]">Supported:</span>
+                <span class="px-1.5 py-0.5 rounded bg-[#fbeae8] text-[#b33122] border border-[#e6bfb9] font-semibold">YouTube</span>
+                <span class="px-1.5 py-0.5 rounded bg-[#e8f4ed] text-[#1e6b43] border border-[#b7dfc6] font-semibold">Google Drive</span>
+                <span class="px-1.5 py-0.5 rounded bg-[#e8f1fa] text-[#1d4f91] border border-[#b7cfe6] font-semibold">Bilibili</span>
+                <span class="px-1.5 py-0.5 rounded bg-[#f1ebfa] text-[#6441a5] border border-[#d2c2ec] font-semibold">Twitch</span>
+              </div>
+
+              <!-- Loaded video panel -->
+              <div id="ytVideoPanel" class="hidden space-y-3">
+                <div class="flex gap-3 bg-[#faf8f3] border border-[#d6d1c4] rounded-lg p-3">
+                  <div class="w-28 h-16 rounded border border-[#c8c2b4] shrink-0 bg-[#ebe7dd] overflow-hidden relative flex items-center justify-center">
+                    <img id="ytPreviewThumb" class="w-full h-full object-cover" alt="" />
+                    <span id="ytThumbFallback" class="hidden text-[11px] font-bold text-[#4a473f] uppercase tracking-wide px-2 text-center"></span>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div id="ytVideoTitle" class="text-sm font-bold text-[#1f1e1b] truncate">Loading…</div>
+                    <div id="ytVideoAuthor" class="text-xs text-[#5c584f] truncate mt-0.5"></div>
+                    <div id="ytVideoDuration" class="text-xs font-semibold text-[#1d4f91] mt-1"></div>
+                  </div>
+                </div>
+
+                <div class="flex flex-wrap gap-2">
+                  <button type="button" onclick="openYoutubeAtPlayhead()" class="inline-flex items-center gap-1.5 px-3 py-2 rounded bg-[#b33122] hover:bg-[#8f2518] text-white text-xs font-bold transition">
+                    <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                    <span><span id="watchPlatformText" data-i18n="btnWatchYt">Watch on YouTube @</span> <span id="ytPlayheadFrameInline">#0</span> ↗</span>
+                  </button>
+                  <button type="button" onclick="toggleYtEmbed()" class="inline-flex items-center gap-1.5 px-3 py-2 rounded bg-[#edeae2] hover:bg-[#e0dcd1] text-[#2c2a26] border border-[#c8c2b4] text-xs font-semibold transition">
+                    <i data-lucide="play-circle" class="w-3.5 h-3.5"></i>
+                    <span id="ytEmbedBtnText">Try embedded player</span>
+                  </button>
+                </div>
+
+                <div id="ytEmbedContainer" class="hidden space-y-1.5">
+                  <div class="relative rounded-lg overflow-hidden border border-[#c8c2b4] bg-black aspect-video">
+                    <iframe id="ytEmbedIframe" class="w-full h-full" referrerpolicy="strict-origin-when-cross-origin"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowfullscreen></iframe>
+                  </div>
+                  <p data-i18n-html="embedFallbackNote" class="text-[11px] text-[#6e6a5f] leading-snug">
+                    <i data-lucide="info" class="w-3 h-3 inline -mt-0.5 text-[#1d4f91]"></i>
+                    If the embed shows an error, use the <strong>Watch / Open</strong> button above — embeds (especially YouTube &amp; Twitch) may fail on <code class="text-[#b33122]">file://</code> and sandboxed pages.
+                  </p>
+                </div>
+
+                <div class="bg-[#faf8f3] border border-[#d6d1c4] rounded-lg p-3 space-y-2">
+                  <div class="flex flex-wrap items-center justify-between gap-2">
+                    <span id="ytInspectorTimeReadout" class="text-xs font-bold text-[#1d4f91]">Playhead: 0.000s (Frame #0)</span>
+                    <div class="flex items-center gap-1 flex-wrap">
+                      <button type="button" onclick="stepYtInspectorFrame(-10)" class="px-2 py-1 rounded bg-white hover:bg-[#edeae2] border border-[#c8c2b4] text-xs font-semibold">-10f</button>
+                      <button type="button" onclick="stepYtInspectorFrame(-1)" class="px-2 py-1 rounded bg-white hover:bg-[#edeae2] border border-[#c8c2b4] text-xs font-semibold">-1f</button>
+                      <button type="button" onclick="stepYtInspectorFrame(1)" class="px-2 py-1 rounded bg-white hover:bg-[#edeae2] border border-[#c8c2b4] text-xs font-semibold">+1f</button>
+                      <button type="button" onclick="stepYtInspectorFrame(10)" class="px-2 py-1 rounded bg-white hover:bg-[#edeae2] border border-[#c8c2b4] text-xs font-semibold">+10f</button>
+                      <button type="button" onclick="captureYtInspectorToEndpoint('startobj')" data-i18n="btnSetStart" class="px-2 py-1 rounded bg-[#e8f4ed] hover:bg-[#d5ebd9] text-[#1e6b43] border border-[#b7dfc6] text-xs font-bold">Set Start</button>
+                      <button type="button" onclick="captureYtInspectorToEndpoint('endobj')" data-i18n="btnSetEnd" class="px-2 py-1 rounded bg-[#fbeae8] hover:bg-[#f5d5d0] text-[#b33122] border border-[#e6bfb9] text-xs font-bold">Set End</button>
+                    </div>
+                  </div>
+                  <input type="range" id="ytInspectorScrubber" min="0" max="12000" value="0" oninput="scrubYtInspectorFrame(this.value)"
+                    class="w-full accent-[#b33122] h-1.5 bg-[#dfd9cc] rounded cursor-pointer" />
+                  <div class="flex justify-between text-[11px] text-[#6e6a5f]">
+                    <span data-i18n="ytScrubberStart">0s (Frame #0)</span>
+                    <span id="ytScrubberMaxLabel">End</span>
+                  </div>
+                </div>
+              </div>
+
+              <div id="ytEmptyState" data-i18n-html="ytEmptyState" class="text-center p-6 text-xs text-[#6e6a5f] border border-dashed border-[#c8c2b4] rounded-lg bg-[#faf8f3]">
+                Paste a YouTube, Google Drive, Bilibili, or Twitch URL above and click <strong>Load Video</strong>.
+              </div>
+            </div>
+
+            <!-- LOCAL FILE SOURCE -->
+            <div id="ytSourceLocal" class="hidden space-y-3">
+              <label for="localVideoFileInput" class="block w-full p-5 border-2 border-dashed border-[#c8c2b4] rounded-lg bg-[#faf8f3] hover:bg-[#edeae2] text-center cursor-pointer transition">
+                <i data-lucide="upload" class="w-6 h-6 mx-auto text-[#1d4f91] mb-1"></i>
+                <div data-i18n="localDropTitle" class="text-sm font-semibold text-[#1f1e1b]">Choose a local video file</div>
+                <div data-i18n="localDropDesc" class="text-xs text-[#6e6a5f] mt-0.5">.mp4, .webm, .mov — steps frame-by-frame using your FPS setting</div>
               </label>
               <input type="file" id="localVideoFileInput" accept="video/*" onchange="loadLocalVideoFile(event)" class="hidden" />
-            </div>
 
-            <!-- Embed Mode Selector Bar (Prevents YouTube Error 153 in no-referrer / sandboxed environments) -->
-            <div class="flex flex-wrap items-center justify-between gap-2 bg-[#faf8f3] border border-[#d6d1c4] rounded px-3 py-1.5 text-xs">
-              <div class="flex items-center gap-1.5">
-                <span class="font-semibold text-[#4a473f]">Player Mode:</span>
-                <select id="ytPlayerModeSelect" onchange="switchYtPlayerSubMode(this.value)" class="bg-white border border-[#c8c2b4] rounded px-2 py-0.5 text-xs font-semibold text-[#1f1e1b] focus:outline-none">
-                  <option value="inspector" selected>Storyboard &amp; Frame Inspector (No Error 153)</option>
-                  <option value="nocookie">Embedded Player (Drive / Bilibili / Twitch / YT No-Cookie)</option>
-                  <option value="standard">Standard Embed (youtube.com / Direct Platform)</option>
-                  <option value="html5">HTML5 Direct Video Stream</option>
-                </select>
-              </div>
-              <a id="ytExternalWatchLink" href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" rel="noopener"
-                class="text-[#1d4f91] hover:underline font-semibold inline-flex items-center gap-1">
-                <span id="ytExternalWatchText">Open on YouTube ↗</span>
-              </a>
-            </div>
-
-            <!-- Viewport Box -->
-            <div class="relative rounded-lg overflow-hidden border border-[#c8c2b4] bg-[#faf8f3] aspect-video flex items-center justify-center">
-              <!-- 1. Error-153-Safe Interactive Storyboard & Frame Inspector -->
-              <div id="ytInspectorPanel" class="w-full h-full flex flex-col justify-between p-3.5 bg-[#faf8f3] text-[#1f1e1b]">
-                <div class="flex items-start justify-between gap-2 border-b border-[#e5e0d5] pb-2">
-                  <div class="min-w-0">
-                    <div id="ytMetaTitle" class="text-xs font-bold text-[#1f1e1b] truncate">YouTube Video Inspector (ID: dQw4w9WgXcQ)</div>
-                    <div id="ytMetaAuthor" class="text-[11px] text-[#5c584f] truncate">Fixes YouTube Embed Error 153 in sandboxed or no-referrer views</div>
-                  </div>
-                  <span id="ytPlatformBadge" class="px-2 py-0.5 rounded bg-[#e8f4ed] text-[#1e6b43] border border-[#b7dfc6] text-[11px] font-semibold shrink-0">Referrer-Safe</span>
+              <div id="html5VideoPanel" class="hidden space-y-2">
+                <div class="relative rounded-lg overflow-hidden border border-[#c8c2b4] bg-black aspect-video">
+                  <video id="html5VideoPlayer" class="w-full h-full" controls playsinline></video>
                 </div>
-
-                <!-- 4 Real YouTube Storyboard Keyframes Grid -->
-                <div id="ytStoryboardGrid" class="grid grid-cols-4 gap-2 my-auto py-1">
-                  <button type="button" onclick="selectStoryboardKeyframe(0.10)" class="group relative rounded overflow-hidden border border-[#c8c2b4] bg-white aspect-video focus:outline-none">
-                    <img id="ytThumb0" src="https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg" alt="Cover Frame" class="w-full h-full object-cover" />
-                    <span class="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-black/75 text-white text-[10px] font-semibold">Cover</span>
-                  </button>
-                  <button type="button" onclick="selectStoryboardKeyframe(0.25)" class="group relative rounded overflow-hidden border border-[#c8c2b4] bg-white aspect-video focus:outline-none">
-                    <img id="ytThumb1" src="https://i.ytimg.com/vi/dQw4w9WgXcQ/mq1.jpg" alt="Keyframe 1" class="w-full h-full object-cover" />
-                    <span class="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-black/75 text-white text-[10px] font-semibold">25%</span>
-                  </button>
-                  <button type="button" onclick="selectStoryboardKeyframe(0.50)" class="group relative rounded overflow-hidden border border-[#c8c2b4] bg-white aspect-video focus:outline-none">
-                    <img id="ytThumb2" src="https://i.ytimg.com/vi/dQw4w9WgXcQ/mq2.jpg" alt="Keyframe 2" class="w-full h-full object-cover" />
-                    <span class="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-black/75 text-white text-[10px] font-semibold">50%</span>
-                  </button>
-                  <button type="button" onclick="selectStoryboardKeyframe(0.85)" class="group relative rounded overflow-hidden border border-[#c8c2b4] bg-white aspect-video focus:outline-none">
-                    <img id="ytThumb3" src="https://i.ytimg.com/vi/dQw4w9WgXcQ/mq3.jpg" alt="Keyframe 3" class="w-full h-full object-cover" />
-                    <span class="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-black/75 text-white text-[10px] font-semibold">85%</span>
-                  </button>
-                </div>
-
-                <!-- Non-YouTube Platform Inspector Preview Card (Google Drive / Bilibili / Twitch) -->
-                <div id="platformPreviewCard" class="hidden my-auto py-2 px-3 bg-white border border-[#d6d1c4] rounded flex items-center justify-between gap-3">
-                  <div class="flex items-center gap-3 min-w-0">
-                    <img id="platformPreviewThumb" src="" alt="Preview" referrerpolicy="no-referrer" class="hidden w-24 h-14 object-cover rounded border border-[#c8c2b4] shrink-0" />
-                    <div class="min-w-0">
-                      <div id="platformPreviewLabel" class="text-xs font-bold text-[#1f1e1b]">External Video Ready</div>
-                      <div id="platformPreviewHint" class="text-[11px] text-[#5c584f] truncate">Switch to Embedded Player or use Pop Out @ Time below.</div>
-                    </div>
-                  </div>
-                  <button type="button" onclick="activatePlatformEmbedFromInspector()" class="px-2.5 py-1.5 rounded bg-[#1d4f91] hover:bg-[#163c6e] text-white text-[11px] font-bold shrink-0 transition">
-                    Open Embed
-                  </button>
-                </div>
-
-                <!-- Interactive Frame Playhead & Pop-out Deep Link -->
-                <div class="bg-white border border-[#d6d1c4] rounded p-2.5 space-y-2">
-                  <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
-                    <span id="ytInspectorTimeReadout" class="font-bold text-[#1d4f91]">Playhead: 4.250s (Frame #255)</span>
-                    <div class="flex items-center gap-1">
-                      <button type="button" onclick="stepYtInspectorFrame(-1)" class="px-2 py-0.5 rounded bg-[#edeae2] hover:bg-[#e0dcd1] border border-[#c8c2b4] font-semibold">-1f (,)</button>
-                      <button type="button" onclick="stepYtInspectorFrame(1)" class="px-2 py-0.5 rounded bg-[#edeae2] hover:bg-[#e0dcd1] border border-[#c8c2b4] font-semibold">+1f (.)</button>
-                      <button type="button" onclick="captureYtInspectorToEndpoint('startobj')" class="px-2 py-0.5 rounded bg-[#e8f4ed] text-[#1e6b43] border border-[#b7dfc6] font-bold">Set Start</button>
-                      <button type="button" onclick="captureYtInspectorToEndpoint('endobj')" class="px-2 py-0.5 rounded bg-[#fbeae8] text-[#b33122] border border-[#e6bfb9] font-bold">Set End</button>
-                    </div>
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <input type="range" id="ytInspectorScrubber" min="0" max="12000" value="255" oninput="scrubYtInspectorFrame(this.value)"
-                      class="flex-1 accent-[#b33122] h-1.5 bg-[#dfd9cc] rounded cursor-pointer" />
-                    <button type="button" onclick="openYoutubeAtPlayhead()" class="px-2.5 py-1 rounded bg-[#b33122] hover:bg-[#8f2518] text-white text-[11px] font-bold shrink-0">
-                      Pop Out @ Time ↗
-                    </button>
+                <div class="flex flex-wrap items-center justify-between gap-2 bg-[#faf8f3] border border-[#d6d1c4] rounded p-2.5 text-xs">
+                  <span id="html5TimeReadout" class="font-bold text-[#1f1e1b]">0.000s (Frame #0)</span>
+                  <div class="flex items-center gap-1 flex-wrap">
+                    <button type="button" onclick="stepHtml5VideoFrame(-10)" class="px-2 py-1 rounded bg-white hover:bg-[#edeae2] border border-[#c8c2b4] font-semibold">-10f</button>
+                    <button type="button" onclick="stepHtml5VideoFrame(-1)" class="px-2 py-1 rounded bg-white hover:bg-[#edeae2] border border-[#c8c2b4] font-semibold">-1f</button>
+                    <button type="button" onclick="stepHtml5VideoFrame(1)" class="px-2 py-1 rounded bg-white hover:bg-[#edeae2] border border-[#c8c2b4] font-semibold">+1f</button>
+                    <button type="button" onclick="stepHtml5VideoFrame(10)" class="px-2 py-1 rounded bg-white hover:bg-[#edeae2] border border-[#c8c2b4] font-semibold">+10f</button>
+                    <button type="button" onclick="captureHtml5VideoToEndpoint('startobj')" data-i18n="btnSetStart" class="px-2 py-1 rounded bg-[#e8f4ed] text-[#1e6b43] border border-[#b7dfc6] font-bold">Set Start</button>
+                    <button type="button" onclick="captureHtml5VideoToEndpoint('endobj')" data-i18n="btnSetEnd" class="px-2 py-1 rounded bg-[#fbeae8] text-[#b33122] border border-[#e6bfb9] font-bold">Set End</button>
                   </div>
                 </div>
               </div>
-
-              <!-- 2. Multi-Platform Referrer-Configured Iframe (YouTube, Google Drive, Bilibili, Twitch) -->
-              <iframe id="ytEmbedIframe"
-                class="w-full h-full hidden"
-                referrerpolicy="strict-origin-when-cross-origin"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
-                allowfullscreen></iframe>
-
-              <!-- 3. Native HTML5 Video Element (for Local Video Files or Direct Streams with zero Error 153) -->
-              <video id="html5VideoPlayer" class="w-full h-full hidden bg-black" controls playsinline></video>
-
-              <!-- 4. Fallback Placeholder kept for ID compatibility -->
-              <div id="ytEmbedPlaceholder" class="hidden p-6 text-center space-y-2">
-                <i data-lucide="youtube" class="w-8 h-8 text-[#b33122] mx-auto"></i>
-                <p class="text-xs text-[#3d3a33] font-medium">Paste a YouTube, Google Drive, Bilibili, or Twitch link above or paste YouTube "Copy debug info" JSON into Start/End Frame to auto-detect the Video ID.</p>
-              </div>
             </div>
 
-            <!-- HTML5 Video Frame-Stepping Bar (Visible when Local Video / HTML5 mode is active) -->
-            <div id="html5FrameControls" class="hidden flex-wrap items-center justify-between gap-2 bg-[#faf8f3] border border-[#d6d1c4] rounded p-2.5 text-xs">
-              <span id="html5TimeReadout" class="font-bold text-[#1f1e1b]">HTML5 Video: 0.000s (Frame #0)</span>
-              <div class="flex items-center gap-1">
-                <button type="button" onclick="stepHtml5VideoFrame(-1)" class="px-2 py-1 rounded bg-[#edeae2] hover:bg-[#e0dcd1] border border-[#c8c2b4] font-semibold">-1f</button>
-                <button type="button" onclick="stepHtml5VideoFrame(1)" class="px-2 py-1 rounded bg-[#edeae2] hover:bg-[#e0dcd1] border border-[#c8c2b4] font-semibold">+1f</button>
-                <button type="button" onclick="captureHtml5VideoToEndpoint('startobj')" class="px-2 py-1 rounded bg-[#e8f4ed] text-[#1e6b43] border border-[#b7dfc6] font-bold">Set Start</button>
-                <button type="button" onclick="captureHtml5VideoToEndpoint('endobj')" class="px-2 py-1 rounded bg-[#fbeae8] text-[#b33122] border border-[#e6bfb9] font-bold">Set End</button>
-              </div>
-            </div>
           </div>
         </section>
 
-        <!-- Card 4: Frame & Timecode Unit Converter + Run Delta Comparator -->
         <section class="bg-white border border-[#d6d1c4] rounded-lg p-5 shadow-sm space-y-4">
           <div class="flex items-center justify-between border-b border-[#e5e0d5] pb-3">
             <h2 class="text-base font-bold text-[#1f1e1b] flex items-center gap-2">
               <i data-lucide="arrow-left-right" class="w-4 h-4 text-[#8c5319]"></i>
-              <span>PB / WR Delta Comparator &amp; Frame Converter</span>
+              <span data-i18n="deltaTitle">PB / WR Delta &amp; Frame Converter</span>
             </h2>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div class="bg-[#faf8f3] border border-[#d6d1c4] rounded-lg p-3 space-y-1.5">
-              <label for="compareTargetInput" class="text-xs font-medium text-[#5c584f] block">Compare Against Target / WR Time:</label>
+              <label for="compareTargetInput" data-i18n="compareLabel" class="text-xs font-medium text-[#5c584f] block">Compare Against Target / WR Time:</label>
               <input type="text" id="compareTargetInput" value="2m 35s 000ms" oninput="updateComparisonDelta()"
-                placeholder="e.g. 2m 35s 000ms or 155.000"
+                data-i18n-placeholder="comparePlaceholder" placeholder="e.g. 2m 35s 000ms or 155.000"
                 class="w-full px-2.5 py-1.5 rounded bg-white border border-[#c8c2b4] text-xs font-semibold text-[#1f1e1b] focus:outline-none focus:border-[#1d4f91]" />
               <div id="comparisonDeltaOutput" class="text-xs font-bold text-[#1e6b43] pt-0.5">
                 Delta: +0.000s (0 frames)
@@ -648,7 +619,7 @@
             </div>
 
             <div class="bg-[#faf8f3] border border-[#d6d1c4] rounded-lg p-3 space-y-1.5">
-              <label for="quickFrameConvertInput" class="text-xs font-medium text-[#5c584f] block">Quick Frame Count → Time @ Current FPS:</label>
+              <label for="quickFrameConvertInput" data-i18n="quickFrameLabel" class="text-xs font-medium text-[#5c584f] block">Quick Frame Count → Time @ Current FPS:</label>
               <input type="number" id="quickFrameConvertInput" value="9280" min="0" step="1" oninput="updateQuickFrameConverter()"
                 class="w-full px-2.5 py-1.5 rounded bg-white border border-[#c8c2b4] text-xs font-semibold text-[#1f1e1b] focus:outline-none focus:border-[#1d4f91]" />
               <div id="quickFrameConvertOutput" class="text-xs font-bold text-[#1d4f91] pt-0.5">
@@ -658,43 +629,38 @@
           </div>
         </section>
 
-        <!-- Card 5: Retime Session History & CSV / JSON Export -->
         <section class="bg-white border border-[#d6d1c4] rounded-lg p-5 shadow-sm space-y-4">
           <div class="flex flex-wrap items-center justify-between gap-2 border-b border-[#e5e0d5] pb-3">
             <div>
               <h2 class="text-base font-bold text-[#1f1e1b] flex items-center gap-2">
                 <i data-lucide="history" class="w-4 h-4 text-[#1e6b43]"></i>
-                <span>Retime Session Log</span>
+                <span data-i18n="historyTitle">Retime Session Log</span>
               </h2>
-              <p class="text-xs text-[#5c584f]">Saved calculations from this verification session</p>
+              <p data-i18n="historyDesc" class="text-xs text-[#5c584f]">Saved calculations from this verification session</p>
             </div>
             <div class="flex items-center gap-1.5">
               <button type="button" onclick="exportHistoryCSV()" class="px-2.5 py-1 rounded bg-[#edeae2] hover:bg-[#e0dcd1] text-xs font-semibold text-[#2c2a26] border border-[#c8c2b4] flex items-center gap-1 transition">
                 <i data-lucide="download" class="w-3.5 h-3.5 text-[#1e6b43]"></i>
                 <span>CSV</span>
               </button>
-              <button type="button" onclick="clearHistoryLog()" class="px-2.5 py-1 rounded bg-[#edeae2] hover:bg-[#e0dcd1] text-xs font-semibold text-[#5c584f] border border-[#c8c2b4] transition">
+              <button type="button" onclick="clearHistoryLog()" data-i18n="btnClear" class="px-2.5 py-1 rounded bg-[#edeae2] hover:bg-[#e0dcd1] text-xs font-semibold text-[#5c584f] border border-[#c8c2b4] transition">
                 Clear
               </button>
             </div>
           </div>
 
-          <div id="historyListContainer" class="space-y-2 max-h-64 overflow-y-auto pr-1">
-            <!-- Populated by JS -->
-          </div>
+          <div id="historyListContainer" class="space-y-2 max-h-64 overflow-y-auto pr-1"></div>
         </section>
-
       </div>
     </div>
   </main>
 
-  <!-- Modal: How to Retime & Keyboard Shortcuts -->
   <div id="guideModal" class="fixed inset-0 z-50 hidden bg-black/50 flex items-center justify-center p-4">
     <div class="bg-white border-2 border-[#c8c2b4] rounded-lg max-w-2xl w-full p-6 shadow-xl space-y-4 max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between border-b border-[#e5e0d5] pb-3">
         <h3 id="about" class="text-lg font-bold text-[#1f1e1b] flex items-center gap-2">
           <i data-lucide="book-open" class="w-5 h-5 text-[#b33122]"></i>
-          <span>About &amp; Speedrun Retiming Guide</span>
+          <span data-i18n="guideTitle">About &amp; Speedrun Retiming Guide</span>
         </h3>
         <button type="button" onclick="toggleGuideModal()" class="p-1.5 rounded bg-[#edeae2] hover:bg-[#e0dcd1] text-[#4a473f] hover:text-[#1f1e1b]">
           <i data-lucide="x" class="w-4 h-4"></i>
@@ -702,40 +668,46 @@
       </div>
 
       <div class="space-y-3 text-xs sm:text-sm text-[#3d3a33] leading-relaxed">
-        <p>
+        <p data-i18n-html="guideIntro">
           Takes start and stop points of a YouTube video, down to the exact frame, and gives the time between them in the format <code class="text-[#b33122] bg-[#f4f1ea] border border-[#d6d1c4] px-1.5 py-0.5 rounded">1h 23m 45s 678ms</code>. Based on the original <a href="https://github.com/slashinfty/yt-frame-timer" target="_blank" rel="noopener" class="text-[#1d4f91] underline font-semibold">yt-frame-timer</a>.
         </p>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
           <div class="bg-[#faf8f3] border border-[#d6d1c4] rounded-lg p-3.5 space-y-1.5">
-            <div class="font-bold text-[#1f1e1b]">Step 1: Get Video Framerate</div>
-            <p class="text-xs text-[#5c584f]">Right-click the YouTube player and select <strong>“Stats for nerds”</strong>. Look at the 3rd line (<em>Current / Optimal Res</em>) and enter the two digits after the <code>@</code> symbol (e.g. <code>1920x1080@60</code> → <code>60</code> FPS).</p>
+            <div data-i18n="guideStep1Title" class="font-bold text-[#1f1e1b]">Step 1: Get Video Framerate</div>
+            <p data-i18n-html="guideStep1Desc" class="text-xs text-[#5c584f]">Right-click the YouTube player and select <strong>“Stats for nerds”</strong>. Look at the 3rd line (<em>Current / Optimal Res</em>) and enter the two digits after the <code>@</code> symbol (e.g. <code>1920x1080@60</code> → <code>60</code> FPS).</p>
           </div>
           <div class="bg-[#faf8f3] border border-[#d6d1c4] rounded-lg p-3.5 space-y-1.5">
-            <div class="font-bold text-[#1f1e1b]">Step 2: Copy Frame Debug Info</div>
-            <p class="text-xs text-[#5c584f]">Pause the video and use the <code>,</code> and <code>.</code> keys to step to the exact start frame. Right-click the video → <strong>“Copy debug info”</strong> and paste it into <em>Starting frame</em>. Repeat for <em>Ending frame</em>.</p>
+            <div data-i18n="guideStep2Title" class="font-bold text-[#1f1e1b]">Step 2: Copy Frame Debug Info</div>
+            <p data-i18n-html="guideStep2Desc" class="text-xs text-[#5c584f]">Pause the video and use the <code>,</code> and <code>.</code> keys to step to the exact start frame. Right-click the video → <strong>“Copy debug info”</strong> and paste it into <em>Starting frame</em>. Repeat for <em>Ending frame</em>.</p>
           </div>
         </div>
 
         <div class="bg-[#faf8f3] border border-[#d6d1c4] rounded-lg p-3.5 space-y-2">
-          <div class="font-bold text-[#1f1e1b]">Why YouTube Embeds Show “Error 153” &amp; How This Tool Fixes It</div>
-          <p class="text-xs text-[#5c584f]">
-            YouTube's embedded player displays <strong>Error 153 (Video player configuration error)</strong> whenever a browser sandbox or local preview blocks the HTTP <code>Referer</code> header. This tool sets <code>referrerpolicy="strict-origin-when-cross-origin"</code> on embeds and provides a built-in <strong>Storyboard &amp; Frame Inspector</strong> plus a <strong>Local Video File Frame-Stepper</strong> that work in every browser environment without Error 153.
+          <div data-i18n="guideLoaderTitle" class="font-bold text-[#1f1e1b]">About the YouTube Video Loader</div>
+          <p data-i18n-html="guideLoaderP1" class="text-xs text-[#5c584f]">
+            The <strong>Video Loader</strong> tab lets you preview a video's title, duration and thumbnails, and step a scrubber through the timeline. Use <strong>Watch on YouTube @ Frame</strong> to jump to the exact time in a real YouTube tab, or try the embedded player in place. Embeds will fail on <code>file://</code> and sandboxed pages — that's expected; the pop-out button always works.
+          </p>
+          <p data-i18n-html="guideLoaderP2" class="text-xs text-[#5c584f]">
+            For frame-accurate stepping, load a <strong>local video file</strong> (mp4/webm) in the <em>Local File</em> tab, or use the <strong>60fps simulator</strong> to practice.
           </p>
         </div>
 
         <div class="bg-[#faf8f3] border border-[#d6d1c4] rounded-lg p-3.5 space-y-2">
-          <div class="font-bold text-[#1f1e1b]">Keyboard Shortcuts (When not typing in an input)</div>
+          <div data-i18n="guideKeysTitle" class="font-bold text-[#1f1e1b]">Keyboard Shortcuts (When not typing in an input)</div>
           <div class="grid grid-cols-2 gap-2 text-xs">
-            <div><kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1d4f91]">,</kbd> / <kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1d4f91]">.</kbd> Step simulator -1f / +1f</div>
-            <div><kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1e6b43]">[</kbd> / <kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#b33122]">]</kbd> Capture simulator to Start / End</div>
-            <div><kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1f1e1b]">Space</kbd> Play / Pause 60fps simulator</div>
-            <div><kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1f1e1b]">Enter</kbd> Re-compute interval time</div>
+            <div data-i18n-html="guideKey1"><kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1d4f91]">,</kbd> / <kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1d4f91]">.</kbd> Step -1f / +1f</div>
+            <div data-i18n-html="guideKey2"><kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1e6b43]">[</kbd> / <kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#b33122]">]</kbd> Capture to Start / End</div>
+            <div data-i18n-html="guideKey3"><kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1f1e1b]">Space</kbd> Play / Pause simulator</div>
+            <div data-i18n-html="guideKey4"><kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1f1e1b]">Enter</kbd> Re-compute interval time</div>
           </div>
+          <p data-i18n-html="guideKeysNote" class="text-[11px] text-[#6e6a5f] pt-1">
+            In Video Loader mode, <kbd>,</kbd>/<kbd>.</kbd> and <kbd>[</kbd>/<kbd>]</kbd> control the YouTube scrubber instead of the simulator.
+          </p>
         </div>
       </div>
 
       <div class="flex justify-end pt-2">
-        <button type="button" onclick="toggleGuideModal()" class="px-4 py-2 rounded bg-[#1d4f91] hover:bg-[#163c6e] text-white text-xs font-bold">
+        <button type="button" onclick="toggleGuideModal()" data-i18n="btnGotIt" class="px-4 py-2 rounded bg-[#1d4f91] hover:bg-[#163c6e] text-white text-xs font-bold">
           Got it
         </button>
       </div>
@@ -744,22 +716,472 @@
 
   <script>
     // =========================================================================
-    // Application State & Storage
+    // Internationalization (English / Simplified Chinese)
+    // =========================================================================
+    const I18N = {
+      en: {
+        pageTitle: 'YouTube Frame & Speedrun Interval Timer',
+        headerTitle: 'YouTube Interval Timer',
+        headerBadge: 'v2.3 Retime Desk',
+        headerSubtitle: 'Frame-accurate speedrun retiming, debug JSON parser, load remover & verification workbench',
+        btnDemo: 'Load Demo Run',
+        btnGuide: 'How to Retime',
+        btnRepo: 'Original Repo',
+        kpiTimeLabel: 'Formatted Time',
+        kpiFramesLabel: 'Elapsed Frames',
+        kpiSmpteLabel: 'SMPTE Timecode',
+        kpiNetLabel: 'Net Multi-Split / LRT',
+        sec1Title: '1. Video Framerate & Rounding Rules',
+        sec1Desc: 'Right-click the YouTube video → <span class="text-[#1f1e1b] font-semibold">“Stats for nerds”</span> → find the number after <code class="text-[#b33122] bg-[#f4f1ea] border border-[#d6d1c4] px-1.5 py-0.5 rounded">@</code> on “Current / Optimal Res”.',
+        fpsLabel: 'Framerate (FPS):',
+        presetsLabel: 'Presets:',
+        precisionLabel: 'Output Precision:',
+        prec3: 'Milliseconds (3 dec · 678ms)',
+        prec2: 'Centiseconds (2 dec · .68s)',
+        prec1: 'Deciseconds (1 dec · .7s)',
+        prec0: 'Whole Seconds (0 dec)',
+        roundingLabel: 'Frame Alignment:',
+        roundFloor: 'Floor to Frame (SPRT / Default)',
+        roundNearest: 'Nearest Frame (Math.round)',
+        roundExact: 'Raw Unrounded Timestamp',
+        sec2Title: '2. Video Endpoints (Start & Stop Frames)',
+        sec2Desc: 'Step with <code class="text-[#1f1e1b] bg-[#f4f1ea] border border-[#d6d1c4] px-1.5 py-0.5 rounded">,</code> and <code class="text-[#1f1e1b] bg-[#f4f1ea] border border-[#d6d1c4] px-1.5 py-0.5 rounded">.</code> on YouTube, right-click → <span class="text-[#1f1e1b] font-semibold">“Copy debug info”</span>, or enter <code class="text-[#1f1e1b]">MM:SS.mmm</code>, seconds, or <code class="text-[#1f1e1b]">1250f</code>.',
+        btnSwap: 'Swap',
+        btnReset: 'Reset',
+        swapTitle: 'Swap Starting and Ending frames',
+        resetTitle: 'Clear both endpoints',
+        startFrameLabel: 'Starting Frame / Debug Info:',
+        endFrameLabel: 'Ending Frame / Debug Info:',
+        startPlaceholder: "Paste YouTube 'Copy debug info' JSON, seconds (e.g. 4.25), MM:SS.mmm, or frame (e.g. 255f)",
+        endPlaceholder: "Paste YouTube 'Copy debug info' JSON, seconds (e.g. 158.916), MM:SS.mmm, or frame (e.g. 9535f)",
+        pasteTitle: 'Paste from clipboard',
+        btnPaste: 'Paste',
+        frameNudgeLabel: 'Frame Nudge:',
+        sec3Title: '3. Computed Video Time & Verification Note',
+        noteTemplateLabel: 'Note Template:',
+        tplStandard: 'Standard Speedrun.com Note',
+        tplDetailed: 'Detailed Frame & Timestamp Audit',
+        tplLrt: 'Load-Removed (RTA + Loads → LRT)',
+        tplMarkdown: 'Markdown Verification Table',
+        btnCompute: 'Compute time',
+        btnCopyTime: 'Copy Time',
+        copyTimeTitle: 'Copy computed time',
+        btnAddSplit: '+ Split',
+        btnAddLoad: '- Load',
+        addSplitTitle: 'Add current start/end interval as a segment',
+        addLoadTitle: 'Subtract current interval as a loading screen / pause',
+        btnCopyMod: 'Copy Mod Message to Clipboard',
+        btnSaveHistory: 'Save to Session History',
+        splitsTitle: 'Multi-Segment Timer & Load Remover (RTA / LRT)',
+        splitsDesc: 'Combine multiple level segments or subtract loading screens/menus from a single full-run interval.',
+        btnAddSegRow: 'Add Segment',
+        btnAddLoadRow: 'Add Load Cut',
+        btnClear: 'Clear',
+        grossLabel: 'Gross Segment Time:',
+        loadsLabel: 'Loads Removed:',
+        netLabel: 'Final Net Time (LRT):',
+        thLabel: 'Label',
+        thType: 'Type',
+        thStart: 'Start (s)',
+        thEnd: 'End (s)',
+        thFrames: 'Frames',
+        thDuration: 'Duration',
+        thAction: 'Action',
+        sandboxTitle: 'Frame-Stepping Sandbox',
+        sandboxDesc: 'Practice frame-accurate capture on the 60fps simulator, or load YouTube / Google Drive / Bilibili / Twitch / local video.',
+        modeSim: '60fps Sim',
+        modeYt: 'Video Loader',
+        btnCopySimJson: 'Copy YT Debug JSON',
+        btnSetStartBracket: 'Set Start [',
+        btnSetEndBracket: 'Set End ]',
+        tabYoutube: 'Video URL',
+        tabLocal: 'Local File',
+        ytUrlPlaceholder: 'Paste YouTube, Google Drive, Bilibili, or Twitch URL / ID',
+        supportedPlatformsLabel: 'Supported:',
+        btnLoadVideo: 'Load Video',
+        btnWatchYt: 'Watch on YouTube @',
+        btnWatchDrive: 'Open in Google Drive @',
+        btnWatchBilibili: 'Watch on Bilibili @',
+        btnWatchTwitch: 'Watch on Twitch @',
+        embedTry: 'Try embedded player',
+        embedHide: 'Hide embedded player',
+        embedFallbackNote: '<i data-lucide="info" class="w-3 h-3 inline -mt-0.5 text-[#1d4f91]"></i> If the embed shows an error, use the <strong>Watch / Open</strong> button above — embeds (especially YouTube &amp; Twitch) may fail on <code class="text-[#b33122]">file://</code> and sandboxed pages.',
+        btnSetStart: 'Set Start',
+        btnSetEnd: 'Set End',
+        ytScrubberStart: '0s (Frame #0)',
+        ytEmptyState: 'Paste a YouTube, Google Drive, Bilibili, or Twitch URL above and click <strong>Load Video</strong>.',
+        localDropTitle: 'Choose a local video file',
+        localDropDesc: '.mp4, .webm, .mov — steps frame-by-frame using your FPS setting',
+        deltaTitle: 'PB / WR Delta & Frame Converter',
+        compareLabel: 'Compare Against Target / WR Time:',
+        comparePlaceholder: 'e.g. 2m 35s 000ms or 155.000',
+        quickFrameLabel: 'Quick Frame Count → Time @ Current FPS:',
+        historyTitle: 'Retime Session Log',
+        historyDesc: 'Saved calculations from this verification session',
+        guideTitle: 'About & Speedrun Retiming Guide',
+        guideIntro: 'Takes start and stop points of a YouTube video, down to the exact frame, and gives the time between them in the format <code class="text-[#b33122] bg-[#f4f1ea] border border-[#d6d1c4] px-1.5 py-0.5 rounded">1h 23m 45s 678ms</code>. Based on the original <a href="https://github.com/slashinfty/yt-frame-timer" target="_blank" rel="noopener" class="text-[#1d4f91] underline font-semibold">yt-frame-timer</a>.',
+        guideStep1Title: 'Step 1: Get Video Framerate',
+        guideStep1Desc: 'Right-click the YouTube player and select <strong>“Stats for nerds”</strong>. Look at the 3rd line (<em>Current / Optimal Res</em>) and enter the two digits after the <code>@</code> symbol (e.g. <code>1920x1080@60</code> → <code>60</code> FPS).',
+        guideStep2Title: 'Step 2: Copy Frame Debug Info',
+        guideStep2Desc: 'Pause the video and use the <code>,</code> and <code>.</code> keys to step to the exact start frame. Right-click the video → <strong>“Copy debug info”</strong> and paste it into <em>Starting frame</em>. Repeat for <em>Ending frame</em>.',
+        guideLoaderTitle: 'About the YouTube Video Loader',
+        guideLoaderP1: 'The <strong>Video Loader</strong> tab lets you preview a video\'s title, duration and thumbnails, and step a scrubber through the timeline. Use <strong>Watch on YouTube @ Frame</strong> to jump to the exact time in a real YouTube tab, or try the embedded player in place. Embeds will fail on <code>file://</code> and sandboxed pages — that\'s expected; the pop-out button always works.',
+        guideLoaderP2: 'For frame-accurate stepping, load a <strong>local video file</strong> (mp4/webm) in the <em>Local File</em> tab, or use the <strong>60fps simulator</strong> to practice.',
+        guideKeysTitle: 'Keyboard Shortcuts (When not typing in an input)',
+        guideKey1: '<kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1d4f91]">,</kbd> / <kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1d4f91]">.</kbd> Step -1f / +1f',
+        guideKey2: '<kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1e6b43]">[</kbd> / <kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#b33122]">]</kbd> Capture to Start / End',
+        guideKey3: '<kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1f1e1b]">Space</kbd> Play / Pause simulator',
+        guideKey4: '<kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1f1e1b]">Enter</kbd> Re-compute interval time',
+        guideKeysNote: 'In Video Loader mode, <kbd>,</kbd>/<kbd>.</kbd> and <kbd>[</kbd>/<kbd>]</kbd> control the YouTube scrubber instead of the simulator.',
+        btnGotIt: 'Got it',
+        // Dynamic strings
+        framePrefix: 'Frame #',
+        framesUnit: 'frames',
+        exactPrefix: 'Exact',
+        msPerFrame: 'ms / frame',
+        segmentsSummary: '{seg} segments · {load} loads removed',
+        detectedVid: 'Detected Video ID: {vid}',
+        play: 'Play',
+        pause: 'Pause',
+        playheadLabel: 'Playhead: {sec}s (Frame #{frame})',
+        durLabel: 'Duration: {dur} ({sec}s)',
+        durUnknown: 'Duration: unknown — scrubber uses 10-min estimate',
+        scrubberMax: '{sec}s (Frame #{frame})',
+        scrubberMaxEst: '~{sec}s estimate (Frame #{frame})',
+        loadingText: 'Loading…',
+        ytTitleFallback: 'YouTube Video {vid}',
+        driveTitleFallback: 'Google Drive Video',
+        biliTitleFallback: 'Bilibili Video {vid}',
+        twitchVodFallback: 'Twitch VOD {vid}',
+        twitchClipFallback: 'Twitch Clip {vid}',
+        byAuthor: 'by {author}',
+        vidLabel: 'Video ID: {vid}',
+        driveLabel: 'Google Drive File ID: {vid}',
+        biliLabel: 'Bilibili ID: {vid} · P{page}',
+        twitchVodLabel: 'Twitch VOD ID: {vid}',
+        twitchClipLabel: 'Twitch Clip: {vid}',
+        vidOffline: 'Video ID: {vid} · metadata offline',
+        splitsEmpty: 'No segments or load cuts added yet. Click <strong>"+ Split"</strong> or <strong>"- Load"</strong> above to add intervals.',
+        segBadge: 'Segment (+)',
+        loadBadge: 'Load (-)',
+        historyEmpty: 'No saved retimes yet. Click "Save to Session History" to log results.',
+        btnLoad: 'Load',
+        deltaInvalid: 'Enter a valid target time',
+        deltaTie: 'Exact Tie: ±0.000s (0 frames)',
+        deltaFaster: '{sec}s ({frames} frames · FASTER)',
+        deltaSlower: '+{sec}s (+{frames} frames · SLOWER)',
+        simStageActive: 'IN-GAME RUN ACTIVE (USE , AND . TO STEP FRAMES)',
+        simStagePre: 'PRE-RUN TITLE SCREEN (START AT FRAME #255)',
+        simStageStart: '★ FIRST INPUT / RUN START FRAME (#255) ★',
+        simStageEnd: '★ FINAL HIT / RUN STOP FRAME (#9535) ★',
+        simStagePost: 'POST-RUN VICTORY SCREEN',
+        simHud: 'Frame #{frame} · {sec}s',
+        toastInvalidFps: 'Invalid framerate; defaulted to 60 FPS',
+        toastSetFps: 'Framerate set to {fps} FPS',
+        toastInvalidEndpoints: 'Please enter valid Starting and Ending frames or timestamps.',
+        toastComputed: 'Computed: {time} ({frames} frames)',
+        toastModCopied: 'Moderator message copied to clipboard!',
+        toastTimeCopied: 'Copied time: {time}',
+        toastCopyFail: 'Could not copy automatically; please select and copy.',
+        toastSwapped: 'Swapped Starting and Ending frames',
+        toastReset: 'Reset endpoints to 0',
+        toastPasted: 'Pasted and parsed from clipboard!',
+        toastPasteHint: 'Press Ctrl+V / Cmd+V inside the highlighted field to paste',
+        toastAddedSplit: 'Added {label} to Multi-Segment Timer',
+        toastClearedSplits: 'Cleared all split intervals',
+        toastSavedHistory: 'Saved calculation to Session Log',
+        toastClearedHistory: 'Cleared session history log',
+        toastNoHistoryCsv: 'No session history to export',
+        toastExportedCsv: 'Exported session history to CSV',
+        toastCapturedSim: 'Captured Frame #{frame} ({sec}s) to {target}',
+        toastCopiedSimJson: 'Copied simulated YouTube debug JSON (cmt: {sec}s)',
+        toastInvalidYt: 'Please enter a valid YouTube, Google Drive, Bilibili, or Twitch URL / ID',
+        toastLoadedYt: 'Loaded {platform} video ({vid})',
+        toastSetYtEndpoint: 'Set {target} to Frame #{frame} ({sec}s)',
+        toastLoadedLocal: 'Loaded "{name}" for native frame stepping',
+        toastCapturedHtml5: 'Captured HTML5 timestamp ({sec}s) to {target}',
+        startWord: 'Start',
+        endWord: 'End'
+      },
+      zh: {
+        pageTitle: 'YouTube 帧数与速通区间计时器',
+        headerTitle: 'YouTube 区间计时器',
+        headerBadge: 'v2.3 重计时工作台',
+        headerSubtitle: '精确到帧的速通重计时、调试 JSON 解析器、读条扣除器与审核工作台',
+        btnDemo: '加载示例',
+        btnGuide: '计时指南',
+        btnRepo: '原项目仓库',
+        kpiTimeLabel: '格式化时间',
+        kpiFramesLabel: '经过帧数',
+        kpiSmpteLabel: 'SMPTE 时间码',
+        kpiNetLabel: '净分段 / 去除读条时间 (LRT)',
+        sec1Title: '1. 视频帧率与取整规则',
+        sec1Desc: '右键点击 YouTube 视频 → <span class="text-[#1f1e1b] font-semibold">“详细统计信息 (Stats for nerds)”</span> → 查看 “Current / Optimal Res” 中 <code class="text-[#b33122] bg-[#f4f1ea] border border-[#d6d1c4] px-1.5 py-0.5 rounded">@</code> 后的数字。',
+        fpsLabel: '帧率 (FPS)：',
+        presetsLabel: '常用预设：',
+        precisionLabel: '输出精度：',
+        prec3: '毫秒 (3位小数 · 678ms)',
+        prec2: '厘秒 (2位小数 · .68s)',
+        prec1: '十分之一秒 (1位小数 · .7s)',
+        prec0: '整秒 (0位小数)',
+        roundingLabel: '帧对齐方式：',
+        roundFloor: '向下取整到帧 (SPRT / 默认)',
+        roundNearest: '最近帧 (四舍五入)',
+        roundExact: '原始未对齐时间戳',
+        sec2Title: '2. 视频起止点（起始帧与结束帧）',
+        sec2Desc: '在 YouTube 上按 <code class="text-[#1f1e1b] bg-[#f4f1ea] border border-[#d6d1c4] px-1.5 py-0.5 rounded">,</code> 和 <code class="text-[#1f1e1b] bg-[#f4f1ea] border border-[#d6d1c4] px-1.5 py-0.5 rounded">.</code> 逐帧步进，右键 → <span class="text-[#1f1e1b] font-semibold">“复制调试信息 (Copy debug info)”</span>，或直接输入 <code class="text-[#1f1e1b]">MM:SS.mmm</code>、秒数或 <code class="text-[#1f1e1b]">1250f</code>。',
+        btnSwap: '交换',
+        btnReset: '重置',
+        swapTitle: '交换起始帧与结束帧',
+        resetTitle: '重置起止点',
+        startFrameLabel: '起始帧 / 调试信息：',
+        endFrameLabel: '结束帧 / 调试信息：',
+        startPlaceholder: '粘贴 YouTube 调试 JSON、秒数 (如 4.25)、MM:SS.mmm 或帧数 (如 255f)',
+        endPlaceholder: '粘贴 YouTube 调试 JSON、秒数 (如 158.916)、MM:SS.mmm 或帧数 (如 9535f)',
+        pasteTitle: '从剪贴板粘贴',
+        btnPaste: '粘贴',
+        frameNudgeLabel: '帧数微调：',
+        sec3Title: '3. 计算结果与审核备注',
+        noteTemplateLabel: '备注模板：',
+        tplStandard: '标准 Speedrun.com 备注',
+        tplDetailed: '详细帧数与时间戳审计',
+        tplLrt: '去除读条 (RTA + 读条 → LRT)',
+        tplMarkdown: 'Markdown 审核表格',
+        btnCompute: '计算时间',
+        btnCopyTime: '复制时间',
+        copyTimeTitle: '复制计算结果',
+        btnAddSplit: '+ 分段',
+        btnAddLoad: '- 读条',
+        addSplitTitle: '将当前起止区间添加为分段',
+        addLoadTitle: '将当前区间作为读条/暂停时间扣除',
+        btnCopyMod: '复制审核备注到剪贴板',
+        btnSaveHistory: '保存到会话记录',
+        splitsTitle: '多段计时与读条去除器 (RTA / LRT)',
+        splitsDesc: '合并多个关卡分段，或从完整录像中扣除读条界面/菜单时间。',
+        btnAddSegRow: '添加分段',
+        btnAddLoadRow: '添加读条扣除',
+        btnClear: '清空',
+        grossLabel: '总分段时长：',
+        loadsLabel: '已扣除读条：',
+        netLabel: '最终净时长 (LRT)：',
+        thLabel: '标签',
+        thType: '类型',
+        thStart: '开始 (秒)',
+        thEnd: '结束 (秒)',
+        thFrames: '帧数',
+        thDuration: '时长',
+        thAction: '操作',
+        sandboxTitle: '逐帧步进沙盒',
+        sandboxDesc: '在 60fps 模拟器中练习精确抓帧，或加载 YouTube / Google Drive / Bilibili / Twitch / 本地视频。',
+        modeSim: '60fps 模拟器',
+        modeYt: '视频加载器',
+        btnCopySimJson: '复制 YT 调试 JSON',
+        btnSetStartBracket: '设为起点 [',
+        btnSetEndBracket: '设为终点 ]',
+        tabYoutube: '在线视频链接',
+        tabLocal: '本地视频',
+        ytUrlPlaceholder: '粘贴 YouTube、Google Drive、Bilibili 或 Twitch 链接 / ID',
+        supportedPlatformsLabel: '支持平台：',
+        btnLoadVideo: '加载视频',
+        btnWatchYt: '在 YouTube 观看 @',
+        btnWatchDrive: '在 Google Drive 打开 @',
+        btnWatchBilibili: '在 Bilibili 观看 @',
+        btnWatchTwitch: '在 Twitch 观看 @',
+        embedTry: '尝试内嵌播放器',
+        embedHide: '隐藏内嵌播放器',
+        embedFallbackNote: '<i data-lucide="info" class="w-3 h-3 inline -mt-0.5 text-[#1d4f91]"></i> 如果内嵌播放器提示错误，请使用上方的<strong>观看 / 打开</strong>按钮 — 在 <code class="text-[#b33122]">file://</code> 或沙盒页面中内嵌播放器（尤其是 YouTube 与 Twitch）通常会受限。',
+        btnSetStart: '设为起点',
+        btnSetEnd: '设为终点',
+        ytScrubberStart: '0秒 (第 #0 帧)',
+        ytEmptyState: '在上方粘贴 YouTube、Google Drive、Bilibili 或 Twitch 链接并点击<strong>加载视频</strong>。',
+        localDropTitle: '选择本地视频文件',
+        localDropDesc: '支持 .mp4, .webm, .mov — 将按当前 FPS 设置逐帧步进',
+        deltaTitle: 'PB / WR 差值与帧数换算器',
+        compareLabel: '对比目标 / 世界纪录时间：',
+        comparePlaceholder: '例如 2m 35s 000ms 或 155.000',
+        quickFrameLabel: '快速帧数 → 时间换算（按当前 FPS）：',
+        historyTitle: '重计时会话记录',
+        historyDesc: '本次审核会话中保存的计算记录',
+        guideTitle: '关于与速通重计时指南',
+        guideIntro: '获取 YouTube 视频的起始与结束时间点（精确到帧），并以 <code class="text-[#b33122] bg-[#f4f1ea] border border-[#d6d1c4] px-1.5 py-0.5 rounded">1h 23m 45s 678ms</code> 格式输出耗时。基于原版 <a href="https://github.com/slashinfty/yt-frame-timer" target="_blank" rel="noopener" class="text-[#1d4f91] underline font-semibold">yt-frame-timer</a>。',
+        guideStep1Title: '步骤 1：获取视频帧率',
+        guideStep1Desc: '右键点击 YouTube 播放器并选择<strong>“详细统计信息”</strong>。查看第 3 行（<em>Current / Optimal Res</em>），输入 <code>@</code> 符号后的数字（例如 <code>1920x1080@60</code> → <code>60</code> FPS）。',
+        guideStep2Title: '步骤 2：复制帧调试信息',
+        guideStep2Desc: '暂停视频并使用 <code>,</code> 和 <code>.</code> 键逐帧定位到起始帧。右键视频 → <strong>“复制调试信息”</strong> 并粘贴到<em>起始帧</em>输入框，再对<em>结束帧</em>重复此操作。',
+        guideLoaderTitle: '关于 YouTube 视频加载器',
+        guideLoaderP1: '<strong>视频加载器</strong>可预览视频标题、时长与缩略图，并通过时间轴滑块微调帧数。使用<strong>在 YouTube 观看 @ 帧</strong>可在新标签页跳转到对应时间点，也可直接展开内嵌播放器并用 <code>-1f</code>/<code>+1f</code>/<code>-10f</code>/<code>+10f</code> 同步跳转播放位置。',
+        guideLoaderP2: '如需离线精确逐帧步进，可在<em>本地视频</em>选项卡加载本地文件（mp4/webm），或使用 <strong>60fps 模拟器</strong>练习。',
+        guideKeysTitle: '键盘快捷键（未在输入框内输入时生效）',
+        guideKey1: '<kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1d4f91]">,</kbd> / <kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1d4f91]">.</kbd> 后退 / 前进 1 帧',
+        guideKey2: '<kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1e6b43]">[</kbd> / <kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#b33122]">]</kbd> 捕获为起点 / 终点',
+        guideKey3: '<kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1f1e1b]">Space</kbd> 播放 / 暂停模拟器',
+        guideKey4: '<kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1f1e1b]">Enter</kbd> 重新计算区间时间',
+        guideKeysNote: '在“视频加载器”模式下，<kbd>,</kbd>/<kbd>.</kbd> 和 <kbd>[</kbd>/<kbd>]</kbd> 将控制 YouTube 时间轴滑块及内嵌播放器。',
+        btnGotIt: '知道了',
+        // Dynamic strings
+        framePrefix: '第 #',
+        framesUnit: '帧',
+        exactPrefix: '精确',
+        msPerFrame: '毫秒 / 帧',
+        segmentsSummary: '{seg} 个分段 · 已扣除 {load} 个读条',
+        detectedVid: '已识别视频 ID: {vid}',
+        play: '播放',
+        pause: '暂停',
+        playheadLabel: '当前位置：{sec}s (第 #{frame} 帧)',
+        durLabel: '时长：{dur} ({sec}s)',
+        durUnknown: '时长未知 — 时间轴默认按 10 分钟估算',
+        scrubberMax: '{sec}s (第 #{frame} 帧)',
+        scrubberMaxEst: '约 {sec}s (第 #{frame} 帧)',
+        loadingText: '加载中…',
+        ytTitleFallback: 'YouTube 视频 {vid}',
+        driveTitleFallback: 'Google Drive 视频',
+        biliTitleFallback: 'Bilibili 视频 {vid}',
+        twitchVodFallback: 'Twitch 录像 {vid}',
+        twitchClipFallback: 'Twitch 剪辑 {vid}',
+        byAuthor: '作者：{author}',
+        vidLabel: '视频 ID: {vid}',
+        driveLabel: 'Google Drive 文件 ID: {vid}',
+        biliLabel: 'Bilibili ID: {vid} · P{page}',
+        twitchVodLabel: 'Twitch 录像 ID: {vid}',
+        twitchClipLabel: 'Twitch 剪辑: {vid}',
+        vidOffline: '视频 ID: {vid} · 元数据离线',
+        splitsEmpty: '尚未添加分段或读条扣除。点击上方的 <strong>“+ 分段”</strong> 或 <strong>“- 读条”</strong> 来添加区间。',
+        segBadge: '分段 (+)',
+        loadBadge: '读条 (-)',
+        historyEmpty: '暂无保存的重计时记录。点击“保存到会话记录”可保存当前结果。',
+        btnLoad: '加载',
+        deltaInvalid: '请输入有效的目标时间',
+        deltaTie: '完全打平：±0.000s (0 帧)',
+        deltaFaster: '{sec}s ({frames} 帧 · 更快)',
+        deltaSlower: '+{sec}s (+{frames} 帧 · 更慢)',
+        simStageActive: '速通进行中（按 , 和 . 逐帧步进）',
+        simStagePre: '开局前标题画面（第 #255 帧开始）',
+        simStageStart: '★ 首次操作 / 计时开始帧 (#255) ★',
+        simStageEnd: '★ 最终一击 / 计时结束帧 (#9535) ★',
+        simStagePost: '通关胜利画面',
+        simHud: '第 #{frame} 帧 · {sec}s',
+        toastInvalidFps: '帧率无效，已恢复为默认 60 FPS',
+        toastSetFps: '已将帧率设为 {fps} FPS',
+        toastInvalidEndpoints: '请输入有效的起始和结束帧或时间戳。',
+        toastComputed: '计算完成：{time} ({frames} 帧)',
+        toastModCopied: '已复制审核备注到剪贴板！',
+        toastTimeCopied: '已复制时间：{time}',
+        toastCopyFail: '无法自动复制，请手动选择并复制。',
+        toastSwapped: '已交换起始帧与结束帧',
+        toastReset: '已将起止点重置为 0',
+        toastPasted: '已从剪贴板粘贴并解析！',
+        toastPasteHint: '请在高亮输入框内按 Ctrl+V / Cmd+V 粘贴',
+        toastAddedSplit: '已将 {label} 添加到多段计时器',
+        toastClearedSplits: '已清空所有分段区间',
+        toastSavedHistory: '已保存到会话记录',
+        toastClearedHistory: '已清空会话记录',
+        toastNoHistoryCsv: '没有可导出的会话记录',
+        toastExportedCsv: '已导出会话记录为 CSV',
+        toastCapturedSim: '已将第 #{frame} 帧 ({sec}s) 设为{target}',
+        toastCopiedSimJson: '已复制模拟 YouTube 调试 JSON (cmt: {sec}s)',
+        toastInvalidYt: '请输入有效的 YouTube、Google Drive、Bilibili 或 Twitch 链接 / ID',
+        toastLoadedYt: '已加载 {platform} 视频 ({vid})',
+        toastSetYtEndpoint: '已将{target}设为第 #{frame} 帧 ({sec}s)',
+        toastLoadedLocal: '已加载本地视频 “{name}”',
+        toastCapturedHtml5: '已将本地视频时间 ({sec}s) 设为{target}',
+        startWord: '起点',
+        endWord: '终点'
+      }
+    };
+
+    function t(key, vars = {}) {
+      const lang = appState.lang === 'zh' ? 'zh' : 'en';
+      let str = (I18N[lang] && I18N[lang][key] !== undefined) ? I18N[lang][key] : (I18N.en[key] || key);
+      Object.keys(vars).forEach(k => {
+        str = str.replace(new RegExp(`\\{${k}\\}`, 'g'), vars[k]);
+      });
+      return str;
+    }
+
+    function applyTranslations() {
+      document.documentElement.lang = appState.lang === 'zh' ? 'zh-CN' : 'en';
+      document.title = t('pageTitle');
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        el.textContent = t(key);
+      });
+      document.querySelectorAll('[data-i18n-html]').forEach(el => {
+        const key = el.getAttribute('data-i18n-html');
+        el.innerHTML = t(key);
+      });
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        el.setAttribute('placeholder', t(key));
+      });
+      document.querySelectorAll('[data-i18n-title]').forEach(el => {
+        const key = el.getAttribute('data-i18n-title');
+        el.setAttribute('title', t(key));
+      });
+
+      const embedBtnText = document.getElementById('ytEmbedBtnText');
+      if (embedBtnText) embedBtnText.textContent = appState.ytEmbedVisible ? t('embedHide') : t('embedTry');
+
+      const simPlayBtnText = document.getElementById('simPlayBtnText');
+      if (simPlayBtnText) simPlayBtnText.textContent = appState.sim.playing ? t('pause') : t('play');
+
+      const badge = document.getElementById('detectedVideoBadge');
+      if (badge && !badge.classList.contains('hidden') && appState.detectedVideoId) {
+        badge.textContent = t('detectedVid', { vid: appState.detectedVideoId });
+      }
+
+      updateWatchButtonLabel();
+
+      const durEl = document.getElementById('ytVideoDuration');
+      if (durEl) {
+        if (appState.ytVideoDuration) {
+          durEl.textContent = t('durLabel', { dur: formatDurationShort(appState.ytVideoDuration), sec: Math.floor(appState.ytVideoDuration) });
+        } else if (!document.getElementById('ytVideoPanel')?.classList.contains('hidden')) {
+          durEl.textContent = t('durUnknown');
+        }
+      }
+
+      if (window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.lucide.createIcons();
+      }
+    }
+
+    function setLanguage(lang) {
+      appState.lang = lang === 'zh' ? 'zh' : 'en';
+      const sel = document.getElementById('langSelect');
+      if (sel) sel.value = appState.lang;
+      savePersistentState();
+      applyTranslations();
+      compute(false);
+      renderSplitsTable();
+      renderHistoryList();
+      updateQuickFrameConverter();
+      updateYtScrubberRange();
+      updateYtPlayheadDisplay();
+      updateHtml5Readout();
+      renderSimulatorCanvas();
+    }
+
+    // =========================================================================
+    // Application State
     // =========================================================================
     const appState = {
+      lang: 'en',
       fps: 60,
       startSeconds: 4.25,
       endSeconds: 158.916667,
       detectedVideoId: 'dQw4w9WgXcQ',
-      videoSource: {
+      loadedVideo: {
         platform: 'youtube',
-        subtype: 'video',
         id: 'dQw4w9WgXcQ',
         page: 1,
-        raw: 'dQw4w9WgXcQ'
+        biliType: 'bv',
+        twitchType: 'vod'
       },
-      ytInspectorFrame: 255,
-      ytSubMode: 'inspector',
+      ytPlayheadSeconds: 0,
+      ytVideoDuration: null,
+      ytEmbedVisible: false,
+      ytSource: 'youtube',
       lastComputed: {
         valid: true,
         diffSeconds: 154.666667,
@@ -792,38 +1214,15 @@
         const raw = localStorage.getItem(STORAGE_KEY);
         if (raw) {
           const parsed = JSON.parse(raw);
-          if (Array.isArray(parsed.history)) {
-            appState.history = parsed.history;
-          }
-          if (Array.isArray(parsed.splits) && parsed.splits.length > 0) {
-            appState.splits = parsed.splits;
-          }
+          if (parsed.lang === 'zh' || parsed.lang === 'en') appState.lang = parsed.lang;
+          if (Array.isArray(parsed.history)) appState.history = parsed.history;
+          if (Array.isArray(parsed.splits) && parsed.splits.length > 0) appState.splits = parsed.splits;
         }
-      } catch (e) {
-        // Ignore storage errors in sandboxed iframes
-      }
+      } catch (e) {}
       if (appState.history.length === 0) {
         appState.history = [
-          {
-            id: 'hist-demo-1',
-            label: 'Any% Verification #1',
-            fps: 60,
-            start: 4.25,
-            end: 158.9167,
-            frames: 9280,
-            formatted: '2m 34s 667ms',
-            timestamp: 'Demo Sample'
-          },
-          {
-            id: 'hist-demo-2',
-            label: 'IL Stage 1 Retime',
-            fps: 60,
-            start: 4.25,
-            end: 78.50,
-            frames: 4455,
-            formatted: '1m 14s 250ms',
-            timestamp: 'Demo Sample'
-          }
+          { id: 'hist-demo-1', label: 'Any% Verification #1', fps: 60, start: 4.25, end: 158.9167, frames: 9280, formatted: '2m 34s 667ms', timestamp: 'Demo Sample' },
+          { id: 'hist-demo-2', label: 'IL Stage 1 Retime', fps: 60, start: 4.25, end: 78.50, frames: 4455, formatted: '1m 14s 250ms', timestamp: 'Demo Sample' }
         ];
       }
     }
@@ -831,16 +1230,15 @@
     function savePersistentState() {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify({
+          lang: appState.lang,
           history: appState.history.slice(0, 30),
           splits: appState.splits
         }));
-      } catch (e) {
-        // Ignore storage errors in sandboxed iframes
-      }
+      } catch (e) {}
     }
 
     // =========================================================================
-    // Toast Notification Helper
+    // Toast & Utils
     // =========================================================================
     function showToast(message, type = 'info') {
       const container = document.getElementById('toastContainer');
@@ -863,34 +1261,24 @@
     }
 
     function escapeHtml(str) {
-      return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
     // =========================================================================
-    // Core Parsing & Original API Functions (validateFPS, parseForTime, compute, copyModMessage)
+    // Core Parsing & Compute
     // =========================================================================
     function getValidFps() {
       const el = document.getElementById('framerate');
       let val = parseFloat(el ? el.value : 60);
-      if (isNaN(val) || val <= 0) {
-        val = 60;
-      }
+      if (isNaN(val) || val <= 0) val = 60;
       return val;
     }
 
     function alignTimeToFrame(seconds, fps) {
       const modeEl = document.getElementById('roundingSelect');
       const mode = modeEl ? modeEl.value : 'floor';
-      if (mode === 'exact') {
-        return Math.max(0, seconds);
-      }
-      if (mode === 'round') {
-        return Math.max(0, Math.round(seconds * fps) / fps);
-      }
+      if (mode === 'exact') return Math.max(0, seconds);
+      if (mode === 'round') return Math.max(0, Math.round(seconds * fps) / fps);
       return Math.max(0, Math.floor(seconds * fps + 1e-7) / fps);
     }
 
@@ -899,7 +1287,6 @@
       const trimmed = String(rawStr).trim();
       if (!trimmed) return null;
 
-      // 1. Try YouTube "Copy debug info" JSON object (contains "cmt", "vct", or "lct")
       if (trimmed.startsWith('{') || trimmed.includes('"cmt"') || trimmed.includes('"vct"')) {
         try {
           const obj = JSON.parse(trimmed);
@@ -908,21 +1295,16 @@
             appState.detectedVideoId = String(vid);
             const badge = document.getElementById('detectedVideoBadge');
             if (badge) {
-              badge.textContent = `Detected Video ID: ${vid}`;
+              badge.textContent = t('detectedVid', { vid });
               badge.classList.remove('hidden');
             }
             const ytInput = document.getElementById('ytUrlInput');
-            if (ytInput) {
-              ytInput.value = String(vid);
-            }
-            updateYoutubeInspectorVideo(String(vid));
+            if (ytInput) ytInput.value = String(vid);
           }
           const timeField = obj.cmt !== undefined ? obj.cmt : (obj.vct !== undefined ? obj.vct : obj.lct);
           if (timeField !== undefined) {
             const parsedSec = parseFloat(timeField);
-            if (!isNaN(parsedSec) && parsedSec >= 0) {
-              return alignTimeToFrame(parsedSec, fps);
-            }
+            if (!isNaN(parsedSec) && parsedSec >= 0) return alignTimeToFrame(parsedSec, fps);
           }
         } catch (err) {
           const matchCmt = trimmed.match(/"(?:cmt|vct|lct)"\s*:\s*"?([0-9]+(?:\.[0-9]+)?)"?/);
@@ -933,78 +1315,63 @@
         }
       }
 
-      // 2. Direct frame number syntax: "255f", "255 frames", or "#255"
       const frameMatch = trimmed.match(/^(?:#\s*([0-9]+)|([0-9]+)\s*(?:f|frames?))$/i);
       if (frameMatch) {
         const frameNum = parseInt(frameMatch[1] || frameMatch[2], 10);
-        if (!isNaN(frameNum) && frameNum >= 0) {
-          return frameNum / fps;
-        }
+        if (!isNaN(frameNum) && frameNum >= 0) return frameNum / fps;
       }
 
-      // 3. Human-readable duration e.g. "1h 23m 45s 678ms" or "2m 34s 667ms"
       if (/[hms]/i.test(trimmed)) {
-        let total = 0;
-        let matchedAny = false;
+        let total = 0, matchedAny = false;
         const hMatch = trimmed.match(/([0-9]+(?:\.[0-9]+)?)\s*h/i);
         const mMatch = trimmed.match(/([0-9]+(?:\.[0-9]+)?)\s*m(?!s)/i);
-        const sMatch = trimmed.match(/([0-9]+(?:\.[0-9]+)?)\s*s/i);
+        const sMatch = trimmed.match(/([0-9]+(?:\.[0-9]+)?)\s*s(?!\w)/i);
         const msMatch = trimmed.match(/([0-9]+(?:\.[0-9]+)?)\s*ms/i);
         if (hMatch) { total += parseFloat(hMatch[1]) * 3600; matchedAny = true; }
         if (mMatch) { total += parseFloat(mMatch[1]) * 60; matchedAny = true; }
         if (sMatch) { total += parseFloat(sMatch[1]); matchedAny = true; }
         if (msMatch) { total += parseFloat(msMatch[1]) / 1000; matchedAny = true; }
-        if (matchedAny && !isNaN(total)) {
-          return alignTimeToFrame(total, fps);
-        }
+        if (matchedAny && !isNaN(total)) return alignTimeToFrame(total, fps);
       }
 
-      // 4. Colon timecode: HH:MM:SS.mmm, MM:SS.mmm, or SMPTE HH:MM:SS:FF
       if (trimmed.includes(':')) {
         const parts = trimmed.split(':').map(p => p.trim());
         if (parts.length === 4) {
-          const hh = parseFloat(parts[0]) || 0;
-          const mm = parseFloat(parts[1]) || 0;
-          const ss = parseFloat(parts[2]) || 0;
-          const ff = parseFloat(parts[3]) || 0;
+          const hh = parseFloat(parts[0]) || 0, mm = parseFloat(parts[1]) || 0;
+          const ss = parseFloat(parts[2]) || 0, ff = parseFloat(parts[3]) || 0;
           return alignTimeToFrame(hh * 3600 + mm * 60 + ss + (ff / fps), fps);
         }
         if (parts.length === 3) {
-          const hh = parseFloat(parts[0]) || 0;
-          const mm = parseFloat(parts[1]) || 0;
-          const ss = parseFloat(parts[2]) || 0;
+          const hh = parseFloat(parts[0]) || 0, mm = parseFloat(parts[1]) || 0, ss = parseFloat(parts[2]) || 0;
           return alignTimeToFrame(hh * 3600 + mm * 60 + ss, fps);
         }
         if (parts.length === 2) {
-          const mm = parseFloat(parts[0]) || 0;
-          const ss = parseFloat(parts[1]) || 0;
+          const mm = parseFloat(parts[0]) || 0, ss = parseFloat(parts[1]) || 0;
           return alignTimeToFrame(mm * 60 + ss, fps);
         }
       }
 
-      // 5. Plain numeric seconds
       const num = parseFloat(trimmed);
-      if (!isNaN(num) && isFinite(num) && num >= 0) {
-        return alignTimeToFrame(num, fps);
-      }
+      if (!isNaN(num) && isFinite(num) && num >= 0) return alignTimeToFrame(num, fps);
 
       return null;
     }
 
-    // Original function: validateFPS(event)
     function validateFPS(event) {
       const el = event && event.target ? event.target : document.getElementById('framerate');
       let val = parseFloat(el.value);
       if (isNaN(val) || val <= 0) {
         val = 60;
         el.value = '60';
-        showToast('Invalid framerate; defaulted to 60 FPS', 'warn');
+        showToast(t('toastInvalidFps'), 'warn');
       } else {
         appState.fps = val;
       }
       highlightActiveFpsPill(val);
       realignAllEndpoints();
       updateQuickFrameConverter();
+      updateYtScrubberRange();
+      updateYtPlayheadDisplay();
     }
 
     function handleFpsInput(event) {
@@ -1014,24 +1381,25 @@
         highlightActiveFpsPill(val);
         compute(false);
         updateQuickFrameConverter();
+        updateYtScrubberRange();
+        updateYtPlayheadDisplay();
       }
     }
 
     function setFpsPreset(fpsVal) {
       const el = document.getElementById('framerate');
-      if (el) {
-        el.value = String(fpsVal);
-      }
+      if (el) el.value = String(fpsVal);
       appState.fps = fpsVal;
       highlightActiveFpsPill(fpsVal);
       realignAllEndpoints();
       updateQuickFrameConverter();
-      showToast(`Framerate set to ${fpsVal} FPS`, 'info');
+      updateYtScrubberRange();
+      updateYtPlayheadDisplay();
+      showToast(t('toastSetFps', { fps: fpsVal }), 'info');
     }
 
     function highlightActiveFpsPill(activeFps) {
-      const pills = document.querySelectorAll('.fps-pill');
-      pills.forEach(btn => {
+      document.querySelectorAll('.fps-pill').forEach(btn => {
         const pillVal = parseFloat(btn.textContent);
         if (Math.abs(pillVal - activeFps) < 0.001) {
           btn.className = 'fps-pill px-2.5 py-1 rounded text-xs font-semibold bg-[#1d4f91] text-white border border-[#163c6e] transition';
@@ -1041,7 +1409,6 @@
       });
     }
 
-    // Original function: parseForTime(event)
     function parseForTime(event) {
       const target = event && event.target ? event.target : null;
       if (!target) return;
@@ -1052,11 +1419,8 @@
         if (event.type === 'change' || raw.trim().startsWith('{')) {
           target.value = formatCleanSeconds(parsed);
         }
-        if (target.id === 'startobj') {
-          appState.startSeconds = parsed;
-        } else if (target.id === 'endobj') {
-          appState.endSeconds = parsed;
-        }
+        if (target.id === 'startobj') appState.startSeconds = parsed;
+        else if (target.id === 'endobj') appState.endSeconds = parsed;
         updateEndpointBadges();
         compute(false);
       }
@@ -1068,17 +1432,11 @@
       const endEl = document.getElementById('endobj');
       if (startEl && startEl.value) {
         const s = parseFlexibleTimeInput(startEl.value, fps);
-        if (s !== null) {
-          appState.startSeconds = s;
-          startEl.value = formatCleanSeconds(s);
-        }
+        if (s !== null) { appState.startSeconds = s; startEl.value = formatCleanSeconds(s); }
       }
       if (endEl && endEl.value) {
         const e = parseFlexibleTimeInput(endEl.value, fps);
-        if (e !== null) {
-          appState.endSeconds = e;
-          endEl.value = formatCleanSeconds(e);
-        }
+        if (e !== null) { appState.endSeconds = e; endEl.value = formatCleanSeconds(e); }
       }
       updateEndpointBadges();
       compute(false);
@@ -1103,18 +1461,13 @@
       if (precision === 3) {
         let ms = Math.round(fractional * 1000);
         let adjSec = seconds;
-        if (ms >= 1000) {
-          ms -= 1000;
-          adjSec += 1;
-        }
+        if (ms >= 1000) { ms -= 1000; adjSec += 1; }
         parts.push(`${adjSec}s`);
         parts.push(`${String(ms).padStart(3, '0')}ms`);
       } else if (precision === 2) {
-        const cs = (seconds + fractional).toFixed(2);
-        parts.push(`${cs}s`);
+        parts.push(`${(seconds + fractional).toFixed(2)}s`);
       } else if (precision === 1) {
-        const ds = (seconds + fractional).toFixed(1);
-        parts.push(`${ds}s`);
+        parts.push(`${(seconds + fractional).toFixed(1)}s`);
       } else {
         parts.push(`${Math.round(seconds + fractional)}s`);
       }
@@ -1128,9 +1481,7 @@
       const mm = Math.floor((abs % 3600) / 60);
       const ss = Math.floor(abs % 60);
       const ms = Math.round((abs - Math.floor(abs)) * 1000) % 1000;
-      if (hh > 0) {
-        return `${sign}${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}:${String(ss).padStart(2, '0')}.${String(ms).padStart(3, '0')}`;
-      }
+      if (hh > 0) return `${sign}${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}:${String(ss).padStart(2, '0')}.${String(ms).padStart(3, '0')}`;
       return `${sign}${String(mm).padStart(2, '0')}:${String(ss).padStart(2, '0')}.${String(ms).padStart(3, '0')}`;
     }
 
@@ -1157,13 +1508,12 @@
       const eFrameBadge = document.getElementById('endFrameNumberBadge');
       const eTimeBadge = document.getElementById('endFormattedBadge');
 
-      if (sFrameBadge) sFrameBadge.textContent = `Frame #${sFrame}`;
+      if (sFrameBadge) sFrameBadge.textContent = `${t('framePrefix')}${sFrame}${appState.lang === 'zh' ? ' 帧' : ''}`;
       if (sTimeBadge) sTimeBadge.textContent = formatColonTimestamp(appState.startSeconds);
-      if (eFrameBadge) eFrameBadge.textContent = `Frame #${eFrame}`;
+      if (eFrameBadge) eFrameBadge.textContent = `${t('framePrefix')}${eFrame}${appState.lang === 'zh' ? ' 帧' : ''}`;
       if (eTimeBadge) eTimeBadge.textContent = formatColonTimestamp(appState.endSeconds);
     }
 
-    // Original function: compute()
     function compute(showFeedback = false) {
       const fps = getValidFps();
       const startEl = document.getElementById('startobj');
@@ -1175,9 +1525,7 @@
       const eParsed = endEl ? parseFlexibleTimeInput(endEl.value, fps) : appState.endSeconds;
 
       if (sParsed === null || eParsed === null) {
-        if (showFeedback) {
-          showToast('Please enter valid Starting and Ending frames or timestamps.', 'warn');
-        }
+        if (showFeedback) showToast(t('toastInvalidEndpoints'), 'warn');
         return;
       }
 
@@ -1193,21 +1541,10 @@
       const colonFormatted = formatColonTimestamp(diffSeconds);
       const smpte = formatSmpte(diffSeconds, fps);
 
-      appState.lastComputed = {
-        valid: true,
-        diffSeconds,
-        totalFrames,
-        startFrame,
-        endFrame,
-        formatted,
-        colonFormatted,
-        smpte
-      };
+      appState.lastComputed = { valid: true, diffSeconds, totalFrames, startFrame, endFrame, formatted, colonFormatted, smpte };
 
       const timeInput = document.getElementById('time');
-      if (timeInput) {
-        timeInput.value = formatted;
-      }
+      if (timeInput) timeInput.value = formatted;
 
       const kpiTime = document.getElementById('kpiFormattedTime');
       const kpiSub = document.getElementById('kpiSubFormat');
@@ -1217,19 +1554,17 @@
       const kpiStepMs = document.getElementById('kpiFrameStepMs');
 
       if (kpiTime) kpiTime.textContent = formatted;
-      if (kpiSub) kpiSub.textContent = `${colonFormatted} (Exact: ${diffSeconds.toFixed(3)}s)`;
-      if (kpiFrames) kpiFrames.textContent = `${totalFrames.toLocaleString()} frames`;
-      if (kpiRange) kpiRange.textContent = `Frame #${startFrame} → #${endFrame}`;
+      if (kpiSub) kpiSub.textContent = `${colonFormatted} (${t('exactPrefix')}: ${diffSeconds.toFixed(3)}s)`;
+      if (kpiFrames) kpiFrames.textContent = `${totalFrames.toLocaleString()} ${t('framesUnit')}`;
+      if (kpiRange) kpiRange.textContent = `${t('framePrefix')}${startFrame} → #${endFrame}`;
       if (kpiSmpte) kpiSmpte.textContent = smpte;
-      if (kpiStepMs) kpiStepMs.textContent = `${(1000 / fps).toFixed(4)} ms / frame @ ${fps} fps`;
+      if (kpiStepMs) kpiStepMs.textContent = `${(1000 / fps).toFixed(4)} ${t('msPerFrame')} @ ${fps} fps`;
 
       updateEndpointBadges();
       updateModMessageFromState();
       updateComparisonDelta();
 
-      if (showFeedback) {
-        showToast(`Computed: ${formatted} (${totalFrames} frames)`, 'success');
-      }
+      if (showFeedback) showToast(t('toastComputed', { time: formatted, frames: totalFrames }), 'success');
     }
 
     function updateModMessageFromState() {
@@ -1239,35 +1574,56 @@
       const tpl = tplSelect ? tplSelect.value : 'standard';
       const fps = getValidFps();
       const c = appState.lastComputed;
-
       if (!modMessage || !c) return;
 
       const sStr = appState.startSeconds.toFixed(3);
       const eStr = appState.endSeconds.toFixed(3);
+      const isZh = appState.lang === 'zh';
 
       let text = '';
       if (tpl === 'standard') {
-        text = `Mod Note: Retimed to ${c.formatted} (${c.totalFrames} frames at ${fps} fps, from ${sStr}s to ${eStr}s).`;
+        text = isZh
+          ? `审核备注：重计时结果为 ${c.formatted}（${fps} fps 下共 ${c.totalFrames} 帧，从 ${sStr}s 到 ${eStr}s）。`
+          : `Mod Note: Retimed to ${c.formatted} (${c.totalFrames} frames at ${fps} fps, from ${sStr}s to ${eStr}s).`;
       } else if (tpl === 'detailed') {
-        text = [
-          `Mod Note: Video retimed to ${c.formatted} (${c.colonFormatted}).`,
-          `• Start: ${sStr}s (Frame #${c.startFrame}) | End: ${eStr}s (Frame #${c.endFrame})`,
-          `• Elapsed: ${c.totalFrames} frames @ ${fps} FPS (${(1000 / fps).toFixed(2)} ms/frame) | SMPTE: ${c.smpte}`
-        ].join('\n');
+        text = isZh
+          ? [
+              `审核备注：视频重计时为 ${c.formatted} (${c.colonFormatted})。`,
+              `• 起点：${sStr}s (第 #${c.startFrame} 帧) | 终点：${eStr}s (第 #${c.endFrame} 帧)`,
+              `• 耗时：${c.totalFrames} 帧 @ ${fps} FPS (${(1000 / fps).toFixed(2)} ms/帧) | SMPTE: ${c.smpte}`
+            ].join('\n')
+          : [
+              `Mod Note: Video retimed to ${c.formatted} (${c.colonFormatted}).`,
+              `• Start: ${sStr}s (Frame #${c.startFrame}) | End: ${eStr}s (Frame #${c.endFrame})`,
+              `• Elapsed: ${c.totalFrames} frames @ ${fps} FPS (${(1000 / fps).toFixed(2)} ms/frame) | SMPTE: ${c.smpte}`
+            ].join('\n');
       } else if (tpl === 'lrt') {
         const totals = calculateSplitTotals();
-        text = [
-          `Mod Note: Retimed to ${totals.netFormatted} LRT (Gross RTA: ${totals.grossFormatted}, Loads Removed: ${totals.loadFormatted}).`,
-          `• Total Net Frames: ${totals.netFrames} frames @ ${fps} FPS across ${appState.splits.length} logged intervals.`
-        ].join('\n');
+        text = isZh
+          ? [
+              `审核备注：重计时为 ${totals.netFormatted} LRT（总 RTA：${totals.grossFormatted}，扣除读条：${totals.loadFormatted}）。`,
+              `• 净帧数：${totals.netFrames} 帧 @ ${fps} FPS（共记录 ${appState.splits.length} 个区间）。`
+            ].join('\n')
+          : [
+              `Mod Note: Retimed to ${totals.netFormatted} LRT (Gross RTA: ${totals.grossFormatted}, Loads Removed: ${totals.loadFormatted}).`,
+              `• Total Net Frames: ${totals.netFrames} frames @ ${fps} FPS across ${appState.splits.length} logged intervals.`
+            ].join('\n');
       } else if (tpl === 'markdown') {
-        text = [
-          `| Metric | Value |`,
-          `| :--- | :--- |`,
-          `| **Final Time** | \`${c.formatted}\` (\`${c.colonFormatted}\`) |`,
-          `| **Frames @ ${fps} FPS** | ${c.totalFrames} frames (#${c.startFrame} → #${c.endFrame}) |`,
-          `| **Endpoints** | ${sStr}s to ${eStr}s (SMPTE \`${c.smpte}\`) |`
-        ].join('\n');
+        text = isZh
+          ? [
+              `| 项目 | 数值 |`,
+              `| :--- | :--- |`,
+              `| **最终时间** | \`${c.formatted}\` (\`${c.colonFormatted}\`) |`,
+              `| **帧数 @ ${fps} FPS** | ${c.totalFrames} 帧 (#${c.startFrame} → #${c.endFrame}) |`,
+              `| **起止时间点** | ${sStr}s 至 ${eStr}s (SMPTE \`${c.smpte}\`) |`
+            ].join('\n')
+          : [
+              `| Metric | Value |`,
+              `| :--- | :--- |`,
+              `| **Final Time** | \`${c.formatted}\` (\`${c.colonFormatted}\`) |`,
+              `| **Frames @ ${fps} FPS** | ${c.totalFrames} frames (#${c.startFrame} → #${c.endFrame}) |`,
+              `| **Endpoints** | ${sStr}s to ${eStr}s (SMPTE \`${c.smpte}\`) |`
+            ].join('\n');
       }
 
       modMessage.value = text;
@@ -1275,26 +1631,23 @@
       if (modBtn) modBtn.disabled = false;
     }
 
-    // Original function: copyModMessage()
     function copyModMessage() {
       const modMessage = document.getElementById('modMessage');
       if (!modMessage || !modMessage.value) return;
-      copyTextToClipboard(modMessage.value, 'Moderator message copied to clipboard!');
+      copyTextToClipboard(modMessage.value, t('toastModCopied'));
     }
 
     function copyTimeValue() {
       const timeInput = document.getElementById('time');
       if (!timeInput || !timeInput.value) return;
-      copyTextToClipboard(timeInput.value, `Copied time: ${timeInput.value}`);
+      copyTextToClipboard(timeInput.value, t('toastTimeCopied', { time: timeInput.value }));
     }
 
     function copyTextToClipboard(text, successMsg) {
       if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(text).then(() => {
-          showToast(successMsg, 'success');
-        }).catch(() => {
-          fallbackCopyText(text, successMsg);
-        });
+        navigator.clipboard.writeText(text)
+          .then(() => showToast(successMsg, 'success'))
+          .catch(() => fallbackCopyText(text, successMsg));
       } else {
         fallbackCopyText(text, successMsg);
       }
@@ -1312,32 +1665,26 @@
         document.execCommand('copy');
         showToast(successMsg, 'success');
       } catch (e) {
-        showToast('Could not copy automatically; please select and copy.', 'warn');
+        showToast(t('toastCopyFail'), 'warn');
       }
       document.body.removeChild(temp);
     }
 
     // =========================================================================
-    // Frame Nudge, Swap, Paste & Demo Helpers
+    // Endpoint Nudge / Swap / Demo
     // =========================================================================
     function nudgeEndpoint(inputId, deltaFrames) {
       const fps = getValidFps();
       const inputEl = document.getElementById(inputId);
       if (!inputEl) return;
-
       let currentSec = parseFlexibleTimeInput(inputEl.value, fps);
       if (currentSec === null) currentSec = 0;
-
       const currentFrame = Math.round(currentSec * fps);
       const nextFrame = Math.max(0, currentFrame + deltaFrames);
       const nextSec = nextFrame / fps;
-
       inputEl.value = formatCleanSeconds(nextSec);
-      if (inputId === 'startobj') {
-        appState.startSeconds = nextSec;
-      } else {
-        appState.endSeconds = nextSec;
-      }
+      if (inputId === 'startobj') appState.startSeconds = nextSec;
+      else appState.endSeconds = nextSec;
       compute(false);
     }
 
@@ -1349,7 +1696,7 @@
       startEl.value = endEl.value;
       endEl.value = tmp;
       realignAllEndpoints();
-      showToast('Swapped Starting and Ending frames', 'info');
+      showToast(t('toastSwapped'), 'info');
     }
 
     function clearEndpoints() {
@@ -1360,7 +1707,7 @@
       appState.startSeconds = 0;
       appState.endSeconds = 0;
       compute(false);
-      showToast('Reset endpoints to 0', 'info');
+      showToast(t('toastReset'), 'info');
     }
 
     async function pasteFromClipboard(inputId) {
@@ -1372,15 +1719,13 @@
           if (clipText) {
             el.value = clipText;
             parseForTime({ target: el, type: 'change' });
-            showToast('Pasted and parsed from clipboard!', 'success');
+            showToast(t('toastPasted'), 'success');
             return;
           }
         }
-      } catch (e) {
-        // Fallback if clipboard read permission is blocked in iframe
-      }
+      } catch (e) {}
       el.focus();
-      showToast('Press Ctrl+V / Cmd+V inside the highlighted field to paste', 'info');
+      showToast(t('toastPasteHint'), 'info');
     }
 
     function loadSampleDebugPair() {
@@ -1389,67 +1734,31 @@
       appState.fps = 60;
       highlightActiveFpsPill(60);
 
-      const sampleStartJson = JSON.stringify({
-        ns: 'yt',
-        el: 'detailpage',
-        cpn: 'speedrun_demo_1',
-        docid: 'dQw4w9WgXcQ',
-        ver: 2,
-        cmt: '4.254',
-        fmt: '299',
-        fs: '0',
-        rt: '12.4'
-      });
-
-      const sampleEndJson = JSON.stringify({
-        ns: 'yt',
-        el: 'detailpage',
-        cpn: 'speedrun_demo_1',
-        docid: 'dQw4w9WgXcQ',
-        ver: 2,
-        cmt: '158.919',
-        fmt: '299',
-        fs: '0',
-        rt: '170.1'
-      });
+      const sampleStartJson = JSON.stringify({ ns: 'yt', el: 'detailpage', cpn: 'speedrun_demo_1', docid: 'dQw4w9WgXcQ', ver: 2, cmt: '4.254', fmt: '299', fs: '0', rt: '12.4' });
+      const sampleEndJson = JSON.stringify({ ns: 'yt', el: 'detailpage', cpn: 'speedrun_demo_1', docid: 'dQw4w9WgXcQ', ver: 2, cmt: '158.919', fmt: '299', fs: '0', rt: '170.1' });
 
       const startEl = document.getElementById('startobj');
       const endEl = document.getElementById('endobj');
-      if (startEl) {
-        startEl.value = sampleStartJson;
-        parseForTime({ target: startEl, type: 'change' });
-      }
-      if (endEl) {
-        endEl.value = sampleEndJson;
-        parseForTime({ target: endEl, type: 'change' });
-      }
+      if (startEl) { startEl.value = sampleStartJson; parseForTime({ target: startEl, type: 'change' }); }
+      if (endEl) { endEl.value = sampleEndJson; parseForTime({ target: endEl, type: 'change' }); }
       compute(true);
     }
 
     // =========================================================================
-    // Multi-Segment Splits & Load-Time Remover
+    // Splits / Load Remover
     // =========================================================================
     function calculateSplitTotals() {
       const fps = getValidFps();
       const precisionEl = document.getElementById('precisionSelect');
       const precision = precisionEl ? parseInt(precisionEl.value, 10) : 3;
 
-      let grossFrames = 0;
-      let loadFrames = 0;
-      let segCount = 0;
-      let loadCount = 0;
-
+      let grossFrames = 0, loadFrames = 0, segCount = 0, loadCount = 0;
       appState.splits.forEach(sp => {
         const sFrame = Math.round((parseFloat(sp.start) || 0) * fps);
         const eFrame = Math.round((parseFloat(sp.end) || 0) * fps);
         const fCount = Math.max(0, eFrame - sFrame);
-        if (sp.type === 'load') {
-          loadFrames += fCount;
-          loadCount++;
-        } else {
-          grossFrames += fCount;
-          segCount++;
-        }
+        if (sp.type === 'load') { loadFrames += fCount; loadCount++; }
+        else { grossFrames += fCount; segCount++; }
       });
 
       const netFrames = Math.max(0, grossFrames - loadFrames);
@@ -1458,14 +1767,8 @@
       const netSeconds = netFrames / fps;
 
       return {
-        grossFrames,
-        loadFrames,
-        netFrames,
-        segCount,
-        loadCount,
-        grossSeconds,
-        loadSeconds,
-        netSeconds,
+        grossFrames, loadFrames, netFrames, segCount, loadCount,
+        grossSeconds, loadSeconds, netSeconds,
         grossFormatted: formatIntervalString(grossSeconds, precision),
         loadFormatted: formatIntervalString(loadSeconds, precision),
         netFormatted: formatIntervalString(netSeconds, precision)
@@ -1480,13 +1783,7 @@
       const precision = precisionEl ? parseInt(precisionEl.value, 10) : 3;
 
       if (appState.splits.length === 0) {
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="7" class="py-6 text-center text-[#6e6a5f] text-xs">
-              No segments or load cuts added yet. Click <strong>"+ Split"</strong> or <strong>"- Load"</strong> above to add intervals.
-            </td>
-          </tr>
-        `;
+        tbody.innerHTML = `<tr><td colspan="7" class="py-6 text-center text-[#6e6a5f] text-xs">${t('splitsEmpty')}</td></tr>`;
       } else {
         tbody.innerHTML = appState.splits.map((sp) => {
           const sFrame = Math.round((parseFloat(sp.start) || 0) * fps);
@@ -1494,40 +1791,17 @@
           const diffFrames = Math.max(0, eFrame - sFrame);
           const diffSec = diffFrames / fps;
           const isLoad = sp.type === 'load';
-          const badgeClass = isLoad
-            ? 'bg-[#fdf3e7] text-[#8c5319] border-[#ebd0ad]'
-            : 'bg-[#e8f4ed] text-[#1e6b43] border-[#b7dfc6]';
+          const badgeClass = isLoad ? 'bg-[#fdf3e7] text-[#8c5319] border-[#ebd0ad]' : 'bg-[#e8f4ed] text-[#1e6b43] border-[#b7dfc6]';
 
           return `
             <tr class="hover:bg-[#faf8f3] transition">
-              <td class="py-2 px-2">
-                <input type="text" value="${escapeHtml(sp.label)}" onchange="updateSplitField('${sp.id}', 'label', this.value)"
-                  class="w-full max-w-[160px] bg-white border border-[#c8c2b4] rounded px-2 py-1 text-xs font-medium text-[#1f1e1b] focus:outline-none focus:border-[#1d4f91]" />
-              </td>
-              <td class="py-2 px-2">
-                <button type="button" onclick="toggleSplitType('${sp.id}')" class="px-2 py-0.5 rounded border text-xs font-semibold ${badgeClass}">
-                  ${isLoad ? 'Load (-)' : 'Segment (+)'}
-                </button>
-              </td>
-              <td class="py-2 px-2">
-                <input type="number" step="0.001" value="${Number(sp.start).toFixed(3)}" onchange="updateSplitField('${sp.id}', 'start', this.value)"
-                  class="w-20 bg-white border border-[#c8c2b4] rounded px-2 py-1 text-xs font-medium text-[#1f1e1b] focus:outline-none focus:border-[#1d4f91]" />
-              </td>
-              <td class="py-2 px-2">
-                <input type="number" step="0.001" value="${Number(sp.end).toFixed(3)}" onchange="updateSplitField('${sp.id}', 'end', this.value)"
-                  class="w-20 bg-white border border-[#c8c2b4] rounded px-2 py-1 text-xs font-medium text-[#1f1e1b] focus:outline-none focus:border-[#1d4f91]" />
-              </td>
-              <td class="py-2 px-2 text-right font-semibold ${isLoad ? 'text-[#8c5319]' : 'text-[#1e6b43]'}">
-                ${isLoad ? '-' : '+'}${diffFrames}f
-              </td>
-              <td class="py-2 px-2 text-right font-bold ${isLoad ? 'text-[#8c5319]' : 'text-[#1f1e1b]'}">
-                ${isLoad ? '-' : ''}${formatIntervalString(diffSec, precision)}
-              </td>
-              <td class="py-2 px-2 text-center">
-                <button type="button" onclick="removeSplitRow('${sp.id}')" title="Remove row" class="p-1 rounded hover:bg-[#fbeae8] text-[#6e6a5f] hover:text-[#b33122] transition">
-                  ✕
-                </button>
-              </td>
+              <td class="py-2 px-2"><input type="text" value="${escapeHtml(sp.label)}" onchange="updateSplitField('${sp.id}', 'label', this.value)" class="w-full max-w-[160px] bg-white border border-[#c8c2b4] rounded px-2 py-1 text-xs font-medium text-[#1f1e1b] focus:outline-none focus:border-[#1d4f91]" /></td>
+              <td class="py-2 px-2"><button type="button" onclick="toggleSplitType('${sp.id}')" class="px-2 py-0.5 rounded border text-xs font-semibold ${badgeClass}">${isLoad ? t('loadBadge') : t('segBadge')}</button></td>
+              <td class="py-2 px-2"><input type="number" step="0.001" value="${Number(sp.start).toFixed(3)}" onchange="updateSplitField('${sp.id}', 'start', this.value)" class="w-20 bg-white border border-[#c8c2b4] rounded px-2 py-1 text-xs font-medium text-[#1f1e1b] focus:outline-none focus:border-[#1d4f91]" /></td>
+              <td class="py-2 px-2"><input type="number" step="0.001" value="${Number(sp.end).toFixed(3)}" onchange="updateSplitField('${sp.id}', 'end', this.value)" class="w-20 bg-white border border-[#c8c2b4] rounded px-2 py-1 text-xs font-medium text-[#1f1e1b] focus:outline-none focus:border-[#1d4f91]" /></td>
+              <td class="py-2 px-2 text-right font-semibold ${isLoad ? 'text-[#8c5319]' : 'text-[#1e6b43]'}">${isLoad ? '-' : '+'}${diffFrames}f</td>
+              <td class="py-2 px-2 text-right font-bold ${isLoad ? 'text-[#8c5319]' : 'text-[#1f1e1b]'}">${isLoad ? '-' : ''}${formatIntervalString(diffSec, precision)}</td>
+              <td class="py-2 px-2 text-center"><button type="button" onclick="removeSplitRow('${sp.id}')" title="Remove row" class="p-1 rounded hover:bg-[#fbeae8] text-[#6e6a5f] hover:text-[#b33122] transition">✕</button></td>
             </tr>
           `;
         }).join('');
@@ -1544,7 +1818,7 @@
       if (loadEl) loadEl.textContent = `-${totals.loadFormatted}`;
       if (netEl) netEl.textContent = totals.netFormatted;
       if (kpiNet) kpiNet.textContent = totals.netFormatted;
-      if (kpiSplitSum) kpiSplitSum.textContent = `${totals.segCount} segments · ${totals.loadCount} loads removed`;
+      if (kpiSplitSum) kpiSplitSum.textContent = t('segmentsSummary', { seg: totals.segCount, load: totals.loadCount });
 
       const netBar = document.getElementById('splitNetBar');
       const loadBar = document.getElementById('splitLoadBar');
@@ -1562,26 +1836,26 @@
 
     function addCurrentToSplits(type) {
       const count = appState.splits.length + 1;
-      const label = type === 'load' ? `Loading Screen #${count}` : `Segment #${count}`;
+      const isZh = appState.lang === 'zh';
+      const label = type === 'load'
+        ? (isZh ? `读条 #${count}` : `Loading Screen #${count}`)
+        : (isZh ? `分段 #${count}` : `Segment #${count}`);
       appState.splits.push({
         id: 'sp-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
-        label,
-        type,
-        start: appState.startSeconds,
-        end: appState.endSeconds
+        label, type, start: appState.startSeconds, end: appState.endSeconds
       });
       renderSplitsTable();
-      showToast(`Added ${label} to Multi-Segment Timer`, 'success');
+      showToast(t('toastAddedSplit', { label }), 'success');
     }
 
     function addManualSplitRow(type) {
       const count = appState.splits.length + 1;
+      const isZh = appState.lang === 'zh';
       const lastEnd = appState.splits.length > 0 ? appState.splits[appState.splits.length - 1].end : 0;
       appState.splits.push({
         id: 'sp-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
-        label: type === 'load' ? `Load Cut #${count}` : `Stage #${count}`,
-        type,
-        start: lastEnd,
+        label: type === 'load' ? (isZh ? `读条扣除 #${count}` : `Load Cut #${count}`) : (isZh ? `关卡 #${count}` : `Stage #${count}`),
+        type, start: lastEnd,
         end: Number((lastEnd + (type === 'load' ? 3.5 : 30.0)).toFixed(3))
       });
       renderSplitsTable();
@@ -1590,9 +1864,8 @@
     function updateSplitField(id, field, value) {
       const item = appState.splits.find(s => s.id === id);
       if (!item) return;
-      if (field === 'label') {
-        item.label = String(value);
-      } else {
+      if (field === 'label') item.label = String(value);
+      else {
         const num = parseFloat(value);
         item[field] = isNaN(num) || num < 0 ? 0 : alignTimeToFrame(num, getValidFps());
       }
@@ -1614,11 +1887,11 @@
     function clearAllSplits() {
       appState.splits = [];
       renderSplitsTable();
-      showToast('Cleared all split intervals', 'info');
+      showToast(t('toastClearedSplits'), 'info');
     }
 
     // =========================================================================
-    // PB / WR Comparator & Quick Frame Converter
+    // Comparator & Converter
     // =========================================================================
     function updateComparisonDelta() {
       const inputEl = document.getElementById('compareTargetInput');
@@ -1628,7 +1901,7 @@
       const fps = getValidFps();
       const targetSec = parseFlexibleTimeInput(inputEl.value, fps);
       if (targetSec === null) {
-        outEl.textContent = 'Enter a valid target time';
+        outEl.textContent = t('deltaInvalid');
         outEl.className = 'text-xs font-semibold text-[#6e6a5f] pt-0.5';
         return;
       }
@@ -1636,16 +1909,15 @@
       const currentSec = appState.lastComputed.diffSeconds;
       const deltaSec = currentSec - targetSec;
       const deltaFrames = Math.round(deltaSec * fps);
-      const sign = deltaSec <= 0 ? '' : '+';
 
       if (Math.abs(deltaFrames) === 0) {
-        outEl.textContent = 'Exact Tie: ±0.000s (0 frames)';
+        outEl.textContent = t('deltaTie');
         outEl.className = 'text-xs font-bold text-[#1d4f91] pt-0.5';
       } else if (deltaSec < 0) {
-        outEl.textContent = `${deltaSec.toFixed(3)}s (${deltaFrames} frames · FASTER)`;
+        outEl.textContent = t('deltaFaster', { sec: deltaSec.toFixed(3), frames: deltaFrames });
         outEl.className = 'text-xs font-bold text-[#1e6b43] pt-0.5';
       } else {
-        outEl.textContent = `${sign}${deltaSec.toFixed(3)}s (+${deltaFrames} frames · SLOWER)`;
+        outEl.textContent = t('deltaSlower', { sec: deltaSec.toFixed(3), frames: deltaFrames });
         outEl.className = 'text-xs font-bold text-[#b33122] pt-0.5';
       }
     }
@@ -1654,7 +1926,6 @@
       const inEl = document.getElementById('quickFrameConvertInput');
       const outEl = document.getElementById('quickFrameConvertOutput');
       if (!inEl || !outEl) return;
-
       const fps = getValidFps();
       const frames = Math.max(0, parseInt(inEl.value, 10) || 0);
       const sec = frames / fps;
@@ -1662,15 +1933,16 @@
     }
 
     // =========================================================================
-    // Session History Log & CSV Export
+    // Session History
     // =========================================================================
     function saveCurrentToHistory() {
       const c = appState.lastComputed;
       if (!c) return;
       const fps = getValidFps();
+      const isZh = appState.lang === 'zh';
       const entry = {
         id: 'hist-' + Date.now(),
-        label: `Run #${appState.history.length + 1} (${fps}fps)`,
+        label: isZh ? `记录 #${appState.history.length + 1} (${fps}fps)` : `Run #${appState.history.length + 1} (${fps}fps)`,
         fps,
         start: Number(appState.startSeconds.toFixed(4)),
         end: Number(appState.endSeconds.toFixed(4)),
@@ -1681,7 +1953,7 @@
       appState.history.unshift(entry);
       savePersistentState();
       renderHistoryList();
-      showToast('Saved calculation to Session Log', 'success');
+      showToast(t('toastSavedHistory'), 'success');
     }
 
     function renderHistoryList() {
@@ -1689,10 +1961,11 @@
       if (!container) return;
 
       if (appState.history.length === 0) {
-        container.innerHTML = `<div class="text-xs text-[#6e6a5f] text-center py-4">No saved retimes yet. Click "Save to Session History" to log results.</div>`;
+        container.innerHTML = `<div class="text-xs text-[#6e6a5f] text-center py-4">${t('historyEmpty')}</div>`;
         return;
       }
 
+      const fUnit = appState.lang === 'zh' ? '帧' : 'f';
       container.innerHTML = appState.history.map(item => `
         <div class="bg-[#faf8f3] border border-[#d6d1c4] rounded-lg p-2.5 flex items-center justify-between gap-2 hover:border-[#b5ae9e] transition">
           <div class="min-w-0">
@@ -1701,16 +1974,12 @@
               <span class="text-[11px] font-semibold px-1.5 py-0.5 rounded bg-white text-[#5c584f] border border-[#d6d1c4]">${item.fps} FPS</span>
             </div>
             <div class="text-xs text-[#1e6b43] font-bold mt-0.5">
-              ${escapeHtml(item.formatted)} <span class="text-[#5c584f] font-normal">(${item.frames}f · ${item.start}s → ${item.end}s)</span>
+              ${escapeHtml(item.formatted)} <span class="text-[#5c584f] font-normal">(${item.frames}${fUnit} · ${item.start}s → ${item.end}s)</span>
             </div>
           </div>
           <div class="flex items-center gap-1 shrink-0">
-            <button type="button" onclick="loadHistoryEntry('${item.id}')" title="Load into calculator" class="px-2.5 py-1 rounded bg-white hover:bg-[#edeae2] text-xs font-semibold text-[#2c2a26] border border-[#c8c2b4] transition">
-              Load
-            </button>
-            <button type="button" onclick="deleteHistoryEntry('${item.id}')" title="Delete entry" class="px-2 py-1 rounded bg-white hover:bg-[#fbeae8] text-xs font-semibold text-[#6e6a5f] hover:text-[#b33122] border border-[#d6d1c4] transition">
-              ✕
-            </button>
+            <button type="button" onclick="loadHistoryEntry('${item.id}')" class="px-2.5 py-1 rounded bg-white hover:bg-[#edeae2] text-xs font-semibold text-[#2c2a26] border border-[#c8c2b4] transition">${t('btnLoad')}</button>
+            <button type="button" onclick="deleteHistoryEntry('${item.id}')" class="px-2 py-1 rounded bg-white hover:bg-[#fbeae8] text-xs font-semibold text-[#6e6a5f] hover:text-[#b33122] border border-[#d6d1c4] transition">✕</button>
           </div>
         </div>
       `).join('');
@@ -1745,23 +2014,17 @@
       appState.history = [];
       savePersistentState();
       renderHistoryList();
-      showToast('Cleared session history log', 'info');
+      showToast(t('toastClearedHistory'), 'info');
     }
 
     function exportHistoryCSV() {
       if (appState.history.length === 0) {
-        showToast('No session history to export', 'warn');
+        showToast(t('toastNoHistoryCsv'), 'warn');
         return;
       }
       const headers = ['Label', 'FPS', 'Start_Seconds', 'End_Seconds', 'Total_Frames', 'Formatted_Time', 'Logged_At'];
       const rows = appState.history.map(h => [
-        `"${String(h.label).replace(/"/g, '""')}"`,
-        h.fps,
-        h.start,
-        h.end,
-        h.frames,
-        `"${h.formatted}"`,
-        `"${h.timestamp || ''}"`
+        `"${String(h.label).replace(/"/g, '""')}"`, h.fps, h.start, h.end, h.frames, `"${h.formatted}"`, `"${h.timestamp || ''}"`
       ]);
       const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -1773,12 +2036,11 @@
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
-      showToast('Exported session history to CSV', 'success');
+      showToast(t('toastExportedCsv'), 'success');
     }
 
     // =========================================================================
-    // Interactive 60 FPS Speedrun Frame Simulator & Multi-Platform Video Loader
-    // (YouTube, Google Drive, Bilibili, Twitch + Local HTML5 Video)
+    // Workbench Mode Switcher
     // =========================================================================
     function switchWorkbenchMode(mode) {
       const simCont = document.getElementById('simWorkbenchContainer');
@@ -1787,51 +2049,61 @@
       const ytBtn = document.getElementById('modeYtBtn');
 
       if (mode === 'yt') {
-        if (simCont) simCont.classList.add('hidden');
-        if (ytCont) ytCont.classList.remove('hidden');
-        if (ytBtn) ytBtn.className = 'px-2.5 py-1 rounded text-xs font-semibold bg-[#1d4f91] text-white transition';
-        if (simBtn) simBtn.className = 'px-2.5 py-1 rounded text-xs font-semibold text-[#4a473f] hover:text-[#1f1e1b] transition';
+        simCont.classList.add('hidden');
+        ytCont.classList.remove('hidden');
+        ytBtn.className = 'px-2.5 py-1 rounded text-xs font-semibold bg-[#1d4f91] text-white transition';
+        simBtn.className = 'px-2.5 py-1 rounded text-xs font-semibold text-[#4a473f] hover:text-[#1f1e1b] transition';
         if (appState.sim.playing) toggleSimPlayback();
       } else {
-        if (ytCont) ytCont.classList.add('hidden');
-        if (simCont) simCont.classList.remove('hidden');
-        if (simBtn) simBtn.className = 'px-2.5 py-1 rounded text-xs font-semibold bg-[#1d4f91] text-white transition';
-        if (ytBtn) ytBtn.className = 'px-2.5 py-1 rounded text-xs font-semibold text-[#4a473f] hover:text-[#1f1e1b] transition';
+        ytCont.classList.add('hidden');
+        simCont.classList.remove('hidden');
+        simBtn.className = 'px-2.5 py-1 rounded text-xs font-semibold bg-[#1d4f91] text-white transition';
+        ytBtn.className = 'px-2.5 py-1 rounded text-xs font-semibold text-[#4a473f] hover:text-[#1f1e1b] transition';
         renderSimulatorCanvas();
+      }
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    function switchYtSource(source) {
+      appState.ytSource = source;
+      const ytSource = document.getElementById('ytSourceYoutube');
+      const localSource = document.getElementById('ytSourceLocal');
+      const tabYt = document.getElementById('ytTabYoutube');
+      const tabLocal = document.getElementById('ytTabLocal');
+
+      if (source === 'local') {
+        ytSource.classList.add('hidden');
+        localSource.classList.remove('hidden');
+        tabYt.classList.remove('active');
+        tabLocal.classList.add('active');
+      } else {
+        localSource.classList.add('hidden');
+        ytSource.classList.remove('hidden');
+        tabLocal.classList.remove('active');
+        tabYt.classList.add('active');
       }
     }
 
+    // =========================================================================
+    // 60 FPS Simulator
+    // =========================================================================
     function renderSimulatorCanvas() {
       const canvas = document.getElementById('frameSimCanvas');
       if (!canvas) return;
       const ctx = canvas.getContext('2d');
-      const w = canvas.width;
-      const h = canvas.height;
+      const w = canvas.width, h = canvas.height;
       const fps = getValidFps();
       const frame = appState.sim.currentFrame;
       const timeSec = frame / fps;
 
-      // Daylight Paper / Broadcast Monitor Canvas Background
       ctx.fillStyle = '#faf8f3';
       ctx.fillRect(0, 0, w, h);
 
-      // Subtle warm editorial grid lines
       ctx.strokeStyle = '#e6e1d6';
       ctx.lineWidth = 1;
-      for (let x = 0; x < w; x += 32) {
-        ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, h);
-        ctx.stroke();
-      }
-      for (let y = 0; y < h; y += 32) {
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(w, y);
-        ctx.stroke();
-      }
+      for (let x = 0; x < w; x += 32) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
+      for (let y = 0; y < h; y += 32) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
 
-      // Highlight Start Frame (#255) & Finish Frame (#9535)
       const isStartFrame = frame === 255;
       const isEndFrame = frame === 9535;
       if (isStartFrame || isEndFrame) {
@@ -1839,7 +2111,6 @@
         ctx.fillRect(0, 0, w, h);
       }
 
-      // Progress timeline track
       const trackY = h - 72;
       ctx.fillStyle = '#dfd9cc';
       ctx.fillRect(40, trackY, w - 80, 8);
@@ -1848,17 +2119,14 @@
       const endX = 40 + (9535 / appState.sim.maxFrames) * (w - 80);
       const curX = 40 + (frame / appState.sim.maxFrames) * (w - 80);
 
-      // Active run bar
       ctx.fillStyle = '#1d4f91';
       ctx.fillRect(startX, trackY, Math.max(0, Math.min(curX, endX) - startX), 8);
 
-      // Start & End Flags on track
       ctx.fillStyle = '#1e6b43';
       ctx.fillRect(startX - 2, trackY - 10, 4, 28);
       ctx.fillStyle = '#b33122';
       ctx.fillRect(endX - 2, trackY - 10, 4, 28);
 
-      // Playhead Marker
       ctx.beginPath();
       ctx.arc(curX, trackY + 4, 8, 0, Math.PI * 2);
       ctx.fillStyle = '#b33122';
@@ -1867,7 +2135,6 @@
       ctx.lineWidth = 2;
       ctx.stroke();
 
-      // Main Center Readout Card
       ctx.fillStyle = '#ffffff';
       ctx.strokeStyle = isStartFrame ? '#1e6b43' : (isEndFrame ? '#b33122' : '#c8c2b4');
       ctx.lineWidth = 2;
@@ -1878,30 +2145,29 @@
 
       ctx.textAlign = 'center';
       ctx.fillStyle = '#5c584f';
-      ctx.font = '600 13px "Source Sans 3", sans-serif';
-      let stageBanner = 'IN-GAME RUN ACTIVE (USE , AND . TO STEP FRAMES)';
-      if (frame < 255) stageBanner = 'PRE-RUN TITLE SCREEN (START AT FRAME #255)';
-      if (frame === 255) stageBanner = '★ FIRST INPUT / RUN START FRAME (#255) ★';
-      if (frame === 9535) stageBanner = '★ FINAL HIT / RUN STOP FRAME (#9535) ★';
-      if (frame > 9535) stageBanner = 'POST-RUN VICTORY SCREEN';
+      ctx.font = '600 13px "Source Sans 3", "PingFang SC", "Microsoft YaHei", sans-serif';
+      let stageBanner = t('simStageActive');
+      if (frame < 255) stageBanner = t('simStagePre');
+      if (frame === 255) stageBanner = t('simStageStart');
+      if (frame === 9535) stageBanner = t('simStageEnd');
+      if (frame > 9535) stageBanner = t('simStagePost');
       ctx.fillText(stageBanner, w / 2, 84);
 
-      // Large Timecode Readout
       ctx.fillStyle = '#1f1e1b';
       ctx.font = '700 42px "Source Sans 3", sans-serif';
       ctx.fillText(`${timeSec.toFixed(3)}s`, w / 2, 138);
 
-      // Frame & SMPTE sub-readout
       ctx.fillStyle = '#1d4f91';
-      ctx.font = '600 16px "Source Sans 3", sans-serif';
-      ctx.fillText(`Frame #${frame}   |   SMPTE ${formatSmpte(timeSec, fps)}`, w / 2, 172);
+      ctx.font = '600 16px "Source Sans 3", "PingFang SC", "Microsoft YaHei", sans-serif';
+      const frameLabel = appState.lang === 'zh' ? `第 #${frame} 帧` : `Frame #${frame}`;
+      ctx.fillText(`${frameLabel}   |   SMPTE ${formatSmpte(timeSec, fps)}`, w / 2, 172);
 
       ctx.fillStyle = '#6e6a5f';
       ctx.font = '500 12px "Source Sans 3", sans-serif';
       ctx.fillText(`YouTube debug cmt: "${timeSec.toFixed(3)}" @ ${fps} FPS`, w / 2, 204);
 
       const hudText = document.getElementById('simHudText');
-      if (hudText) hudText.textContent = `Frame #${frame} · ${timeSec.toFixed(3)}s`;
+      if (hudText) hudText.textContent = t('simHud', { frame, sec: timeSec.toFixed(3) });
       const scrubber = document.getElementById('simScrubber');
       if (scrubber) scrubber.value = String(frame);
       const maxLabel = document.getElementById('simMaxTimeLabel');
@@ -1924,11 +2190,11 @@
       if (appState.sim.playing) {
         appState.sim.playing = false;
         if (appState.sim.rafId) cancelAnimationFrame(appState.sim.rafId);
-        if (btnText) btnText.textContent = 'Play';
+        if (btnText) btnText.textContent = t('play');
         return;
       }
       appState.sim.playing = true;
-      if (btnText) btnText.textContent = 'Pause';
+      if (btnText) btnText.textContent = t('pause');
       appState.sim.lastTick = performance.now();
 
       function loop(now) {
@@ -1954,34 +2220,29 @@
       if (el) {
         el.value = formatCleanSeconds(sec);
         parseForTime({ target: el, type: 'change' });
-        showToast(`Captured Frame #${appState.sim.currentFrame} (${sec.toFixed(3)}s) to ${targetId === 'startobj' ? 'Start' : 'End'}`, 'success');
+        showToast(t('toastCapturedSim', {
+          frame: appState.sim.currentFrame,
+          sec: sec.toFixed(3),
+          target: targetId === 'startobj' ? t('startWord') : t('endWord')
+        }), 'success');
       }
     }
 
     function copySimDebugJson() {
       const fps = getValidFps();
       const sec = appState.sim.currentFrame / fps;
-      const debugObj = {
-        ns: 'yt',
-        el: 'detailpage',
-        cpn: 'sim_workbench',
-        docid: appState.detectedVideoId || 'dQw4w9WgXcQ',
-        ver: 2,
-        cmt: sec.toFixed(3),
-        vct: sec.toFixed(3),
-        fps: fps
-      };
-      copyTextToClipboard(JSON.stringify(debugObj), `Copied simulated YouTube debug JSON (cmt: ${sec.toFixed(3)}s)`);
+      const debugObj = { ns: 'yt', el: 'detailpage', cpn: 'sim_workbench', docid: appState.detectedVideoId || 'dQw4w9WgXcQ', ver: 2, cmt: sec.toFixed(3), vct: sec.toFixed(3), fps };
+      copyTextToClipboard(JSON.stringify(debugObj), t('toastCopiedSimJson', { sec: sec.toFixed(3) }));
     }
 
     // =========================================================================
-    // Multi-Platform Video Parser & Embeds (YouTube, Google Drive, Bilibili, Twitch)
+    // Multi-Platform Video Loader (YouTube / Google Drive / Bilibili / Twitch)
     // =========================================================================
     function extractYoutubeId(urlOrId) {
       const str = String(urlOrId || '').trim();
       if (!str) return null;
       if (/^[a-zA-Z0-9_-]{11}$/.test(str)) return str;
-      const match = str.match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([a-zA-Z0-9_-]{11})/);
+      const match = str.match(/(?:v=|youtu\.be\/|embed\/|shorts\/|live\/)([a-zA-Z0-9_-]{11})/);
       return match ? match[1] : null;
     }
 
@@ -1989,485 +2250,460 @@
       const str = String(urlOrId || '').trim();
       if (!str) return null;
 
-      // 1. Google Drive (file/d/<ID>, open?id=<ID>, uc?id=<ID>, or gdrive:<ID> / drive:<ID>)
-      const gdriveUrlMatch = str.match(/(?:drive|docs)\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:[^#]*&)?id=)([a-zA-Z0-9_-]{10,})/i);
-      if (gdriveUrlMatch) {
-        return { platform: 'gdrive', subtype: 'file', id: gdriveUrlMatch[1], page: 1, raw: str };
-      }
-      const gdriveShortMatch = str.match(/^(?:gdrive|drive):([a-zA-Z0-9_-]{10,})$/i);
-      if (gdriveShortMatch) {
-        return { platform: 'gdrive', subtype: 'file', id: gdriveShortMatch[1], page: 1, raw: str };
-      }
-
-      // 2. Bilibili (bilibili.com/video/BV..., bilibili.com/video/av..., player.bilibili.com, or bare BV/av ID)
-      const biliPageMatch = str.match(/[?&](?:p|page)=(\d+)/i);
-      const biliPage = biliPageMatch ? Math.max(1, parseInt(biliPageMatch[1], 10)) : 1;
-
-      const biliUrlMatch = str.match(/(?:bilibili\.com\/video\/|player\.bilibili\.com\/player\.html\?[^#]*\bbvid=)(BV[a-zA-Z0-9]{10}|av\d+)/i);
-      if (biliUrlMatch) {
-        return { platform: 'bilibili', subtype: 'video', id: biliUrlMatch[1], page: biliPage, raw: str };
-      }
-      const biliAidMatch = str.match(/player\.bilibili\.com\/player\.html\?[^#]*\baid=(\d+)/i);
-      if (biliAidMatch) {
-        return { platform: 'bilibili', subtype: 'video', id: 'av' + biliAidMatch[1], page: biliPage, raw: str };
-      }
-      const biliBareMatch = str.match(/^(BV[a-zA-Z0-9]{10}|av\d+)$/i);
-      if (biliBareMatch) {
-        return { platform: 'bilibili', subtype: 'video', id: biliBareMatch[1], page: 1, raw: str };
+      // 1. Google Drive
+      if (/drive\.google\.com|docs\.google\.com/i.test(str)) {
+        const driveMatch =
+          str.match(/\/file\/d\/([a-zA-Z0-9_-]{10,})/) ||
+          str.match(/[?&]id=([a-zA-Z0-9_-]{10,})/) ||
+          str.match(/\/d\/([a-zA-Z0-9_-]{10,})/);
+        if (driveMatch) {
+          return { platform: 'drive', id: driveMatch[1] };
+        }
       }
 
-      // 3. Twitch (VODs, Clips, or v<VOD_ID> / twitch:<VOD_ID>)
-      const twitchClipMatch = str.match(/(?:clips\.twitch\.tv\/|twitch\.tv\/[^\/\?#]+\/clip\/)([a-zA-Z0-9_-]+)/i);
-      if (twitchClipMatch) {
-        return { platform: 'twitch', subtype: 'clip', id: twitchClipMatch[1], page: 1, raw: str };
-      }
-      const twitchVodMatch = str.match(/twitch\.tv\/(?:videos|[^\/\?#]+\/v)\/(\d+)/i);
-      if (twitchVodMatch) {
-        return { platform: 'twitch', subtype: 'vod', id: twitchVodMatch[1], page: 1, raw: str };
-      }
-      const twitchShortMatch = str.match(/^(?:twitch:|v)(\d{6,})$/i);
-      if (twitchShortMatch) {
-        return { platform: 'twitch', subtype: 'vod', id: twitchShortMatch[1], page: 1, raw: str };
+      // 2. Bilibili (URL or bare BV / av ID)
+      if (/bilibili\.com|b23\.tv/i.test(str) || /^BV[a-zA-Z0-9]{10}$/i.test(str) || /^av\d+$/i.test(str)) {
+        let page = 1;
+        const pageMatch = str.match(/[?&]p=(\d+)/i);
+        if (pageMatch) page = Math.max(1, parseInt(pageMatch[1], 10) || 1);
+
+        const bvMatch = str.match(/(BV[a-zA-Z0-9]{10})/i) || str.match(/[?&]bvid=(BV[a-zA-Z0-9]{10})/i);
+        if (bvMatch) {
+          const rawBv = bvMatch[1];
+          const normalizedBv = 'BV' + rawBv.slice(2);
+          return { platform: 'bilibili', id: normalizedBv, biliType: 'bv', page };
+        }
+        const avMatch = str.match(/(?:\/|aid=|^)(av\d+)/i) || str.match(/[?&]aid=(\d+)/i);
+        if (avMatch) {
+          const avId = avMatch[1].toLowerCase().startsWith('av') ? avMatch[1].toLowerCase() : ('av' + avMatch[1]);
+          return { platform: 'bilibili', id: avId, biliType: 'av', page };
+        }
       }
 
-      // 4. YouTube (URL or 11-char ID)
+      // 3. Twitch (VODs & Clips)
+      if (/twitch\.tv/i.test(str)) {
+        const clipMatch =
+          str.match(/clips\.twitch\.tv\/(?:embed\?[^#]*clip=)?([a-zA-Z0-9_-]+)/i) ||
+          str.match(/twitch\.tv\/[^/]+\/clip\/([a-zA-Z0-9_-]+)/i);
+        if (clipMatch) {
+          return { platform: 'twitch', id: clipMatch[1], twitchType: 'clip' };
+        }
+        const vodMatch =
+          str.match(/twitch\.tv\/videos\/(\d+)/i) ||
+          str.match(/twitch\.tv\/[^/]+\/v\/(\d+)/i) ||
+          str.match(/[?&]video=v?(\d+)/i);
+        if (vodMatch) {
+          return { platform: 'twitch', id: vodMatch[1], twitchType: 'vod' };
+        }
+      }
+
+      // 4. YouTube
       const ytId = extractYoutubeId(str);
       if (ytId) {
-        return { platform: 'youtube', subtype: 'video', id: ytId, page: 1, raw: str };
+        return { platform: 'youtube', id: ytId };
       }
 
       return null;
     }
 
-    function isSandboxedNullOrigin() {
-      try {
-        return !window.location.origin ||
-          window.location.origin === 'null' ||
-          window.location.protocol === 'file:' ||
-          window.location.protocol === 'about:' ||
-          window.location.protocol === 'blob:';
-      } catch (e) {
-        return true;
-      }
-    }
-
-    function formatTwitchTimestampParam(totalSec) {
-      const s = Math.max(0, Math.floor(totalSec));
+    function formatTwitchTime(sec) {
+      const s = Math.max(0, Math.floor(sec));
       const h = Math.floor(s / 3600);
       const m = Math.floor((s % 3600) / 60);
       const rem = s % 60;
       return `${h}h${m}m${rem}s`;
     }
 
-    function buildYoutubeEmbedUrl(vid, domainMode) {
-      const host = domainMode === 'standard'
-        ? 'https://www.youtube.com'
-        : 'https://www.youtube-nocookie.com';
+    function getPlatformDisplayName(platform) {
+      if (platform === 'drive') return 'Google Drive';
+      if (platform === 'bilibili') return 'Bilibili';
+      if (platform === 'twitch') return 'Twitch';
+      return 'YouTube';
+    }
+
+    function updateWatchButtonLabel() {
+      const el = document.getElementById('watchPlatformText');
+      if (!el) return;
+      const p = appState.loadedVideo ? appState.loadedVideo.platform : 'youtube';
+      if (p === 'drive') el.textContent = t('btnWatchDrive');
+      else if (p === 'bilibili') el.textContent = t('btnWatchBilibili');
+      else if (p === 'twitch') el.textContent = t('btnWatchTwitch');
+      else el.textContent = t('btnWatchYt');
+    }
+
+    function buildYtEmbedUrl(vid, startSec = 0) {
       const params = new URLSearchParams({
         rel: '0',
-        modestbranding: '1',
         playsinline: '1',
+        modestbranding: '1',
         enablejsapi: '1'
       });
-      if (!isSandboxedNullOrigin() && window.location.origin.startsWith('http')) {
+      if (startSec > 0) {
+        params.set('start', String(Math.floor(startSec)));
+      }
+      if (window.location.origin && window.location.origin !== 'null' && window.location.protocol.startsWith('http')) {
         params.set('origin', window.location.origin);
-        params.set('widget_referrer', window.location.href);
       }
-      return `${host}/embed/${vid}?${params.toString()}`;
+      return `https://www.youtube-nocookie.com/embed/${vid}?${params.toString()}`;
     }
 
-    function getVideoPlatformInfo(source) {
-      const src = source || appState.videoSource || { platform: 'youtube', subtype: 'video', id: 'dQw4w9WgXcQ', page: 1 };
-
-      if (src.platform === 'gdrive') {
-        const id = encodeURIComponent(src.id);
-        return {
-          name: 'Google Drive',
-          watchText: 'Open on Google Drive ↗',
-          watchUrl: `https://drive.google.com/file/d/${id}/view`,
-          getEmbedUrl: () => `https://drive.google.com/file/d/${id}/preview`,
-          getPopoutUrl: (sec) => `https://drive.google.com/file/d/${id}/view?t=${Math.floor(sec)}`
-        };
+    function buildVideoEmbedUrl(video, startSec = 0) {
+      if (!video) return '';
+      if (video.platform === 'drive') {
+        return `https://drive.google.com/file/d/${encodeURIComponent(video.id)}/preview`;
       }
-
-      if (src.platform === 'bilibili') {
-        const page = src.page || 1;
-        const isAv = /^av\d+$/i.test(src.id);
-        const queryId = isAv
-          ? `aid=${encodeURIComponent(src.id.slice(2))}`
-          : `bvid=${encodeURIComponent(src.id)}`;
-        const pageQuery = page > 1 ? `?p=${page}` : '';
-        return {
-          name: 'Bilibili',
-          watchText: 'Open on Bilibili ↗',
-          watchUrl: `https://www.bilibili.com/video/${encodeURIComponent(src.id)}${pageQuery}`,
-          getEmbedUrl: () => `https://player.bilibili.com/player.html?${queryId}&page=${page}&high_quality=1&danmaku=0&autoplay=0`,
-          getPopoutUrl: (sec) => `https://www.bilibili.com/video/${encodeURIComponent(src.id)}?${page > 1 ? `p=${page}&` : ''}t=${Math.floor(sec)}`
-        };
+      if (video.platform === 'bilibili') {
+        const page = video.page || 1;
+        const idParam = video.biliType === 'av'
+          ? `aid=${encodeURIComponent(video.id.slice(2))}`
+          : `bvid=${encodeURIComponent(video.id)}`;
+        return `https://player.bilibili.com/player.html?${idParam}&page=${page}&t=${Math.floor(startSec)}&high_quality=1&autoplay=0`;
       }
-
-      if (src.platform === 'twitch') {
-        const host = window.location.hostname || 'localhost';
-        if (src.subtype === 'clip') {
-          const slug = encodeURIComponent(src.id);
-          return {
-            name: 'Twitch Clip',
-            watchText: 'Open on Twitch ↗',
-            watchUrl: `https://clips.twitch.tv/${slug}`,
-            getEmbedUrl: () => `https://clips.twitch.tv/embed?clip=${slug}&parent=${encodeURIComponent(host)}&autoplay=false`,
-            getPopoutUrl: () => `https://clips.twitch.tv/${slug}`
-          };
+      if (video.platform === 'twitch') {
+        const parentHost = (window.location.hostname && window.location.hostname !== '') ? window.location.hostname : 'localhost';
+        if (video.twitchType === 'clip') {
+          return `https://clips.twitch.tv/embed?clip=${encodeURIComponent(video.id)}&parent=${encodeURIComponent(parentHost)}&autoplay=false`;
         }
-        const vodId = encodeURIComponent(src.id);
-        return {
-          name: 'Twitch VOD',
-          watchText: 'Open on Twitch ↗',
-          watchUrl: `https://www.twitch.tv/videos/${vodId}`,
-          getEmbedUrl: () => `https://player.twitch.tv/?video=${vodId}&parent=${encodeURIComponent(host)}&autoplay=false`,
-          getPopoutUrl: (sec) => `https://www.twitch.tv/videos/${vodId}?t=${formatTwitchTimestampParam(sec)}`
-        };
+        return `https://player.twitch.tv/?video=${encodeURIComponent(video.id)}&parent=${encodeURIComponent(parentHost)}&time=${formatTwitchTime(startSec)}&autoplay=false`;
       }
-
-      const ytId = encodeURIComponent(src.id);
-      return {
-        name: 'YouTube',
-        watchText: 'Open on YouTube ↗',
-        watchUrl: `https://www.youtube.com/watch?v=${ytId}`,
-        getEmbedUrl: (subMode) => buildYoutubeEmbedUrl(src.id, subMode),
-        getPopoutUrl: (sec) => `https://www.youtube.com/watch?v=${ytId}&t=${Math.floor(sec)}s`
-      };
+      return buildYtEmbedUrl(video.id, startSec);
     }
 
-    async function updateYoutubeInspectorVideo(vidOrSource) {
-      let src = null;
-      if (vidOrSource && typeof vidOrSource === 'object' && vidOrSource.platform) {
-        src = vidOrSource;
-      } else {
-        src = parseVideoSource(vidOrSource) || { platform: 'youtube', subtype: 'video', id: String(vidOrSource || 'dQw4w9WgXcQ'), page: 1 };
-      }
-
-      appState.videoSource = src;
-      appState.detectedVideoId = src.id;
-
-      const info = getVideoPlatformInfo(src);
-      const extLink = document.getElementById('ytExternalWatchLink');
-      const extText = document.getElementById('ytExternalWatchText');
-      if (extLink) extLink.href = info.watchUrl;
-      if (extText) extText.textContent = info.watchText;
-
-      const ytGrid = document.getElementById('ytStoryboardGrid');
-      const platformCard = document.getElementById('platformPreviewCard');
-      const platformThumb = document.getElementById('platformPreviewThumb');
-      const platformLabel = document.getElementById('platformPreviewLabel');
-      const platformHint = document.getElementById('platformPreviewHint');
-      const platformBadge = document.getElementById('ytPlatformBadge');
-      const titleEl = document.getElementById('ytMetaTitle');
-      const authorEl = document.getElementById('ytMetaAuthor');
-
-      if (src.platform === 'youtube') {
-        if (ytGrid) ytGrid.classList.remove('hidden');
-        if (platformCard) platformCard.classList.add('hidden');
-        if (platformBadge) platformBadge.textContent = 'Referrer-Safe';
-
-        const vid = src.id;
-        const t0 = document.getElementById('ytThumb0');
-        const t1 = document.getElementById('ytThumb1');
-        const t2 = document.getElementById('ytThumb2');
-        const t3 = document.getElementById('ytThumb3');
-        if (t0) t0.src = `https://i.ytimg.com/vi/${vid}/hqdefault.jpg`;
-        if (t1) t1.src = `https://i.ytimg.com/vi/${vid}/mq1.jpg`;
-        if (t2) t2.src = `https://i.ytimg.com/vi/${vid}/mq2.jpg`;
-        if (t3) t3.src = `https://i.ytimg.com/vi/${vid}/mq3.jpg`;
-
-        if (titleEl) titleEl.textContent = `YouTube Video (${vid})`;
-        if (authorEl) authorEl.textContent = 'Fetching video title via YouTube oEmbed...';
-
-        try {
-          const res = await fetch(`https://noembed.com/embed?url=https://www.youtube.com/watch?v=${encodeURIComponent(vid)}`);
-          if (res.ok) {
-            const data = await res.json();
-            if (data && data.title) {
-              if (titleEl) titleEl.textContent = data.title;
-              if (authorEl) authorEl.textContent = `Channel: ${data.author_name || 'YouTube'} · ID: ${vid} (Error 153 Bypass Active)`;
-              return;
-            }
-          }
-        } catch (e) {
-          // Fallback if offline
-        }
-        if (authorEl) authorEl.textContent = `Video ID: ${vid} · Storyboard & Frame Scrubber Ready`;
-        return;
-      }
-
-      // Non-YouTube platforms (Google Drive, Bilibili, Twitch)
-      if (ytGrid) ytGrid.classList.add('hidden');
-      if (platformCard) platformCard.classList.remove('hidden');
-      if (platformBadge) platformBadge.textContent = info.name;
-
-      if (src.platform === 'gdrive') {
-        if (titleEl) titleEl.textContent = `Google Drive Video (${src.id})`;
-        if (authorEl) authorEl.textContent = 'Google Drive /preview embed & timestamp deep-link ready';
-        if (platformLabel) platformLabel.textContent = 'Google Drive File Ready';
-        if (platformHint) platformHint.textContent = `File ID: ${src.id} · Click "Open Embed" to play inside frame.`;
-        if (platformThumb) {
-          platformThumb.src = `https://drive.google.com/thumbnail?id=${encodeURIComponent(src.id)}&sz=w320`;
-          platformThumb.classList.remove('hidden');
-          platformThumb.onerror = () => platformThumb.classList.add('hidden');
-        }
-      } else if (src.platform === 'bilibili') {
-        const partLabel = src.page > 1 ? ` (Part ${src.page})` : '';
-        if (titleEl) titleEl.textContent = `Bilibili Video (${src.id}${partLabel})`;
-        if (authorEl) authorEl.textContent = 'Bilibili player.bilibili.com embed & timestamp deep-link ready';
-        if (platformLabel) platformLabel.textContent = `Bilibili ${src.id}${partLabel}`;
-        if (platformHint) platformHint.textContent = 'Click "Open Embed" to load the Bilibili player.';
-        if (platformThumb) platformThumb.classList.add('hidden');
-      } else if (src.platform === 'twitch') {
-        if (titleEl) titleEl.textContent = `${info.name} (${src.id})`;
-        if (authorEl) authorEl.textContent = 'Fetching Twitch metadata...';
-        if (platformLabel) platformLabel.textContent = `${info.name}: ${src.id}`;
-        if (platformHint) {
-          platformHint.textContent = isSandboxedNullOrigin()
-            ? 'Twitch embeds require an http(s) host domain; use Pop Out @ Time ↗.'
-            : `Twitch parent=${window.location.hostname} configured for embedded playback.`;
-        }
-        if (platformThumb) platformThumb.classList.add('hidden');
-
-        try {
-          const res = await fetch(`https://noembed.com/embed?url=${encodeURIComponent(info.watchUrl)}`);
-          if (res.ok) {
-            const data = await res.json();
-            if (data && data.title) {
-              if (titleEl) titleEl.textContent = data.title;
-              if (authorEl) authorEl.textContent = `Streamer: ${data.author_name || 'Twitch'} · ID: ${src.id}`;
-              if (data.thumbnail_url && platformThumb) {
-                platformThumb.src = data.thumbnail_url;
-                platformThumb.classList.remove('hidden');
-              }
-              return;
-            }
-          }
-        } catch (e) {
-          // Fallback if offline
-        }
-        if (authorEl) authorEl.textContent = `${info.name} ID: ${src.id} · Frame Scrubber Ready`;
-      }
-    }
-
-    function activatePlatformEmbedFromInspector() {
-      const modeSelect = document.getElementById('ytPlayerModeSelect');
-      if (modeSelect) modeSelect.value = 'nocookie';
-      switchYtPlayerSubMode('nocookie', true);
-    }
-
-    function loadYoutubeEmbed() {
-      const inputEl = document.getElementById('ytUrlInput');
-      if (!inputEl) return;
-
-      const source = parseVideoSource(inputEl.value);
-      if (!source) {
-        showToast('Enter a valid YouTube, Google Drive, Bilibili (BV/av), or Twitch (VOD/Clip) URL or ID', 'warn');
-        return;
-      }
-
-      updateYoutubeInspectorVideo(source);
-
-      const modeSelect = document.getElementById('ytPlayerModeSelect');
-      let selectedMode = modeSelect ? modeSelect.value : 'inspector';
-
-      if (selectedMode === 'inspector') {
-        if (source.platform === 'gdrive' || source.platform === 'bilibili') {
-          selectedMode = 'nocookie';
-          if (modeSelect) modeSelect.value = 'nocookie';
-        } else if (source.platform === 'twitch' && !isSandboxedNullOrigin() && window.location.hostname) {
-          selectedMode = 'nocookie';
-          if (modeSelect) modeSelect.value = 'nocookie';
-        }
-      }
-
-      switchYtPlayerSubMode(selectedMode, true);
-    }
-
-    function switchYtPlayerSubMode(subMode, showMsg = false) {
-      appState.ytSubMode = subMode;
-      const inspectorPanel = document.getElementById('ytInspectorPanel');
+    function seekYtEmbed(sec, pause = true) {
+      if (!appState.ytEmbedVisible) return;
+      if (!appState.loadedVideo || appState.loadedVideo.platform !== 'youtube') return;
       const iframe = document.getElementById('ytEmbedIframe');
-      const html5Video = document.getElementById('html5VideoPlayer');
-      const html5Controls = document.getElementById('html5FrameControls');
-      const placeholder = document.getElementById('ytEmbedPlaceholder');
-      const src = appState.videoSource || { platform: 'youtube', subtype: 'video', id: appState.detectedVideoId || 'dQw4w9WgXcQ', page: 1 };
-      const info = getVideoPlatformInfo(src);
+      if (!iframe || !iframe.contentWindow) return;
+      try {
+        if (pause) {
+          iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'pauseVideo', args: [] }), '*');
+        }
+        iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'seekTo', args: [sec, true] }), '*');
+      } catch (e) {}
+    }
 
-      if (placeholder) placeholder.classList.add('hidden');
-      if (inspectorPanel) inspectorPanel.classList.add('hidden');
-      if (iframe) iframe.classList.add('hidden');
-      if (html5Video) html5Video.classList.add('hidden');
-      if (html5Controls) {
-        html5Controls.classList.add('hidden');
-        html5Controls.classList.remove('flex');
-      }
+    function formatDurationShort(sec) {
+      const h = Math.floor(sec / 3600);
+      const m = Math.floor((sec % 3600) / 60);
+      const s = Math.floor(sec % 60);
+      if (h > 0) return `${h}h ${m}m ${s}s`;
+      if (m > 0) return `${m}m ${s}s`;
+      return `${s}s`;
+    }
 
-      if (subMode === 'nocookie' || subMode === 'standard') {
-        if (src.platform === 'youtube' && isSandboxedNullOrigin()) {
-          const modeSelect = document.getElementById('ytPlayerModeSelect');
-          if (modeSelect) modeSelect.value = 'inspector';
-          if (inspectorPanel) inspectorPanel.classList.remove('hidden');
-          showToast('Preview sandbox strips HTTP Referer (which triggers YouTube Error 153); using Referrer-Safe Inspector instead.', 'info');
-          return;
-        }
-        if (src.platform === 'twitch' && (isSandboxedNullOrigin() || !window.location.hostname)) {
-          const modeSelect = document.getElementById('ytPlayerModeSelect');
-          if (modeSelect) modeSelect.value = 'inspector';
-          if (inspectorPanel) inspectorPanel.classList.remove('hidden');
-          showToast('Twitch embeds require an http(s) host domain for &parent=; use Pop Out @ Time ↗ or host via HTTP.', 'info');
-          return;
-        }
-        if (iframe) {
-          iframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
-          iframe.src = info.getEmbedUrl(subMode);
-          iframe.classList.remove('hidden');
-        }
-        if (showMsg) showToast(`Loaded ${info.name} Embed (${src.id})`, 'success');
-      } else if (subMode === 'html5') {
-        if (html5Video) {
-          if (!html5Video.src) {
-            html5Video.src = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4';
-          }
-          html5Video.classList.remove('hidden');
-        }
-        if (html5Controls) {
-          html5Controls.classList.remove('hidden');
-          html5Controls.classList.add('flex');
-        }
-        if (showMsg) showToast('Switched to direct HTML5 frame-stepping video player', 'success');
+    function setPreviewThumbnail(thumbUrl, fallbackText) {
+      const thumb = document.getElementById('ytPreviewThumb');
+      const fallback = document.getElementById('ytThumbFallback');
+      if (!thumb || !fallback) return;
+
+      fallback.textContent = fallbackText || '';
+      if (thumbUrl) {
+        thumb.onload = () => {
+          thumb.classList.remove('hidden');
+          fallback.classList.add('hidden');
+        };
+        thumb.onerror = () => {
+          thumb.classList.add('hidden');
+          fallback.classList.remove('hidden');
+        };
+        thumb.classList.add('hidden');
+        fallback.classList.remove('hidden');
+        thumb.src = thumbUrl;
       } else {
-        if (inspectorPanel) inspectorPanel.classList.remove('hidden');
-        if (showMsg) showToast(`Loaded ${info.name} (${src.id}) in Frame Inspector`, 'success');
+        thumb.onload = null;
+        thumb.onerror = null;
+        thumb.removeAttribute('src');
+        thumb.classList.add('hidden');
+        fallback.classList.remove('hidden');
       }
     }
 
-    function selectStoryboardKeyframe(ratio) {
-      const maxF = 12000;
-      const targetFrame = Math.round(maxF * ratio);
-      scrubYtInspectorFrame(targetFrame);
-      showToast(`Jumped inspector playhead to Frame #${targetFrame}`, 'info');
+    async function loadYoutubeVideo() {
+      const input = document.getElementById('ytUrlInput');
+      const parsed = parseVideoSource(input.value);
+      if (!parsed) {
+        showToast(t('toastInvalidYt'), 'warn');
+        return;
+      }
+
+      appState.loadedVideo = parsed;
+      appState.detectedVideoId = parsed.id;
+      appState.ytVideoDuration = null;
+      appState.ytPlayheadSeconds = 0;
+      appState.ytEmbedVisible = false;
+
+      // Hide embed
+      const embedC = document.getElementById('ytEmbedContainer');
+      const embedIframe = document.getElementById('ytEmbedIframe');
+      if (embedC) embedC.classList.add('hidden');
+      if (embedIframe) embedIframe.src = '';
+      const embedBtnText = document.getElementById('ytEmbedBtnText');
+      if (embedBtnText) embedBtnText.textContent = t('embedTry');
+
+      // Show panel
+      document.getElementById('ytVideoPanel').classList.remove('hidden');
+      document.getElementById('ytEmptyState').classList.add('hidden');
+      updateWatchButtonLabel();
+
+      const titleEl = document.getElementById('ytVideoTitle');
+      const authorEl = document.getElementById('ytVideoAuthor');
+      const durEl = document.getElementById('ytVideoDuration');
+
+      if (parsed.platform === 'youtube') {
+        setPreviewThumbnail(`https://i.ytimg.com/vi/${parsed.id}/hqdefault.jpg`, 'YOUTUBE');
+        if (titleEl) titleEl.textContent = t('loadingText');
+        if (authorEl) authorEl.textContent = t('vidLabel', { vid: parsed.id });
+        if (durEl) durEl.textContent = '';
+
+        try {
+          const res = await fetch(`https://noembed.com/embed?url=https://www.youtube.com/watch?v=${encodeURIComponent(parsed.id)}`);
+          if (res.ok) {
+            const data = await res.json();
+            if (titleEl) titleEl.textContent = data.title || t('ytTitleFallback', { vid: parsed.id });
+            if (authorEl) authorEl.textContent = data.author_name ? t('byAuthor', { author: data.author_name }) : t('vidLabel', { vid: parsed.id });
+            const dur = parseFloat(data.duration);
+            if (!isNaN(dur) && dur > 0) {
+              appState.ytVideoDuration = dur;
+              if (durEl) durEl.textContent = t('durLabel', { dur: formatDurationShort(dur), sec: Math.floor(dur) });
+            } else {
+              if (durEl) durEl.textContent = t('durUnknown');
+            }
+          } else {
+            if (titleEl) titleEl.textContent = t('ytTitleFallback', { vid: parsed.id });
+            if (durEl) durEl.textContent = t('durUnknown');
+          }
+        } catch (e) {
+          if (titleEl) titleEl.textContent = t('ytTitleFallback', { vid: parsed.id });
+          if (authorEl) authorEl.textContent = t('vidOffline', { vid: parsed.id });
+          if (durEl) durEl.textContent = t('durUnknown');
+        }
+      } else if (parsed.platform === 'drive') {
+        setPreviewThumbnail(`https://drive.google.com/thumbnail?id=${encodeURIComponent(parsed.id)}&sz=w320`, 'GOOGLE DRIVE');
+        if (titleEl) titleEl.textContent = t('driveTitleFallback');
+        if (authorEl) authorEl.textContent = t('driveLabel', { vid: parsed.id });
+        if (durEl) durEl.textContent = t('durUnknown');
+      } else if (parsed.platform === 'bilibili') {
+        setPreviewThumbnail(null, 'BILIBILI');
+        if (titleEl) titleEl.textContent = t('biliTitleFallback', { vid: parsed.id });
+        if (authorEl) authorEl.textContent = t('biliLabel', { vid: parsed.id, page: parsed.page || 1 });
+        if (durEl) durEl.textContent = t('durUnknown');
+      } else if (parsed.platform === 'twitch') {
+        const isClip = parsed.twitchType === 'clip';
+        setPreviewThumbnail(null, isClip ? 'TWITCH CLIP' : 'TWITCH VOD');
+        if (titleEl) titleEl.textContent = isClip ? t('twitchClipFallback', { vid: parsed.id }) : t('twitchVodFallback', { vid: parsed.id });
+        if (authorEl) authorEl.textContent = isClip ? t('twitchClipLabel', { vid: parsed.id }) : t('twitchVodLabel', { vid: parsed.id });
+        if (durEl) durEl.textContent = t('durUnknown');
+      }
+
+      scrubYtToSeconds(0, false);
+      updateYtScrubberRange();
+      showToast(t('toastLoadedYt', { platform: getPlatformDisplayName(parsed.platform), vid: parsed.id }), 'success');
+    }
+
+    function updateYtScrubberRange() {
+      const fps = getValidFps();
+      const duration = appState.ytVideoDuration;
+      const maxSec = duration || 600;
+      const maxFrame = Math.floor(maxSec * fps);
+      const scrubber = document.getElementById('ytInspectorScrubber');
+      if (scrubber) scrubber.max = String(maxFrame);
+
+      const label = document.getElementById('ytScrubberMaxLabel');
+      if (label) {
+        if (duration) label.textContent = t('scrubberMax', { sec: duration.toFixed(1), frame: maxFrame });
+        else label.textContent = t('scrubberMaxEst', { sec: maxSec, frame: maxFrame });
+      }
+    }
+
+    function scrubYtToSeconds(sec, syncEmbed = true) {
+      const maxSec = appState.ytVideoDuration || 600;
+      appState.ytPlayheadSeconds = Math.max(0, Math.min(maxSec, sec));
+      updateYtPlayheadDisplay();
+      if (syncEmbed) {
+        seekYtEmbed(appState.ytPlayheadSeconds, true);
+      }
     }
 
     function scrubYtInspectorFrame(frameVal) {
       const fps = getValidFps();
-      const f = Math.max(0, Math.min(12000, parseInt(frameVal, 10) || 0));
-      appState.ytInspectorFrame = f;
-      const sec = f / fps;
-      const readout = document.getElementById('ytInspectorTimeReadout');
-      const scrubber = document.getElementById('ytInspectorScrubber');
-      if (readout) readout.textContent = `Playhead: ${sec.toFixed(3)}s (Frame #${f})`;
-      if (scrubber) scrubber.value = String(f);
+      scrubYtToSeconds(parseInt(frameVal, 10) / fps, true);
     }
 
-    function stepYtInspectorFrame(delta) {
-      scrubYtInspectorFrame(appState.ytInspectorFrame + delta);
+    function stepYtInspectorFrame(deltaFrames) {
+      const fps = getValidFps();
+      scrubYtToSeconds(appState.ytPlayheadSeconds + deltaFrames / fps, true);
+    }
+
+    function updateYtPlayheadDisplay() {
+      const fps = getValidFps();
+      const sec = appState.ytPlayheadSeconds;
+      const frame = Math.round(sec * fps);
+
+      const readout = document.getElementById('ytInspectorTimeReadout');
+      if (readout) readout.textContent = t('playheadLabel', { sec: sec.toFixed(3), frame });
+      const scrubber = document.getElementById('ytInspectorScrubber');
+      if (scrubber) scrubber.value = String(frame);
+      const inlineFrame = document.getElementById('ytPlayheadFrameInline');
+      if (inlineFrame) inlineFrame.textContent = `#${frame}`;
     }
 
     function captureYtInspectorToEndpoint(targetId) {
       const fps = getValidFps();
-      const sec = appState.ytInspectorFrame / fps;
+      const frame = Math.round(appState.ytPlayheadSeconds * fps);
+      const alignedSec = frame / fps;
       const el = document.getElementById(targetId);
       if (el) {
-        el.value = formatCleanSeconds(sec);
+        el.value = formatCleanSeconds(alignedSec);
         parseForTime({ target: el, type: 'change' });
-        showToast(`Set ${targetId === 'startobj' ? 'Start' : 'End'} to Frame #${appState.ytInspectorFrame} (${sec.toFixed(3)}s)`, 'success');
+        showToast(t('toastSetYtEndpoint', {
+          target: targetId === 'startobj' ? t('startWord') : t('endWord'),
+          frame,
+          sec: alignedSec.toFixed(3)
+        }), 'success');
       }
     }
 
     function openYoutubeAtPlayhead() {
-      const fps = getValidFps();
-      const sec = Math.floor(appState.ytInspectorFrame / fps);
-      const info = getVideoPlatformInfo(appState.videoSource);
-      window.open(info.getPopoutUrl(sec), '_blank', 'noopener');
+      const sec = Math.floor(appState.ytPlayheadSeconds);
+      const video = appState.loadedVideo || { platform: 'youtube', id: appState.detectedVideoId || 'dQw4w9WgXcQ' };
+      let url = '';
+      if (video.platform === 'drive') {
+        url = `https://drive.google.com/file/d/${encodeURIComponent(video.id)}/view?t=${sec}`;
+      } else if (video.platform === 'bilibili') {
+        const pagePart = video.page && video.page > 1 ? `&p=${video.page}` : '';
+        url = `https://www.bilibili.com/video/${encodeURIComponent(video.id)}?t=${sec}${pagePart}`;
+      } else if (video.platform === 'twitch') {
+        if (video.twitchType === 'clip') {
+          url = `https://clips.twitch.tv/${encodeURIComponent(video.id)}`;
+        } else {
+          url = `https://www.twitch.tv/videos/${encodeURIComponent(video.id)}?t=${formatTwitchTime(sec)}`;
+        }
+      } else {
+        url = `https://www.youtube.com/watch?v=${encodeURIComponent(video.id)}&t=${sec}s`;
+      }
+      window.open(url, '_blank', 'noopener');
     }
 
+    function toggleYtEmbed() {
+      const container = document.getElementById('ytEmbedContainer');
+      const iframe = document.getElementById('ytEmbedIframe');
+      const btnText = document.getElementById('ytEmbedBtnText');
+      const video = appState.loadedVideo || { platform: 'youtube', id: appState.detectedVideoId || 'dQw4w9WgXcQ' };
+
+      if (appState.ytEmbedVisible) {
+        container.classList.add('hidden');
+        iframe.src = '';
+        if (btnText) btnText.textContent = t('embedTry');
+        appState.ytEmbedVisible = false;
+        return;
+      }
+
+      appState.ytEmbedVisible = true;
+      iframe.onload = () => {
+        if (video.platform === 'youtube' && appState.ytPlayheadSeconds > 0) {
+          seekYtEmbed(appState.ytPlayheadSeconds, true);
+        }
+      };
+      iframe.src = buildVideoEmbedUrl(video, appState.ytPlayheadSeconds);
+      container.classList.remove('hidden');
+      if (btnText) btnText.textContent = t('embedHide');
+    }
+
+    // =========================================================================
+    // Local File Video Loader
+    // =========================================================================
     function loadLocalVideoFile(event) {
       const file = event.target && event.target.files ? event.target.files[0] : null;
       if (!file) return;
-      const html5Video = document.getElementById('html5VideoPlayer');
-      const modeSelect = document.getElementById('ytPlayerModeSelect');
-      if (html5Video) {
-        const fileUrl = URL.createObjectURL(file);
-        html5Video.src = fileUrl;
-        if (modeSelect) modeSelect.value = 'html5';
-        switchYtPlayerSubMode('html5', false);
-        showToast(`Loaded local video "${file.name}" for native frame stepping`, 'success');
-      }
+      const video = document.getElementById('html5VideoPlayer');
+      const panel = document.getElementById('html5VideoPanel');
+      if (!video || !panel) return;
+
+      const fileUrl = URL.createObjectURL(file);
+      video.src = fileUrl;
+      panel.classList.remove('hidden');
+      showToast(t('toastLoadedLocal', { name: file.name }), 'success');
+      updateHtml5Readout();
     }
 
     function stepHtml5VideoFrame(deltaFrames) {
-      const html5Video = document.getElementById('html5VideoPlayer');
-      if (!html5Video) return;
-      html5Video.pause();
+      const video = document.getElementById('html5VideoPlayer');
+      if (!video) return;
+      video.pause();
       const fps = getValidFps();
-      const nextTime = Math.max(0, (html5Video.currentTime || 0) + (deltaFrames / fps));
-      html5Video.currentTime = nextTime;
+      video.currentTime = Math.max(0, (video.currentTime || 0) + (deltaFrames / fps));
       updateHtml5Readout();
     }
 
     function updateHtml5Readout() {
-      const html5Video = document.getElementById('html5VideoPlayer');
+      const video = document.getElementById('html5VideoPlayer');
       const readout = document.getElementById('html5TimeReadout');
-      if (!html5Video || !readout) return;
+      if (!video || !readout) return;
       const fps = getValidFps();
-      const cur = html5Video.currentTime || 0;
+      const cur = video.currentTime || 0;
       const f = Math.round(cur * fps);
-      readout.textContent = `HTML5 Video: ${cur.toFixed(3)}s (Frame #${f})`;
+      readout.textContent = appState.lang === 'zh'
+        ? `${cur.toFixed(3)}s (第 #${f} 帧)`
+        : `${cur.toFixed(3)}s (Frame #${f})`;
     }
 
     function captureHtml5VideoToEndpoint(targetId) {
-      const html5Video = document.getElementById('html5VideoPlayer');
+      const video = document.getElementById('html5VideoPlayer');
       const el = document.getElementById(targetId);
-      if (!html5Video || !el) return;
-      const sec = alignTimeToFrame(html5Video.currentTime || 0, getValidFps());
+      if (!video || !el) return;
+      const sec = alignTimeToFrame(video.currentTime || 0, getValidFps());
       el.value = formatCleanSeconds(sec);
       parseForTime({ target: el, type: 'change' });
-      showToast(`Captured HTML5 Video timestamp (${sec.toFixed(3)}s) to ${targetId === 'startobj' ? 'Start' : 'End'}`, 'success');
+      showToast(t('toastCapturedHtml5', {
+        sec: sec.toFixed(3),
+        target: targetId === 'startobj' ? t('startWord') : t('endWord')
+      }), 'success');
     }
 
     // =========================================================================
-    // Guide Modal & Keyboard Shortcuts
+    // Modal & Keyboard Shortcuts
     // =========================================================================
     function toggleGuideModal() {
       const modal = document.getElementById('guideModal');
       if (!modal) return;
       modal.classList.toggle('hidden');
+      if (window.lucide) window.lucide.createIcons();
     }
 
     window.addEventListener('keydown', (e) => {
       const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
       if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
 
-      if (e.key === ',') {
-        e.preventDefault();
-        stepSimFrame(-1);
-      } else if (e.key === '.') {
-        e.preventDefault();
-        stepSimFrame(1);
-      } else if (e.key === '[') {
-        e.preventDefault();
-        captureSimToEndpoint('startobj');
-      } else if (e.key === ']') {
-        e.preventDefault();
-        captureSimToEndpoint('endobj');
-      } else if (e.key === ' ') {
-        e.preventDefault();
-        toggleSimPlayback();
-      } else if (e.key === 'Enter') {
+      const ytVisible = !document.getElementById('ytWorkbenchContainer')?.classList.contains('hidden');
+
+      if (ytVisible) {
+        if (e.key === ',') { e.preventDefault(); stepYtInspectorFrame(-1); return; }
+        if (e.key === '.') { e.preventDefault(); stepYtInspectorFrame(1); return; }
+        if (e.key === '[') { e.preventDefault(); captureYtInspectorToEndpoint('startobj'); return; }
+        if (e.key === ']') { e.preventDefault(); captureYtInspectorToEndpoint('endobj'); return; }
+      } else {
+        if (e.key === ',') { e.preventDefault(); stepSimFrame(-1); return; }
+        if (e.key === '.') { e.preventDefault(); stepSimFrame(1); return; }
+        if (e.key === '[') { e.preventDefault(); captureSimToEndpoint('startobj'); return; }
+        if (e.key === ']') { e.preventDefault(); captureSimToEndpoint('endobj'); return; }
+        if (e.key === ' ') { e.preventDefault(); toggleSimPlayback(); return; }
+      }
+
+      if (e.key === 'Enter') {
         e.preventDefault();
         compute(true);
       }
     });
 
     // =========================================================================
-    // Initialize App on Load
+    // Init
     // =========================================================================
     window.addEventListener('DOMContentLoaded', () => {
       loadSavedState();
+
+      const langSelect = document.getElementById('langSelect');
+      if (langSelect) langSelect.value = appState.lang;
+      applyTranslations();
 
       const startEl = document.getElementById('startobj');
       const endEl = document.getElementById('endobj');
@@ -2485,7 +2721,9 @@
       renderHistoryList();
       updateQuickFrameConverter();
       renderSimulatorCanvas();
-      updateYoutubeInspectorVideo(appState.videoSource);
+
+      // Auto-load default YouTube video in the loader
+      loadYoutubeVideo();
 
       if (window.lucide && typeof window.lucide.createIcons === 'function') {
         window.lucide.createIcons();
