@@ -1,3 +1,19 @@
+Here is the refined full HTML code. It now supports YouTube, Bilibili, Twitch
+(VODs & Clips), and Google Drive in the Video Loader, so the scroller, -10f /
+-1f / +1f / +10f buttons, Set Start / Set End, and embedded player work across
+all of them:
+
+  - YouTube: Seeks instantly (including fractional seconds) via postMessage
+    (enablejsapi=1).
+  - Bilibili & Twitch VODs: Seeks the embedded player by updating its t= / time=
+    parameter (immediate on -10f/-1f/+1f/+10f clicks, debounced while dragging
+    the scroller).
+  - Google Drive: Enables the scroller, -10f/-1f/+1f/+10f buttons, and Set
+    Start/Set End for timing, with a note that Google Drive's /preview iframe
+    blocks external seek commands.
+  - Simplified Chinese (简体中文): Full UI and dynamic message translation via the
+    header language selector.
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -5,7 +21,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="referrer" content="strict-origin-when-cross-origin" />
-  <meta name="version" content="2.3.0" />
+  <meta name="version" content="2.4.0" />
   <title>YouTube Frame &amp; Speedrun Interval Timer</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
@@ -68,7 +84,7 @@
         <div>
           <div class="flex items-center gap-2.5">
             <h1 id="youtube-interval-timer" data-i18n="headerTitle" class="text-lg sm:text-xl font-bold text-[#1f1e1b]">YouTube Interval Timer</h1>
-            <span data-i18n="headerBadge" class="text-xs px-2 py-0.5 rounded bg-[#ebe7dd] text-[#4a473f] border border-[#cfc9bb] font-semibold">v2.3 Retime Desk</span>
+            <span data-i18n="headerBadge" class="text-xs px-2 py-0.5 rounded bg-[#ebe7dd] text-[#4a473f] border border-[#cfc9bb] font-semibold">v2.4 Retime Desk</span>
           </div>
           <p data-i18n="headerSubtitle" class="text-xs text-[#5c584f]">Frame-accurate speedrun retiming, debug JSON parser, load remover &amp; verification workbench</p>
         </div>
@@ -417,7 +433,7 @@
                 <span data-i18n="sandboxTitle">Frame-Stepping Sandbox</span>
               </h2>
               <p data-i18n="sandboxDesc" class="text-xs text-[#5c584f] mt-0.5">
-                Practice frame-accurate capture on the 60fps simulator, or load YouTube / Google Drive / Bilibili / Twitch / local video.
+                Practice frame-accurate capture on the 60fps simulator, or load YouTube / Bilibili / Twitch / Google Drive / local files.
               </p>
             </div>
             <div class="inline-flex rounded bg-[#ebe7dd] p-0.5 border border-[#cfc9bb]">
@@ -480,17 +496,17 @@
             <!-- Source tabs -->
             <div class="flex border-b border-[#e5e0d5]">
               <button id="ytTabYoutube" onclick="switchYtSource('youtube')" class="yt-tab active">
-                <i data-lucide="globe" class="w-3.5 h-3.5 inline -mt-0.5 mr-1"></i><span data-i18n="tabYoutube">Video URL</span>
+                <i data-lucide="link" class="w-3.5 h-3.5 inline -mt-0.5 mr-1"></i><span data-i18n="tabVideoUrl">Video URL</span>
               </button>
               <button id="ytTabLocal" onclick="switchYtSource('local')" class="yt-tab">
                 <i data-lucide="folder-open" class="w-3.5 h-3.5 inline -mt-0.5 mr-1"></i><span data-i18n="tabLocal">Local File</span>
               </button>
             </div>
 
-            <!-- ONLINE VIDEO SOURCE (YouTube / Google Drive / Bilibili / Twitch) -->
+            <!-- VIDEO URL SOURCE (YouTube / Bilibili / Twitch / Google Drive) -->
             <div id="ytSourceYoutube" class="space-y-3">
               <div class="flex flex-wrap gap-2">
-                <input type="text" id="ytUrlInput" value="dQw4w9WgXcQ" data-i18n-placeholder="ytUrlPlaceholder" placeholder="Paste YouTube, Google Drive, Bilibili, or Twitch URL / ID"
+                <input type="text" id="ytUrlInput" value="dQw4w9WgXcQ" data-i18n-placeholder="ytUrlPlaceholder" placeholder="YouTube, Bilibili (BV/av), Twitch, or Google Drive URL"
                   onkeydown="if(event.key==='Enter'){event.preventDefault();loadYoutubeVideo();}"
                   class="flex-1 min-w-[180px] px-3 py-2 rounded bg-[#faf8f3] border border-[#c8c2b4] text-sm font-medium text-[#1f1e1b] focus:outline-none focus:border-[#1d4f91]" />
                 <button type="button" onclick="loadYoutubeVideo()" data-i18n="btnLoadVideo" class="px-4 py-2 rounded bg-[#b33122] hover:bg-[#8f2518] text-white text-xs font-bold transition">
@@ -498,23 +514,18 @@
                 </button>
               </div>
 
-              <div class="flex flex-wrap items-center gap-1.5 text-[11px] text-[#6e6a5f]">
-                <span data-i18n="supportedPlatformsLabel" class="font-semibold text-[#4a473f]">Supported:</span>
-                <span class="px-1.5 py-0.5 rounded bg-[#fbeae8] text-[#b33122] border border-[#e6bfb9] font-semibold">YouTube</span>
-                <span class="px-1.5 py-0.5 rounded bg-[#e8f4ed] text-[#1e6b43] border border-[#b7dfc6] font-semibold">Google Drive</span>
-                <span class="px-1.5 py-0.5 rounded bg-[#e8f1fa] text-[#1d4f91] border border-[#b7cfe6] font-semibold">Bilibili</span>
-                <span class="px-1.5 py-0.5 rounded bg-[#f1ebfa] text-[#6441a5] border border-[#d2c2ec] font-semibold">Twitch</span>
-              </div>
-
               <!-- Loaded video panel -->
               <div id="ytVideoPanel" class="hidden space-y-3">
                 <div class="flex gap-3 bg-[#faf8f3] border border-[#d6d1c4] rounded-lg p-3">
-                  <div class="w-28 h-16 rounded border border-[#c8c2b4] shrink-0 bg-[#ebe7dd] overflow-hidden relative flex items-center justify-center">
-                    <img id="ytPreviewThumb" class="w-full h-full object-cover" alt="" />
-                    <span id="ytThumbFallback" class="hidden text-[11px] font-bold text-[#4a473f] uppercase tracking-wide px-2 text-center"></span>
+                  <img id="ytPreviewThumb" class="w-28 h-16 object-cover rounded border border-[#c8c2b4] shrink-0 bg-[#ebe7dd]" alt="" />
+                  <div id="ytProviderThumbFallback" class="hidden w-28 h-16 rounded border border-[#c8c2b4] shrink-0 bg-[#ebe7dd] flex items-center justify-center text-xs font-bold text-[#4a473f]">
+                    VIDEO
                   </div>
                   <div class="flex-1 min-w-0">
-                    <div id="ytVideoTitle" class="text-sm font-bold text-[#1f1e1b] truncate">Loading…</div>
+                    <div class="flex items-center gap-1.5">
+                      <span id="ytProviderBadge" class="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-[#ebe7dd] text-[#3d3a33] border border-[#cfc9bb] shrink-0">YouTube</span>
+                      <div id="ytVideoTitle" class="text-sm font-bold text-[#1f1e1b] truncate">Loading…</div>
+                    </div>
                     <div id="ytVideoAuthor" class="text-xs text-[#5c584f] truncate mt-0.5"></div>
                     <div id="ytVideoDuration" class="text-xs font-semibold text-[#1d4f91] mt-1"></div>
                   </div>
@@ -523,7 +534,7 @@
                 <div class="flex flex-wrap gap-2">
                   <button type="button" onclick="openYoutubeAtPlayhead()" class="inline-flex items-center gap-1.5 px-3 py-2 rounded bg-[#b33122] hover:bg-[#8f2518] text-white text-xs font-bold transition">
                     <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-                    <span><span id="watchPlatformText" data-i18n="btnWatchYt">Watch on YouTube @</span> <span id="ytPlayheadFrameInline">#0</span> ↗</span>
+                    <span><span id="ytWatchProviderLabel">Watch on YouTube @</span> <span id="ytPlayheadFrameInline">#0</span> ↗</span>
                   </button>
                   <button type="button" onclick="toggleYtEmbed()" class="inline-flex items-center gap-1.5 px-3 py-2 rounded bg-[#edeae2] hover:bg-[#e0dcd1] text-[#2c2a26] border border-[#c8c2b4] text-xs font-semibold transition">
                     <i data-lucide="play-circle" class="w-3.5 h-3.5"></i>
@@ -537,9 +548,9 @@
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       allowfullscreen></iframe>
                   </div>
-                  <p data-i18n-html="embedFallbackNote" class="text-[11px] text-[#6e6a5f] leading-snug">
+                  <p id="embedFallbackNoteEl" data-i18n-html="embedFallbackNote" class="text-[11px] text-[#6e6a5f] leading-snug">
                     <i data-lucide="info" class="w-3 h-3 inline -mt-0.5 text-[#1d4f91]"></i>
-                    If the embed shows an error, use the <strong>Watch / Open</strong> button above — embeds (especially YouTube &amp; Twitch) may fail on <code class="text-[#b33122]">file://</code> and sandboxed pages.
+                    If the embed shows an error, use the <strong>Watch</strong> button above — embeds can fail on <code class="text-[#b33122]">file://</code> or restricted pages.
                   </p>
                 </div>
 
@@ -565,7 +576,7 @@
               </div>
 
               <div id="ytEmptyState" data-i18n-html="ytEmptyState" class="text-center p-6 text-xs text-[#6e6a5f] border border-dashed border-[#c8c2b4] rounded-lg bg-[#faf8f3]">
-                Paste a YouTube, Google Drive, Bilibili, or Twitch URL above and click <strong>Load Video</strong>.
+                Paste a YouTube, Bilibili, Twitch, or Google Drive URL above and click <strong>Load Video</strong>.
               </div>
             </div>
 
@@ -683,9 +694,9 @@
         </div>
 
         <div class="bg-[#faf8f3] border border-[#d6d1c4] rounded-lg p-3.5 space-y-2">
-          <div data-i18n="guideLoaderTitle" class="font-bold text-[#1f1e1b]">About the YouTube Video Loader</div>
+          <div data-i18n="guideLoaderTitle" class="font-bold text-[#1f1e1b]">About the Video Loader (YouTube / Bilibili / Twitch / Google Drive)</div>
           <p data-i18n-html="guideLoaderP1" class="text-xs text-[#5c584f]">
-            The <strong>Video Loader</strong> tab lets you preview a video's title, duration and thumbnails, and step a scrubber through the timeline. Use <strong>Watch on YouTube @ Frame</strong> to jump to the exact time in a real YouTube tab, or try the embedded player in place. Embeds will fail on <code>file://</code> and sandboxed pages — that's expected; the pop-out button always works.
+            The <strong>Video Loader</strong> tab supports YouTube, Bilibili, Twitch (VODs &amp; Clips), and Google Drive URLs. Use the scrubber and <code>-10f</code> / <code>-1f</code> / <code>+1f</code> / <code>+10f</code> buttons to step the playhead and sync the embedded player (YouTube seeks via API; Bilibili &amp; Twitch VODs reload at the target timestamp; Google Drive's preview iframe blocks external seek).
           </p>
           <p data-i18n-html="guideLoaderP2" class="text-xs text-[#5c584f]">
             For frame-accurate stepping, load a <strong>local video file</strong> (mp4/webm) in the <em>Local File</em> tab, or use the <strong>60fps simulator</strong> to practice.
@@ -701,7 +712,7 @@
             <div data-i18n-html="guideKey4"><kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1f1e1b]">Enter</kbd> Re-compute interval time</div>
           </div>
           <p data-i18n-html="guideKeysNote" class="text-[11px] text-[#6e6a5f] pt-1">
-            In Video Loader mode, <kbd>,</kbd>/<kbd>.</kbd> and <kbd>[</kbd>/<kbd>]</kbd> control the YouTube scrubber instead of the simulator.
+            In Video Loader mode, <kbd>,</kbd>/<kbd>.</kbd> and <kbd>[</kbd>/<kbd>]</kbd> control the Video Loader scrubber and embedded player instead of the simulator.
           </p>
         </div>
       </div>
@@ -722,7 +733,7 @@
       en: {
         pageTitle: 'YouTube Frame & Speedrun Interval Timer',
         headerTitle: 'YouTube Interval Timer',
-        headerBadge: 'v2.3 Retime Desk',
+        headerBadge: 'v2.4 Retime Desk',
         headerSubtitle: 'Frame-accurate speedrun retiming, debug JSON parser, load remover & verification workbench',
         btnDemo: 'Load Demo Run',
         btnGuide: 'How to Retime',
@@ -788,28 +799,28 @@
         thDuration: 'Duration',
         thAction: 'Action',
         sandboxTitle: 'Frame-Stepping Sandbox',
-        sandboxDesc: 'Practice frame-accurate capture on the 60fps simulator, or load YouTube / Google Drive / Bilibili / Twitch / local video.',
+        sandboxDesc: 'Practice frame-accurate capture on the 60fps simulator, or load YouTube / Bilibili / Twitch / Google Drive / local files.',
         modeSim: '60fps Sim',
         modeYt: 'Video Loader',
         btnCopySimJson: 'Copy YT Debug JSON',
         btnSetStartBracket: 'Set Start [',
         btnSetEndBracket: 'Set End ]',
-        tabYoutube: 'Video URL',
+        tabVideoUrl: 'Video URL',
         tabLocal: 'Local File',
-        ytUrlPlaceholder: 'Paste YouTube, Google Drive, Bilibili, or Twitch URL / ID',
-        supportedPlatformsLabel: 'Supported:',
+        ytUrlPlaceholder: 'YouTube, Bilibili (BV/av), Twitch, or Google Drive URL',
         btnLoadVideo: 'Load Video',
-        btnWatchYt: 'Watch on YouTube @',
-        btnWatchDrive: 'Open in Google Drive @',
-        btnWatchBilibili: 'Watch on Bilibili @',
-        btnWatchTwitch: 'Watch on Twitch @',
+        watchYoutube: 'Watch on YouTube @',
+        watchBilibili: 'Watch on Bilibili @',
+        watchTwitch: 'Watch on Twitch @',
+        watchGdrive: 'Open in Google Drive @',
         embedTry: 'Try embedded player',
         embedHide: 'Hide embedded player',
-        embedFallbackNote: '<i data-lucide="info" class="w-3 h-3 inline -mt-0.5 text-[#1d4f91]"></i> If the embed shows an error, use the <strong>Watch / Open</strong> button above — embeds (especially YouTube &amp; Twitch) may fail on <code class="text-[#b33122]">file://</code> and sandboxed pages.',
+        embedFallbackNote: '<i data-lucide="info" class="w-3 h-3 inline -mt-0.5 text-[#1d4f91]"></i> If the embed shows an error, use the <strong>Watch</strong> button above — embeds can fail on <code class="text-[#b33122]">file://</code> or restricted pages.',
+        embedGdriveNote: '<i data-lucide="info" class="w-3 h-3 inline -mt-0.5 text-[#8c5319]"></i> Google Drive\'s <code>/preview</code> iframe blocks external seek commands. The scroller and <code>-1f</code>/<code>+1f</code> buttons still work for timing, or download for Local File stepping.',
         btnSetStart: 'Set Start',
         btnSetEnd: 'Set End',
         ytScrubberStart: '0s (Frame #0)',
-        ytEmptyState: 'Paste a YouTube, Google Drive, Bilibili, or Twitch URL above and click <strong>Load Video</strong>.',
+        ytEmptyState: 'Paste a YouTube, Bilibili, Twitch, or Google Drive URL above and click <strong>Load Video</strong>.',
         localDropTitle: 'Choose a local video file',
         localDropDesc: '.mp4, .webm, .mov — steps frame-by-frame using your FPS setting',
         deltaTitle: 'PB / WR Delta & Frame Converter',
@@ -824,15 +835,15 @@
         guideStep1Desc: 'Right-click the YouTube player and select <strong>“Stats for nerds”</strong>. Look at the 3rd line (<em>Current / Optimal Res</em>) and enter the two digits after the <code>@</code> symbol (e.g. <code>1920x1080@60</code> → <code>60</code> FPS).',
         guideStep2Title: 'Step 2: Copy Frame Debug Info',
         guideStep2Desc: 'Pause the video and use the <code>,</code> and <code>.</code> keys to step to the exact start frame. Right-click the video → <strong>“Copy debug info”</strong> and paste it into <em>Starting frame</em>. Repeat for <em>Ending frame</em>.',
-        guideLoaderTitle: 'About the YouTube Video Loader',
-        guideLoaderP1: 'The <strong>Video Loader</strong> tab lets you preview a video\'s title, duration and thumbnails, and step a scrubber through the timeline. Use <strong>Watch on YouTube @ Frame</strong> to jump to the exact time in a real YouTube tab, or try the embedded player in place. Embeds will fail on <code>file://</code> and sandboxed pages — that\'s expected; the pop-out button always works.',
+        guideLoaderTitle: 'About the Video Loader (YouTube / Bilibili / Twitch / Google Drive)',
+        guideLoaderP1: 'The <strong>Video Loader</strong> tab supports YouTube, Bilibili, Twitch (VODs &amp; Clips), and Google Drive URLs. Use the scrubber and <code>-10f</code> / <code>-1f</code> / <code>+1f</code> / <code>+10f</code> buttons to step the playhead and sync the embedded player (YouTube seeks via API; Bilibili &amp; Twitch VODs reload at the target timestamp; Google Drive\'s preview iframe blocks external seek).',
         guideLoaderP2: 'For frame-accurate stepping, load a <strong>local video file</strong> (mp4/webm) in the <em>Local File</em> tab, or use the <strong>60fps simulator</strong> to practice.',
         guideKeysTitle: 'Keyboard Shortcuts (When not typing in an input)',
         guideKey1: '<kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1d4f91]">,</kbd> / <kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1d4f91]">.</kbd> Step -1f / +1f',
         guideKey2: '<kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1e6b43]">[</kbd> / <kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#b33122]">]</kbd> Capture to Start / End',
         guideKey3: '<kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1f1e1b]">Space</kbd> Play / Pause simulator',
         guideKey4: '<kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1f1e1b]">Enter</kbd> Re-compute interval time',
-        guideKeysNote: 'In Video Loader mode, <kbd>,</kbd>/<kbd>.</kbd> and <kbd>[</kbd>/<kbd>]</kbd> control the YouTube scrubber instead of the simulator.',
+        guideKeysNote: 'In Video Loader mode, <kbd>,</kbd>/<kbd>.</kbd> and <kbd>[</kbd>/<kbd>]</kbd> control the Video Loader scrubber and embedded player instead of the simulator.',
         btnGotIt: 'Got it',
         // Dynamic strings
         framePrefix: 'Frame #',
@@ -850,17 +861,13 @@
         scrubberMaxEst: '~{sec}s estimate (Frame #{frame})',
         loadingText: 'Loading…',
         ytTitleFallback: 'YouTube Video {vid}',
-        driveTitleFallback: 'Google Drive Video',
-        biliTitleFallback: 'Bilibili Video {vid}',
-        twitchVodFallback: 'Twitch VOD {vid}',
-        twitchClipFallback: 'Twitch Clip {vid}',
+        biliTitle: 'Bilibili Video {vid}',
+        twitchVodTitle: 'Twitch VOD #{vid}',
+        twitchClipTitle: 'Twitch Clip {vid}',
+        gdriveTitle: 'Google Drive Video',
         byAuthor: 'by {author}',
-        vidLabel: 'Video ID: {vid}',
-        driveLabel: 'Google Drive File ID: {vid}',
-        biliLabel: 'Bilibili ID: {vid} · P{page}',
-        twitchVodLabel: 'Twitch VOD ID: {vid}',
-        twitchClipLabel: 'Twitch Clip: {vid}',
-        vidOffline: 'Video ID: {vid} · metadata offline',
+        vidLabel: 'ID: {vid}',
+        vidOffline: 'ID: {vid} · metadata offline',
         splitsEmpty: 'No segments or load cuts added yet. Click <strong>"+ Split"</strong> or <strong>"- Load"</strong> above to add intervals.',
         segBadge: 'Segment (+)',
         loadBadge: 'Load (-)',
@@ -895,8 +902,8 @@
         toastExportedCsv: 'Exported session history to CSV',
         toastCapturedSim: 'Captured Frame #{frame} ({sec}s) to {target}',
         toastCopiedSimJson: 'Copied simulated YouTube debug JSON (cmt: {sec}s)',
-        toastInvalidYt: 'Please enter a valid YouTube, Google Drive, Bilibili, or Twitch URL / ID',
-        toastLoadedYt: 'Loaded {platform} video ({vid})',
+        toastInvalidUrl: 'Please enter a valid YouTube, Bilibili, Twitch, or Google Drive URL',
+        toastLoadedVideo: 'Loaded {provider} video ({vid})',
         toastSetYtEndpoint: 'Set {target} to Frame #{frame} ({sec}s)',
         toastLoadedLocal: 'Loaded "{name}" for native frame stepping',
         toastCapturedHtml5: 'Captured HTML5 timestamp ({sec}s) to {target}',
@@ -906,7 +913,7 @@
       zh: {
         pageTitle: 'YouTube 帧数与速通区间计时器',
         headerTitle: 'YouTube 区间计时器',
-        headerBadge: 'v2.3 重计时工作台',
+        headerBadge: 'v2.4 重计时工作台',
         headerSubtitle: '精确到帧的速通重计时、调试 JSON 解析器、读条扣除器与审核工作台',
         btnDemo: '加载示例',
         btnGuide: '计时指南',
@@ -972,28 +979,28 @@
         thDuration: '时长',
         thAction: '操作',
         sandboxTitle: '逐帧步进沙盒',
-        sandboxDesc: '在 60fps 模拟器中练习精确抓帧，或加载 YouTube / Google Drive / Bilibili / Twitch / 本地视频。',
+        sandboxDesc: '在 60fps 模拟器中练习精确抓帧，或加载 YouTube / B站 / Twitch / Google 云端硬盘 / 本地视频。',
         modeSim: '60fps 模拟器',
         modeYt: '视频加载器',
         btnCopySimJson: '复制 YT 调试 JSON',
         btnSetStartBracket: '设为起点 [',
         btnSetEndBracket: '设为终点 ]',
-        tabYoutube: '在线视频链接',
+        tabVideoUrl: '视频链接',
         tabLocal: '本地视频',
-        ytUrlPlaceholder: '粘贴 YouTube、Google Drive、Bilibili 或 Twitch 链接 / ID',
-        supportedPlatformsLabel: '支持平台：',
+        ytUrlPlaceholder: '粘贴 YouTube、B站 (BV/av)、Twitch 或 Google 云端硬盘链接',
         btnLoadVideo: '加载视频',
-        btnWatchYt: '在 YouTube 观看 @',
-        btnWatchDrive: '在 Google Drive 打开 @',
-        btnWatchBilibili: '在 Bilibili 观看 @',
-        btnWatchTwitch: '在 Twitch 观看 @',
+        watchYoutube: '在 YouTube 观看 @',
+        watchBilibili: '在 Bilibili 观看 @',
+        watchTwitch: '在 Twitch 观看 @',
+        watchGdrive: '在 Google 云端硬盘打开 @',
         embedTry: '尝试内嵌播放器',
         embedHide: '隐藏内嵌播放器',
-        embedFallbackNote: '<i data-lucide="info" class="w-3 h-3 inline -mt-0.5 text-[#1d4f91]"></i> 如果内嵌播放器提示错误，请使用上方的<strong>观看 / 打开</strong>按钮 — 在 <code class="text-[#b33122]">file://</code> 或沙盒页面中内嵌播放器（尤其是 YouTube 与 Twitch）通常会受限。',
+        embedFallbackNote: '<i data-lucide="info" class="w-3 h-3 inline -mt-0.5 text-[#1d4f91]"></i> 如果内嵌播放器提示错误，请使用上方的<strong>观看</strong>按钮 — 在 <code class="text-[#b33122]">file://</code> 或受限页面中内嵌播放器可能会失败。',
+        embedGdriveNote: '<i data-lucide="info" class="w-3 h-3 inline -mt-0.5 text-[#8c5319]"></i> Google 云端硬盘的 <code>/preview</code> 播放器禁止外部跳转控制。时间轴滑块和 <code>-1f</code>/<code>+1f</code> 仍可用于计时，或下载后使用本地视频逐帧步进。',
         btnSetStart: '设为起点',
         btnSetEnd: '设为终点',
         ytScrubberStart: '0秒 (第 #0 帧)',
-        ytEmptyState: '在上方粘贴 YouTube、Google Drive、Bilibili 或 Twitch 链接并点击<strong>加载视频</strong>。',
+        ytEmptyState: '在上方粘贴 YouTube、B站、Twitch 或 Google 云端硬盘链接并点击<strong>加载视频</strong>。',
         localDropTitle: '选择本地视频文件',
         localDropDesc: '支持 .mp4, .webm, .mov — 将按当前 FPS 设置逐帧步进',
         deltaTitle: 'PB / WR 差值与帧数换算器',
@@ -1008,15 +1015,15 @@
         guideStep1Desc: '右键点击 YouTube 播放器并选择<strong>“详细统计信息”</strong>。查看第 3 行（<em>Current / Optimal Res</em>），输入 <code>@</code> 符号后的数字（例如 <code>1920x1080@60</code> → <code>60</code> FPS）。',
         guideStep2Title: '步骤 2：复制帧调试信息',
         guideStep2Desc: '暂停视频并使用 <code>,</code> 和 <code>.</code> 键逐帧定位到起始帧。右键视频 → <strong>“复制调试信息”</strong> 并粘贴到<em>起始帧</em>输入框，再对<em>结束帧</em>重复此操作。',
-        guideLoaderTitle: '关于 YouTube 视频加载器',
-        guideLoaderP1: '<strong>视频加载器</strong>可预览视频标题、时长与缩略图，并通过时间轴滑块微调帧数。使用<strong>在 YouTube 观看 @ 帧</strong>可在新标签页跳转到对应时间点，也可直接展开内嵌播放器并用 <code>-1f</code>/<code>+1f</code>/<code>-10f</code>/<code>+10f</code> 同步跳转播放位置。',
+        guideLoaderTitle: '关于视频加载器（YouTube / B站 / Twitch / Google 云端硬盘）',
+        guideLoaderP1: '<strong>视频加载器</strong>支持 YouTube、B站 (BV/av)、Twitch（录播与剪辑）及 Google 云端硬盘链接。使用时间轴滑块和 <code>-10f</code>/<code>-1f</code>/<code>+1f</code>/<code>+10f</code> 按钮可微调位置并同步内嵌播放器（YouTube 通过 API 实时跳转；B站与 Twitch 录播会按目标时间点重载；Google 云端硬盘预览播放器不支持外部跳转）。',
         guideLoaderP2: '如需离线精确逐帧步进，可在<em>本地视频</em>选项卡加载本地文件（mp4/webm），或使用 <strong>60fps 模拟器</strong>练习。',
         guideKeysTitle: '键盘快捷键（未在输入框内输入时生效）',
         guideKey1: '<kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1d4f91]">,</kbd> / <kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1d4f91]">.</kbd> 后退 / 前进 1 帧',
         guideKey2: '<kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1e6b43]">[</kbd> / <kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#b33122]">]</kbd> 捕获为起点 / 终点',
         guideKey3: '<kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1f1e1b]">Space</kbd> 播放 / 暂停模拟器',
         guideKey4: '<kbd class="px-1.5 py-0.5 bg-white rounded border border-[#c8c2b4] text-[#1f1e1b]">Enter</kbd> 重新计算区间时间',
-        guideKeysNote: '在“视频加载器”模式下，<kbd>,</kbd>/<kbd>.</kbd> 和 <kbd>[</kbd>/<kbd>]</kbd> 将控制 YouTube 时间轴滑块及内嵌播放器。',
+        guideKeysNote: '在“视频加载器”模式下，<kbd>,</kbd>/<kbd>.</kbd> 和 <kbd>[</kbd>/<kbd>]</kbd> 将控制视频加载器滑块及内嵌播放器。',
         btnGotIt: '知道了',
         // Dynamic strings
         framePrefix: '第 #',
@@ -1034,17 +1041,13 @@
         scrubberMaxEst: '约 {sec}s (第 #{frame} 帧)',
         loadingText: '加载中…',
         ytTitleFallback: 'YouTube 视频 {vid}',
-        driveTitleFallback: 'Google Drive 视频',
-        biliTitleFallback: 'Bilibili 视频 {vid}',
-        twitchVodFallback: 'Twitch 录像 {vid}',
-        twitchClipFallback: 'Twitch 剪辑 {vid}',
+        biliTitle: 'B站视频 {vid}',
+        twitchVodTitle: 'Twitch 录播 #{vid}',
+        twitchClipTitle: 'Twitch 剪辑 {vid}',
+        gdriveTitle: 'Google 云端硬盘视频',
         byAuthor: '作者：{author}',
-        vidLabel: '视频 ID: {vid}',
-        driveLabel: 'Google Drive 文件 ID: {vid}',
-        biliLabel: 'Bilibili ID: {vid} · P{page}',
-        twitchVodLabel: 'Twitch 录像 ID: {vid}',
-        twitchClipLabel: 'Twitch 剪辑: {vid}',
-        vidOffline: '视频 ID: {vid} · 元数据离线',
+        vidLabel: 'ID: {vid}',
+        vidOffline: 'ID: {vid} · 元数据离线',
         splitsEmpty: '尚未添加分段或读条扣除。点击上方的 <strong>“+ 分段”</strong> 或 <strong>“- 读条”</strong> 来添加区间。',
         segBadge: '分段 (+)',
         loadBadge: '读条 (-)',
@@ -1079,8 +1082,8 @@
         toastExportedCsv: '已导出会话记录为 CSV',
         toastCapturedSim: '已将第 #{frame} 帧 ({sec}s) 设为{target}',
         toastCopiedSimJson: '已复制模拟 YouTube 调试 JSON (cmt: {sec}s)',
-        toastInvalidYt: '请输入有效的 YouTube、Google Drive、Bilibili 或 Twitch 链接 / ID',
-        toastLoadedYt: '已加载 {platform} 视频 ({vid})',
+        toastInvalidUrl: '请输入有效的 YouTube、B站、Twitch 或 Google 云端硬盘链接',
+        toastLoadedVideo: '已加载 {provider} 视频 ({vid})',
         toastSetYtEndpoint: '已将{target}设为第 #{frame} 帧 ({sec}s)',
         toastLoadedLocal: '已加载本地视频 “{name}”',
         toastCapturedHtml5: '已将本地视频时间 ({sec}s) 设为{target}',
@@ -1130,7 +1133,7 @@
         badge.textContent = t('detectedVid', { vid: appState.detectedVideoId });
       }
 
-      updateWatchButtonLabel();
+      updateMediaProviderUiText();
 
       const durEl = document.getElementById('ytVideoDuration');
       if (durEl) {
@@ -1171,17 +1174,17 @@
       startSeconds: 4.25,
       endSeconds: 158.916667,
       detectedVideoId: 'dQw4w9WgXcQ',
-      loadedVideo: {
-        platform: 'youtube',
+      media: {
+        provider: 'youtube', // 'youtube' | 'bilibili' | 'twitch-vod' | 'twitch-clip' | 'gdrive'
         id: 'dQw4w9WgXcQ',
         page: 1,
-        biliType: 'bv',
-        twitchType: 'vod'
+        isAv: false
       },
       ytPlayheadSeconds: 0,
       ytVideoDuration: null,
       ytEmbedVisible: false,
       ytSource: 'youtube',
+      embedSeekTimer: null,
       lastComputed: {
         valid: true,
         diffSeconds: 154.666667,
@@ -2236,150 +2239,172 @@
     }
 
     // =========================================================================
-    // Multi-Platform Video Loader (YouTube / Google Drive / Bilibili / Twitch)
+    // Multi-Provider Video Loader (YouTube / Bilibili / Twitch / Google Drive)
     // =========================================================================
-    function extractYoutubeId(urlOrId) {
-      const str = String(urlOrId || '').trim();
-      if (!str) return null;
-      if (/^[a-zA-Z0-9_-]{11}$/.test(str)) return str;
-      const match = str.match(/(?:v=|youtu\.be\/|embed\/|shorts\/|live\/)([a-zA-Z0-9_-]{11})/);
-      return match ? match[1] : null;
-    }
-
-    function parseVideoSource(urlOrId) {
-      const str = String(urlOrId || '').trim();
+    function parseMediaUrl(rawInput) {
+      const str = String(rawInput || '').trim();
       if (!str) return null;
 
-      // 1. Google Drive
-      if (/drive\.google\.com|docs\.google\.com/i.test(str)) {
-        const driveMatch =
-          str.match(/\/file\/d\/([a-zA-Z0-9_-]{10,})/) ||
-          str.match(/[?&]id=([a-zA-Z0-9_-]{10,})/) ||
-          str.match(/\/d\/([a-zA-Z0-9_-]{10,})/);
-        if (driveMatch) {
-          return { platform: 'drive', id: driveMatch[1] };
-        }
+      // 1. Bilibili (URL or BV/av ID)
+      const biliBvMatch = str.match(/(?:bilibili\.com\/video\/|^)(BV[0-9A-Za-z]{8,12})/i);
+      const biliAvMatch = str.match(/(?:bilibili\.com\/video\/|^)av([0-9]+)/i);
+      const pageMatch = str.match(/[?&]p=([0-9]+)/i);
+      const page = pageMatch ? Math.max(1, parseInt(pageMatch[1], 10)) : 1;
+      if (biliBvMatch) {
+        return { provider: 'bilibili', id: biliBvMatch[1], page, isAv: false };
+      }
+      if (biliAvMatch) {
+        return { provider: 'bilibili', id: biliAvMatch[1], page, isAv: true };
       }
 
-      // 2. Bilibili (URL or bare BV / av ID)
-      if (/bilibili\.com|b23\.tv/i.test(str) || /^BV[a-zA-Z0-9]{10}$/i.test(str) || /^av\d+$/i.test(str)) {
-        let page = 1;
-        const pageMatch = str.match(/[?&]p=(\d+)/i);
-        if (pageMatch) page = Math.max(1, parseInt(pageMatch[1], 10) || 1);
-
-        const bvMatch = str.match(/(BV[a-zA-Z0-9]{10})/i) || str.match(/[?&]bvid=(BV[a-zA-Z0-9]{10})/i);
-        if (bvMatch) {
-          const rawBv = bvMatch[1];
-          const normalizedBv = 'BV' + rawBv.slice(2);
-          return { platform: 'bilibili', id: normalizedBv, biliType: 'bv', page };
-        }
-        const avMatch = str.match(/(?:\/|aid=|^)(av\d+)/i) || str.match(/[?&]aid=(\d+)/i);
-        if (avMatch) {
-          const avId = avMatch[1].toLowerCase().startsWith('av') ? avMatch[1].toLowerCase() : ('av' + avMatch[1]);
-          return { platform: 'bilibili', id: avId, biliType: 'av', page };
-        }
+      // 2. Twitch VOD or Clip
+      const twitchVodMatch = str.match(/twitch\.tv\/videos\/([0-9]+)/i);
+      if (twitchVodMatch) {
+        return { provider: 'twitch-vod', id: twitchVodMatch[1], page: 1, isAv: false };
+      }
+      const twitchClipMatch = str.match(/(?:clips\.twitch\.tv\/|twitch\.tv\/[^/]+\/clip\/)([A-Za-z0-9_-]+)/i);
+      if (twitchClipMatch) {
+        return { provider: 'twitch-clip', id: twitchClipMatch[1], page: 1, isAv: false };
       }
 
-      // 3. Twitch (VODs & Clips)
-      if (/twitch\.tv/i.test(str)) {
-        const clipMatch =
-          str.match(/clips\.twitch\.tv\/(?:embed\?[^#]*clip=)?([a-zA-Z0-9_-]+)/i) ||
-          str.match(/twitch\.tv\/[^/]+\/clip\/([a-zA-Z0-9_-]+)/i);
-        if (clipMatch) {
-          return { platform: 'twitch', id: clipMatch[1], twitchType: 'clip' };
-        }
-        const vodMatch =
-          str.match(/twitch\.tv\/videos\/(\d+)/i) ||
-          str.match(/twitch\.tv\/[^/]+\/v\/(\d+)/i) ||
-          str.match(/[?&]video=v?(\d+)/i);
-        if (vodMatch) {
-          return { platform: 'twitch', id: vodMatch[1], twitchType: 'vod' };
-        }
+      // 3. Google Drive
+      const gdriveMatch = str.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?id=)([a-zA-Z0-9_-]{10,})/i);
+      if (gdriveMatch) {
+        return { provider: 'gdrive', id: gdriveMatch[1], page: 1, isAv: false };
       }
 
-      // 4. YouTube
-      const ytId = extractYoutubeId(str);
-      if (ytId) {
-        return { platform: 'youtube', id: ytId };
+      // 4. YouTube (11-char ID or URL)
+      if (/^[a-zA-Z0-9_-]{11}$/.test(str)) {
+        return { provider: 'youtube', id: str, page: 1, isAv: false };
+      }
+      const ytMatch = str.match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([a-zA-Z0-9_-]{11})/);
+      if (ytMatch) {
+        return { provider: 'youtube', id: ytMatch[1], page: 1, isAv: false };
       }
 
       return null;
     }
 
     function formatTwitchTime(sec) {
-      const s = Math.max(0, Math.floor(sec));
-      const h = Math.floor(s / 3600);
-      const m = Math.floor((s % 3600) / 60);
-      const rem = s % 60;
-      return `${h}h${m}m${rem}s`;
+      const total = Math.max(0, Math.floor(sec));
+      const h = Math.floor(total / 3600);
+      const m = Math.floor((total % 3600) / 60);
+      const s = total % 60;
+      return `${h}h${m}m${s}s`;
     }
 
-    function getPlatformDisplayName(platform) {
-      if (platform === 'drive') return 'Google Drive';
-      if (platform === 'bilibili') return 'Bilibili';
-      if (platform === 'twitch') return 'Twitch';
-      return 'YouTube';
+    function getTwitchParentHost() {
+      if (window.location.hostname && window.location.hostname !== '') {
+        return window.location.hostname;
+      }
+      return 'localhost';
     }
 
-    function updateWatchButtonLabel() {
-      const el = document.getElementById('watchPlatformText');
-      if (!el) return;
-      const p = appState.loadedVideo ? appState.loadedVideo.platform : 'youtube';
-      if (p === 'drive') el.textContent = t('btnWatchDrive');
-      else if (p === 'bilibili') el.textContent = t('btnWatchBilibili');
-      else if (p === 'twitch') el.textContent = t('btnWatchTwitch');
-      else el.textContent = t('btnWatchYt');
-    }
-
-    function buildYtEmbedUrl(vid, startSec = 0) {
-      const params = new URLSearchParams({
-        rel: '0',
-        playsinline: '1',
-        modestbranding: '1',
-        enablejsapi: '1'
-      });
-      if (startSec > 0) {
-        params.set('start', String(Math.floor(startSec)));
-      }
-      if (window.location.origin && window.location.origin !== 'null' && window.location.protocol.startsWith('http')) {
-        params.set('origin', window.location.origin);
-      }
-      return `https://www.youtube-nocookie.com/embed/${vid}?${params.toString()}`;
-    }
-
-    function buildVideoEmbedUrl(video, startSec = 0) {
-      if (!video) return '';
-      if (video.platform === 'drive') {
-        return `https://drive.google.com/file/d/${encodeURIComponent(video.id)}/preview`;
-      }
-      if (video.platform === 'bilibili') {
-        const page = video.page || 1;
-        const idParam = video.biliType === 'av'
-          ? `aid=${encodeURIComponent(video.id.slice(2))}`
-          : `bvid=${encodeURIComponent(video.id)}`;
-        return `https://player.bilibili.com/player.html?${idParam}&page=${page}&t=${Math.floor(startSec)}&high_quality=1&autoplay=0`;
-      }
-      if (video.platform === 'twitch') {
-        const parentHost = (window.location.hostname && window.location.hostname !== '') ? window.location.hostname : 'localhost';
-        if (video.twitchType === 'clip') {
-          return `https://clips.twitch.tv/embed?clip=${encodeURIComponent(video.id)}&parent=${encodeURIComponent(parentHost)}&autoplay=false`;
+    function buildMediaEmbedUrl(media, startSec = 0) {
+      if (!media) return '';
+      if (media.provider === 'youtube') {
+        const params = new URLSearchParams({
+          rel: '0',
+          playsinline: '1',
+          modestbranding: '1',
+          enablejsapi: '1'
+        });
+        if (startSec > 0) params.set('start', String(Math.floor(startSec)));
+        if (window.location.origin && window.location.origin !== 'null' && window.location.protocol.startsWith('http')) {
+          params.set('origin', window.location.origin);
         }
-        return `https://player.twitch.tv/?video=${encodeURIComponent(video.id)}&parent=${encodeURIComponent(parentHost)}&time=${formatTwitchTime(startSec)}&autoplay=false`;
+        return `https://www.youtube-nocookie.com/embed/${media.id}?${params.toString()}`;
       }
-      return buildYtEmbedUrl(video.id, startSec);
+      if (media.provider === 'bilibili') {
+        const params = new URLSearchParams({
+          page: String(media.page || 1),
+          autoplay: '0',
+          t: Number(startSec.toFixed(2)).toString()
+        });
+        if (media.isAv) params.set('aid', media.id);
+        else params.set('bvid', media.id);
+        return `https://player.bilibili.com/player.html?${params.toString()}`;
+      }
+      if (media.provider === 'twitch-vod') {
+        const params = new URLSearchParams({
+          video: `v${media.id}`,
+          parent: getTwitchParentHost(),
+          autoplay: 'false',
+          time: formatTwitchTime(startSec)
+        });
+        return `https://player.twitch.tv/?${params.toString()}`;
+      }
+      if (media.provider === 'twitch-clip') {
+        const params = new URLSearchParams({
+          clip: media.id,
+          parent: getTwitchParentHost(),
+          autoplay: 'false'
+        });
+        return `https://clips.twitch.tv/embed?${params.toString()}`;
+      }
+      if (media.provider === 'gdrive') {
+        return `https://drive.google.com/file/d/${media.id}/preview`;
+      }
+      return '';
     }
 
-    function seekYtEmbed(sec, pause = true) {
-      if (!appState.ytEmbedVisible) return;
-      if (!appState.loadedVideo || appState.loadedVideo.platform !== 'youtube') return;
+    function seekMediaEmbed(sec, pause = true, immediateReload = false) {
+      if (!appState.ytEmbedVisible || !appState.media) return;
       const iframe = document.getElementById('ytEmbedIframe');
-      if (!iframe || !iframe.contentWindow) return;
-      try {
-        if (pause) {
-          iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'pauseVideo', args: [] }), '*');
+      if (!iframe) return;
+
+      const provider = appState.media.provider;
+      if (provider === 'youtube') {
+        if (!iframe.contentWindow) return;
+        try {
+          if (pause) {
+            iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'pauseVideo', args: [] }), '*');
+          }
+          iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'seekTo', args: [sec, true] }), '*');
+        } catch (e) {}
+        return;
+      }
+
+      if (provider === 'bilibili' || provider === 'twitch-vod') {
+        clearTimeout(appState.embedSeekTimer);
+        const applyReload = () => {
+          if (!appState.ytEmbedVisible) return;
+          iframe.src = buildMediaEmbedUrl(appState.media, sec);
+        };
+        if (immediateReload) {
+          applyReload();
+        } else {
+          appState.embedSeekTimer = setTimeout(applyReload, 350);
         }
-        iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'seekTo', args: [sec, true] }), '*');
-      } catch (e) {}
+      }
+    }
+
+    function updateMediaProviderUiText() {
+      const m = appState.media;
+      if (!m) return;
+      const badgeEl = document.getElementById('ytProviderBadge');
+      const watchLabelEl = document.getElementById('ytWatchProviderLabel');
+      const fallbackNoteEl = document.getElementById('embedFallbackNoteEl');
+
+      const providerNames = {
+        youtube: 'YouTube',
+        bilibili: 'Bilibili',
+        'twitch-vod': 'Twitch VOD',
+        'twitch-clip': 'Twitch Clip',
+        gdrive: 'Google Drive'
+      };
+      if (badgeEl) badgeEl.textContent = providerNames[m.provider] || 'Video';
+
+      if (watchLabelEl) {
+        if (m.provider === 'bilibili') watchLabelEl.textContent = t('watchBilibili');
+        else if (m.provider === 'twitch-vod' || m.provider === 'twitch-clip') watchLabelEl.textContent = t('watchTwitch');
+        else if (m.provider === 'gdrive') watchLabelEl.textContent = t('watchGdrive');
+        else watchLabelEl.textContent = t('watchYoutube');
+      }
+
+      if (fallbackNoteEl) {
+        fallbackNoteEl.innerHTML = m.provider === 'gdrive' ? t('embedGdriveNote') : t('embedFallbackNote');
+      }
     }
 
     function formatDurationShort(sec) {
@@ -2391,43 +2416,18 @@
       return `${s}s`;
     }
 
-    function setPreviewThumbnail(thumbUrl, fallbackText) {
-      const thumb = document.getElementById('ytPreviewThumb');
-      const fallback = document.getElementById('ytThumbFallback');
-      if (!thumb || !fallback) return;
-
-      fallback.textContent = fallbackText || '';
-      if (thumbUrl) {
-        thumb.onload = () => {
-          thumb.classList.remove('hidden');
-          fallback.classList.add('hidden');
-        };
-        thumb.onerror = () => {
-          thumb.classList.add('hidden');
-          fallback.classList.remove('hidden');
-        };
-        thumb.classList.add('hidden');
-        fallback.classList.remove('hidden');
-        thumb.src = thumbUrl;
-      } else {
-        thumb.onload = null;
-        thumb.onerror = null;
-        thumb.removeAttribute('src');
-        thumb.classList.add('hidden');
-        fallback.classList.remove('hidden');
-      }
-    }
-
     async function loadYoutubeVideo() {
       const input = document.getElementById('ytUrlInput');
-      const parsed = parseVideoSource(input.value);
+      const parsed = parseMediaUrl(input.value);
       if (!parsed) {
-        showToast(t('toastInvalidYt'), 'warn');
+        showToast(t('toastInvalidUrl'), 'warn');
         return;
       }
 
-      appState.loadedVideo = parsed;
-      appState.detectedVideoId = parsed.id;
+      appState.media = parsed;
+      if (parsed.provider === 'youtube') {
+        appState.detectedVideoId = parsed.id;
+      }
       appState.ytVideoDuration = null;
       appState.ytPlayheadSeconds = 0;
       appState.ytEmbedVisible = false;
@@ -2443,14 +2443,21 @@
       // Show panel
       document.getElementById('ytVideoPanel').classList.remove('hidden');
       document.getElementById('ytEmptyState').classList.add('hidden');
-      updateWatchButtonLabel();
 
+      updateMediaProviderUiText();
+
+      const thumb = document.getElementById('ytPreviewThumb');
+      const thumbFallback = document.getElementById('ytProviderThumbFallback');
       const titleEl = document.getElementById('ytVideoTitle');
       const authorEl = document.getElementById('ytVideoAuthor');
       const durEl = document.getElementById('ytVideoDuration');
 
-      if (parsed.platform === 'youtube') {
-        setPreviewThumbnail(`https://i.ytimg.com/vi/${parsed.id}/hqdefault.jpg`, 'YOUTUBE');
+      if (parsed.provider === 'youtube') {
+        if (thumb) {
+          thumb.src = `https://i.ytimg.com/vi/${parsed.id}/hqdefault.jpg`;
+          thumb.classList.remove('hidden');
+        }
+        if (thumbFallback) thumbFallback.classList.add('hidden');
         if (titleEl) titleEl.textContent = t('loadingText');
         if (authorEl) authorEl.textContent = t('vidLabel', { vid: parsed.id });
         if (durEl) durEl.textContent = '';
@@ -2477,27 +2484,33 @@
           if (authorEl) authorEl.textContent = t('vidOffline', { vid: parsed.id });
           if (durEl) durEl.textContent = t('durUnknown');
         }
-      } else if (parsed.platform === 'drive') {
-        setPreviewThumbnail(`https://drive.google.com/thumbnail?id=${encodeURIComponent(parsed.id)}&sz=w320`, 'GOOGLE DRIVE');
-        if (titleEl) titleEl.textContent = t('driveTitleFallback');
-        if (authorEl) authorEl.textContent = t('driveLabel', { vid: parsed.id });
-        if (durEl) durEl.textContent = t('durUnknown');
-      } else if (parsed.platform === 'bilibili') {
-        setPreviewThumbnail(null, 'BILIBILI');
-        if (titleEl) titleEl.textContent = t('biliTitleFallback', { vid: parsed.id });
-        if (authorEl) authorEl.textContent = t('biliLabel', { vid: parsed.id, page: parsed.page || 1 });
-        if (durEl) durEl.textContent = t('durUnknown');
-      } else if (parsed.platform === 'twitch') {
-        const isClip = parsed.twitchType === 'clip';
-        setPreviewThumbnail(null, isClip ? 'TWITCH CLIP' : 'TWITCH VOD');
-        if (titleEl) titleEl.textContent = isClip ? t('twitchClipFallback', { vid: parsed.id }) : t('twitchVodFallback', { vid: parsed.id });
-        if (authorEl) authorEl.textContent = isClip ? t('twitchClipLabel', { vid: parsed.id }) : t('twitchVodLabel', { vid: parsed.id });
+      } else {
+        if (thumb) thumb.classList.add('hidden');
+        if (thumbFallback) {
+          thumbFallback.classList.remove('hidden');
+          thumbFallback.textContent = parsed.provider === 'bilibili' ? 'BILIBILI'
+            : (parsed.provider === 'gdrive' ? 'G-DRIVE' : 'TWITCH');
+        }
+        if (parsed.provider === 'bilibili') {
+          const displayId = parsed.isAv ? `av${parsed.id}` : parsed.id;
+          if (titleEl) titleEl.textContent = t('biliTitle', { vid: displayId });
+          if (authorEl) authorEl.textContent = `P${parsed.page} · ${displayId}`;
+        } else if (parsed.provider === 'twitch-vod') {
+          if (titleEl) titleEl.textContent = t('twitchVodTitle', { vid: parsed.id });
+          if (authorEl) authorEl.textContent = t('vidLabel', { vid: parsed.id });
+        } else if (parsed.provider === 'twitch-clip') {
+          if (titleEl) titleEl.textContent = t('twitchClipTitle', { vid: parsed.id });
+          if (authorEl) authorEl.textContent = t('vidLabel', { vid: parsed.id });
+        } else if (parsed.provider === 'gdrive') {
+          if (titleEl) titleEl.textContent = t('gdriveTitle');
+          if (authorEl) authorEl.textContent = t('vidLabel', { vid: parsed.id });
+        }
         if (durEl) durEl.textContent = t('durUnknown');
       }
 
       scrubYtToSeconds(0, false);
       updateYtScrubberRange();
-      showToast(t('toastLoadedYt', { platform: getPlatformDisplayName(parsed.platform), vid: parsed.id }), 'success');
+      showToast(t('toastLoadedVideo', { provider: parsed.provider.toUpperCase(), vid: parsed.id }), 'success');
     }
 
     function updateYtScrubberRange() {
@@ -2515,23 +2528,23 @@
       }
     }
 
-    function scrubYtToSeconds(sec, syncEmbed = true) {
+    function scrubYtToSeconds(sec, syncEmbed = true, immediateReload = false) {
       const maxSec = appState.ytVideoDuration || 600;
       appState.ytPlayheadSeconds = Math.max(0, Math.min(maxSec, sec));
       updateYtPlayheadDisplay();
       if (syncEmbed) {
-        seekYtEmbed(appState.ytPlayheadSeconds, true);
+        seekMediaEmbed(appState.ytPlayheadSeconds, true, immediateReload);
       }
     }
 
     function scrubYtInspectorFrame(frameVal) {
       const fps = getValidFps();
-      scrubYtToSeconds(parseInt(frameVal, 10) / fps, true);
+      scrubYtToSeconds(parseInt(frameVal, 10) / fps, true, false);
     }
 
     function stepYtInspectorFrame(deltaFrames) {
       const fps = getValidFps();
-      scrubYtToSeconds(appState.ytPlayheadSeconds + deltaFrames / fps, true);
+      scrubYtToSeconds(appState.ytPlayheadSeconds + deltaFrames / fps, true, true);
     }
 
     function updateYtPlayheadDisplay() {
@@ -2565,21 +2578,19 @@
 
     function openYoutubeAtPlayhead() {
       const sec = Math.floor(appState.ytPlayheadSeconds);
-      const video = appState.loadedVideo || { platform: 'youtube', id: appState.detectedVideoId || 'dQw4w9WgXcQ' };
+      const m = appState.media || { provider: 'youtube', id: 'dQw4w9WgXcQ', page: 1 };
       let url = '';
-      if (video.platform === 'drive') {
-        url = `https://drive.google.com/file/d/${encodeURIComponent(video.id)}/view?t=${sec}`;
-      } else if (video.platform === 'bilibili') {
-        const pagePart = video.page && video.page > 1 ? `&p=${video.page}` : '';
-        url = `https://www.bilibili.com/video/${encodeURIComponent(video.id)}?t=${sec}${pagePart}`;
-      } else if (video.platform === 'twitch') {
-        if (video.twitchType === 'clip') {
-          url = `https://clips.twitch.tv/${encodeURIComponent(video.id)}`;
-        } else {
-          url = `https://www.twitch.tv/videos/${encodeURIComponent(video.id)}?t=${formatTwitchTime(sec)}`;
-        }
+      if (m.provider === 'bilibili') {
+        const pathId = m.isAv ? `av${m.id}` : m.id;
+        url = `https://www.bilibili.com/video/${encodeURIComponent(pathId)}?p=${m.page || 1}&t=${sec}`;
+      } else if (m.provider === 'twitch-vod') {
+        url = `https://www.twitch.tv/videos/${encodeURIComponent(m.id)}?t=${formatTwitchTime(sec)}`;
+      } else if (m.provider === 'twitch-clip') {
+        url = `https://clips.twitch.tv/${encodeURIComponent(m.id)}`;
+      } else if (m.provider === 'gdrive') {
+        url = `https://drive.google.com/file/d/${encodeURIComponent(m.id)}/view`;
       } else {
-        url = `https://www.youtube.com/watch?v=${encodeURIComponent(video.id)}&t=${sec}s`;
+        url = `https://www.youtube.com/watch?v=${encodeURIComponent(m.id)}&t=${sec}s`;
       }
       window.open(url, '_blank', 'noopener');
     }
@@ -2588,9 +2599,10 @@
       const container = document.getElementById('ytEmbedContainer');
       const iframe = document.getElementById('ytEmbedIframe');
       const btnText = document.getElementById('ytEmbedBtnText');
-      const video = appState.loadedVideo || { platform: 'youtube', id: appState.detectedVideoId || 'dQw4w9WgXcQ' };
+      const m = appState.media;
 
       if (appState.ytEmbedVisible) {
+        clearTimeout(appState.embedSeekTimer);
         container.classList.add('hidden');
         iframe.src = '';
         if (btnText) btnText.textContent = t('embedTry');
@@ -2600,13 +2612,14 @@
 
       appState.ytEmbedVisible = true;
       iframe.onload = () => {
-        if (video.platform === 'youtube' && appState.ytPlayheadSeconds > 0) {
-          seekYtEmbed(appState.ytPlayheadSeconds, true);
+        if (m && m.provider === 'youtube' && appState.ytPlayheadSeconds > 0) {
+          seekMediaEmbed(appState.ytPlayheadSeconds, true, true);
         }
       };
-      iframe.src = buildVideoEmbedUrl(video, appState.ytPlayheadSeconds);
+      iframe.src = buildMediaEmbedUrl(m, appState.ytPlayheadSeconds);
       container.classList.remove('hidden');
       if (btnText) btnText.textContent = t('embedHide');
+      updateMediaProviderUiText();
     }
 
     // =========================================================================
@@ -2722,7 +2735,7 @@
       updateQuickFrameConverter();
       renderSimulatorCanvas();
 
-      // Auto-load default YouTube video in the loader
+      // Auto-load default video in the loader
       loadYoutubeVideo();
 
       if (window.lucide && typeof window.lucide.createIcons === 'function') {
